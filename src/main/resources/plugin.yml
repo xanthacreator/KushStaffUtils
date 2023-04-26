@@ -1,0 +1,24 @@
+name: KushStaffUtils
+version: '${project.version}'
+main: me.dankofuk.Main
+load-after: [InteractiveChat]
+commands:
+  stafflogger:
+    description: reloads the config.
+    usage: /stafflogger reload - Reloads the config
+  viewlogs:
+    description: views a players command logs ingame
+    usage: /viewlogs <player_name> - Views a players command logs
+  report:
+    description: reports a player ingame
+  bug:
+    description: report a bug to the developers
+  strike:
+    description: strike a group, island, faction
+    aliases: [strikes]
+  freeze:
+    description: Freezes a player
+  suggestion:
+    description: Make a suggestion
+  suggest:
+    description: make a suggestion

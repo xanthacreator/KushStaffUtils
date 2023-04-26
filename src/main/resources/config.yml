@@ -1,0 +1,206 @@
+# Placeholders for Staff Logger Webhook
+# %player% - Player Name
+# %command% - Command it will log
+# %server% - pulls from the config option "server_name"
+# %time% - Place holder for how many Seconds/Mins/Hours/Days command was ago
+#
+# Plugin Created by DankOfUK with help from ChatGPT
+# Discord for Support: http://discord.gg/2xYgHUfubM
+
+
+#
+# Discord Bot Settings
+#
+bot:
+  enabled: false
+  discord_token: ""
+  command_prefix: "@"
+  adminRoleID: ""
+  discord_activity: "with KushPvP"
+  activity:
+    type: LISTENING
+    name: some music
+    url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+# Command Logger Discord Webhook - If you need help watch this: https://www.youtube.com/watch?v=fKksxz2Gdnc
+webhook_url: ""
+
+# Enable this if you want it to log commands to a file per use! (STORED VIA UUIDS)
+log_commands: false # this logs in KushStaffLogger/logs
+
+
+
+suggestion: #Uses The Discord Bot - If the discord
+  title: "New Suggestion from %player%"
+  description: "%suggestion%"
+  color: "#94157f"
+  footer: "Submitted by %player% (%player_uuid%)"
+  thumbnail_url: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=4096"
+  channel_id: "1096952523585245195"
+  thread_id: "1096952523585245195" #Coming Soon
+  usage_message: "&cUsage: /suggest <suggestion>"
+  sent_message: "&aYour suggestion (%suggestion%) has been sent!"
+  cooldown: 60
+
+
+
+# Player Reporting Configuration
+enabled: true # If disabled it will not work
+# Chat Reporting Webhook Lang
+webhook-url: ""
+username: "OBN"
+avatar-url: "https://example.com/avatar.png"
+report-message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%"
+# Chat Reporting Lang
+cooldown-seconds: 15 # seconds
+report-sent-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour report has been sent!\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fThank you for helping us make the server safer!"
+no-permission-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
+usage-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/report <player> <reason>\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fPlease use &cImgur&f or &cYoutube&f for proof."
+
+
+
+# Join Leave Webhooks Logger
+isEnabled: false
+joinWebhookUrl: "https://discord.com/api/webhooks/1090091527742689280/2EWe1JJ3R-e5dkVcugE-4gdepyRhMkH0d1yLIBfNNA-ZH9Dwmx8oPREQwgzQ4v_dIeLk"
+leaveWebhookUrl: "https://discord.com/api/webhooks/1090710491367743560/pGxPya19ypXpM886o7zBTWeHvlC3G8ziuE07nEUixKYm734GAXwxuZnHFO3u0HIbUuLl"
+# Join and leave messages (THESE ARE SEND WHEN A PLAYER JOINS OR LEAVES THE SERVER)
+joinMessage:
+  - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
+  - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
+  - ""
+  - "> :satellite: Server IP > play.servername.net"
+  - "> :computer: Website > www.servername.net"
+  - "> :department_store: Store > store.servername.net"
+leaveMessage:
+  - "> <:dot:1071609577122041856> `%player%` has *left* the server!"
+  - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
+  - ""
+  - "> :satellite: Server IP > play.servername.net"
+  - "> :computer: Website > www.servername.net"
+  - "> :department_store: Store > store.servername.net"
+# If enabled it will send as a embed message!
+useEmbed: true
+# Gets the Server Name for the %server% placeholder
+server_name: "ONEBLOCK NATION"
+
+
+
+# Reload Config Config
+#
+# Change the no permission message!
+no_permission: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to &c/stafflogger&f!"
+
+# Change the no permission message!
+reload_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fThe config files have been reloaded!"
+
+# Message format to use when logging a command
+message_formats:
+  - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
+
+# Embed title format to use when logging a command
+embed_title_formats:
+  - ":information_source: COMMAND LOGGER"
+
+
+# Commands the plugin will ingore
+ignored_commands:
+  - "/pin"
+  - "/register"
+  - "/login"
+  - "/password"
+
+# If false it will log all commands (ignored_commands wont ever be logged)
+# If true it will only log the command in the whitelist_commands (ignored_commands wont ever be logged)
+whitelist_enabled: true
+# Commands the will be logged if set to true (ignored_commands wont ever be logged)
+whitelisted_commands:
+  - "/kick"
+  - "/ipmute"
+  - "/ipban"
+  - "/ban"
+  - "/tempban"
+  - "/mute"
+  - "/tempmute"
+  - "/warn"
+  - "/clearchat"
+  - "/gmc"
+  - "/gmsp"
+  - "/co i"
+  - "/co rollback"
+  - "/co"
+  - "/irp restore"
+  - "/irp"
+  - "/invsee"
+  - "/kill"
+
+# Configuration file for Log Viewer - COMING SOON
+#logs-header: "&6=== &e%player% Logs &6=== &ePage &f%currentPage%&e/&f%maxPage% &6==="
+#prev-page: "&a<< Previous Page"
+#next-page: "&aNext Page >>"
+#page_size: 15
+
+# Chat Webhook - BETA (LOGS GAME CHAT TO DISCORD)
+chatwebhook:
+  enabled: false
+  url: "YOUR-WEBHOOK-HERE"
+  serverName: "My Server Name"
+  username: "My Bot Username"
+  avatarUrl: "https://example.com/avatar.png"
+  message: "[%vault_groups% %player_name%]: %message%"
+
+# Configure StrikeWebhook
+strike:
+  webhookUrl: "YOUR-WEBHOOK-HERE"
+  username: "FactionStrikeBot"
+  avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
+  enabled: true
+  embedTitle: ":book: `Faction Strike`"
+  message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%"
+  thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
+  sendCommand: "me %group% has been given %amount% Strikes (%reason%)" # Commands it sends when a strike is done!
+  noPermissionMessage: "&cYou do not have permission to use this command."
+  usageMessage: "&cUsage: /strike <group> <amount> <reason>"
+
+# Bug Command Webhook
+bug_webhook_url: ""
+bug_username: "BUG REPORT"
+bug_thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
+bug_avatar_url: "https://example.com/bug-avatar.png"
+is_bug_enabled: true
+bug_cooldown: 30
+bug_message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**"
+no_bug_permission_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
+bug_usage_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/bug <report>"
+bug_sent_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been logged.\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fOverview: &c%reason%"
+
+freeze:
+  frozenGUITitle: "&8&lYOUR FROZEN"
+  frozenGUIBarrierName: " "
+  frozenGUILore: "&c&lʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ʜᴀs ʙᴇᴇɴ ғʀᴏᴢᴇɴ."
+  freezeMessages:
+    - "&cyour account has been frozen."
+    - "&f&ki&4ᴅᴏ ɴᴏᴛ ᴍᴏᴠᴇ ᴏʀ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ᴡɪʟʟ ʙᴇ ᴘᴜɴɪsʜᴇᴅ.&f&ki"
+  cannotUseEnderpearlsOrChorusFruit: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot use enderpearls or chorus fruit while frozen!"
+  cannotChat: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot chat while frozen!"
+  cannotUseCommands: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot use commands while frozen!"
+  cannotPlaceBlocks: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot place blocks while frozen!"
+  cannotBreakBlocks: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot break blocks while frozen!"
+  discordServerMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fDiscord: &chttps://discord.gg/SM7bmYbKYs"
+  noPermissionMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command.'
+  playerNotFoundMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fPlayer not found.'
+  cannotFreezeOpPlayerMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot freeze an OP player.'
+  cannotFreezeSelfMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot freeze yourself.'
+  freezeSuccessMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c%1$s &fhas been &cFrozen&f.'
+  unfreezeSuccessMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c%1$s &fhas been &cUnfrozen&f.'
+  logOutCommand: "ban %player% Loggin Out While Frozen."
+
+# Enderpearl Cooldown Configuration
+enderpearl:
+  enabled: false
+  cooldown-time: 10
+  cooldown-message: '&cYou must wait %time_left% seconds before using this again!'
+# Chorus Fruit Cooldown Configuration (DO NOT ENABLE IF YOUR BELOW 1.9+)
+chorus:
+  enabled: false # (DO NOT ENABLE IF YOUR BELOW 1.9+)
+  cooldown-time: 10 # (DO NOT ENABLE IF YOUR BELOW 1.9+)
+  cooldown-message: '&cYou must wait %time_left% seconds before using this again!' # (DO NOT ENABLE IF YOUR BELOW 1.9+)
