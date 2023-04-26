@@ -1,14 +1,5 @@
 package me.dankofuk.commands;
 
-import me.dankofuk.ColorUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -20,18 +11,36 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import me.dankofuk.ColorUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 public class ReportCommand implements Listener, CommandExecutor {
     public String ReportWebhookUrl;
+
     public String username;
+
     public String avatarUrl;
+
     public boolean isReportEnabled;
+
     public String reportMessage;
+
     public final Map<UUID, Long> cooldowns = new HashMap<>();
+
     public int reportCooldown;
+
     public String reportSentMessage;
+
     public String noPermissionMessage;
+
     public String usageMessage;
+
     public FileConfiguration config;
 
     public ReportCommand(String ReportWebhookUrl, String username, String avatarUrl, boolean isEnabled, String reportMessage, int cooldownSeconds, String reportSentMessage, String noPermissionMessage, String usageMessage, FileConfiguration config) {
@@ -47,66 +56,48 @@ public class ReportCommand implements Listener, CommandExecutor {
         this.config = config;
     }
 
-
-    @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player))
             return true;
-        }
-
-        Player player = (Player) sender;
-
+        Player player = (Player)sender;
         if (!player.hasPermission("commandlogger.report.use")) {
-            player.sendMessage(ColorUtils.translateColorCodes(noPermissionMessage));
+            player.sendMessage(ColorUtils.translateColorCodes(this.noPermissionMessage));
             return true;
         }
-
         if (args.length < 2) {
-            player.sendMessage(ColorUtils.translateColorCodes(usageMessage));
+            player.sendMessage(ColorUtils.translateColorCodes(this.usageMessage));
             return true;
         }
-
         String reportedPlayerName = args[0];
-        String reportReason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-
+        String reportReason = String.join(" ", Arrays.<CharSequence>copyOfRange((CharSequence[])args, 1, args.length));
         long currentTime = System.currentTimeMillis();
-        long lastReportTime = cooldowns.getOrDefault(player.getUniqueId(), 0L);
-        long timeRemaining = (lastReportTime + (reportCooldown * 1000L) - currentTime) / 1000L;
-
-        if (timeRemaining > 0) {
+        long lastReportTime = ((Long)this.cooldowns.getOrDefault(player.getUniqueId(), Long.valueOf(0L))).longValue();
+        long timeRemaining = (lastReportTime + this.reportCooldown * 1000L - currentTime) / 1000L;
+        if (timeRemaining > 0L) {
             String cooldownMessage = "&cPlease wait " + timeRemaining + " seconds before submitting another report.";
             player.sendMessage(ColorUtils.translateColorCodes(cooldownMessage));
             return true;
         }
-
         sendWebhook(player, reportedPlayerName, reportReason);
         this.cooldowns.put(player.getUniqueId(), Long.valueOf(currentTime));
         player.sendMessage(ColorUtils.translateColorCodes(this.reportSentMessage));
         return true;
     }
 
-
     private void sendWebhook(Player player, String reportedPlayerName, String reportReason) {
         CompletableFuture.runAsync(() -> {
             try {
                 URL url = new URL(this.ReportWebhookUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestProperty("User-Agent", "ReportWebhook");
                 connection.setDoOutput(true);
-
-                String message = this.reportMessage.replace("%player%", player.getName())
-                        .replace("%reported_player%", reportedPlayerName)
-                        .replace("%reason%", reportReason)
-                        .replace("\n", "\\n");
-
+                String message = this.reportMessage.replace("%player%", player.getName()).replace("%reported_player%", reportedPlayerName).replace("%reason%", reportReason).replace("\n", "\\n");
                 message = "{\"username\":\"" + this.username + "\",\"avatar_url\":\"" + this.avatarUrl + "\",\"embeds\":[{\"description\":\"" + message + "\",\"color\":" + getColorCode("#FF0000") + "}]}";
-
                 try (OutputStream os = connection.getOutputStream()) {
                     os.write(message.getBytes());
                 }
-
                 connection.getResponseCode();
                 connection.getResponseMessage();
             } catch (MalformedURLException e) {
@@ -121,7 +112,6 @@ public class ReportCommand implements Listener, CommandExecutor {
             }
         });
     }
-
 
     public void reloadReportWebhook(String ReportWebhookUrl) {
         this.ReportWebhookUrl = ReportWebhookUrl;

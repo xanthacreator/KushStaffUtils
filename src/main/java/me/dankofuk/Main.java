@@ -191,7 +191,7 @@ public class Main extends JavaPlugin implements Listener {
         boolean isReportEnabled = config.getBoolean("enabled");
         String reportMessage = config.getString("report-message");
         int cooldownSeconds = config.getInt("cooldown-seconds");
-        String reportSentMessage = config.getString("report-sent-message:");
+        String reportSentMessage = config.getString("report-sent-message");
         String usageMessage = config.getString("usage-message");
         ReportCommand reportCommand = new ReportCommand(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, FileConfiguration);
         Bukkit.getPluginManager().registerEvents(reportCommand, this);
