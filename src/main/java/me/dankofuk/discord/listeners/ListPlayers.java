@@ -7,6 +7,7 @@ import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.bukkit.Bukkit;
 
 public class ListPlayers extends ListenerAdapter {
     private final DiscordBot discordBot;
@@ -37,6 +38,8 @@ public class ListPlayers extends ListenerAdapter {
 
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Online Players");
+            embed.setThumbnail(event.getGuild().getIconUrl());
+            embed.setFooter("Total Online: " + Bukkit.getOnlinePlayers().size());
             embed.setDescription(String.join(", ", playerNames));
 
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
