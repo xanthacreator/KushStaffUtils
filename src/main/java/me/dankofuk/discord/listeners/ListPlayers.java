@@ -40,7 +40,7 @@ public class ListPlayers extends ListenerAdapter {
             embed.setTitle("Online Players");
             embed.setThumbnail(event.getGuild().getIconUrl());
             embed.setFooter("Total Online: " + Bukkit.getOnlinePlayers().size());
-            embed.setDescription(String.join(", ", playerNames));
+            embed.setDescription(String.join("\n", playerNames));
 
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
         }
