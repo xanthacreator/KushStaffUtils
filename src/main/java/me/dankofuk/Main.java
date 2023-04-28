@@ -184,7 +184,7 @@ public class Main extends JavaPlugin implements Listener {
         this.enderPearlCooldown.setChorusCooldownTime(getConfig().getInt("chorus.cooldown-time"));
         this.enderPearlCooldown.setChorusEnabled(getConfig().getBoolean("chorus.enabled"));
         this.enderPearlCooldown.start();
-        // Bug Report Webhook
+        // Report Webhook
         String ReportWebhookUrl = config.getString("webhook-url");
         String username = config.getString("username");
         String avatarUrl = config.getString("avatar-url");
@@ -374,6 +374,7 @@ public class Main extends JavaPlugin implements Listener {
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActiviy = getConfig().getString("bot.discord_activity");
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
+        this.reportCommand.reloadReportWebhook(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, FileConfiguration);
         // start new Discord bot session if enabled
         if (discordBotEnabled) {
             discordBot = new DiscordBot(discordToken, true, getServer(), commandPrefix, adminRoleID, discordActiviy, this, config, ServerStatusChannelID);

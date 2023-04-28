@@ -6,10 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import me.dankofuk.ColorUtils;
 import org.bukkit.Bukkit;
@@ -113,44 +110,21 @@ public class ReportCommand implements Listener, CommandExecutor {
         });
     }
 
-    public void reloadReportWebhook(String ReportWebhookUrl) {
+    public void reloadReportWebhook(String ReportWebhookUrl, String username, String avatarUrl, boolean isEnabled, ArrayList<String> reportMessage, int cooldownSeconds, String reportSentMessage, String noPermissionMessage, String usageMessage, FileConfiguration config) {
         this.ReportWebhookUrl = ReportWebhookUrl;
-    }
-
-    public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public void setEnabled(boolean isReportEnabled) {
         this.isReportEnabled = isReportEnabled;
+        this.reportCooldown = cooldownSeconds;
+        this.reportSentMessage = reportSentMessage;
+        this.noPermissionMessage = noPermissionMessage;
+        this.usageMessage = usageMessage;
+        this.reportMessage = reportMessage;
+
     }
 
     private int getColorCode(String color) {
         color = color.replace("#", "");
         return Integer.parseInt(color, 16);
-    }
-
-    public void reloadCooldown(int cooldownSeconds) {
-        this.reportCooldown = cooldownSeconds;
-    }
-
-    public void reloadSentMessage(String reportSentMessage) {
-        this.reportSentMessage = reportSentMessage;
-    }
-
-    public void reloadNoPermMessage(String noPermissionMessage) {
-        this.noPermissionMessage = noPermissionMessage;
-    }
-
-    public void reloadUsageMessage(String usageMessage) {
-        this.usageMessage = usageMessage;
-    }
-
-    public void reloadReportMessage(String reportMessage) {
-        this.reportMessage = reportMessage;
     }
 }
