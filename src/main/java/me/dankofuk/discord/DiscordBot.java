@@ -1,5 +1,6 @@
 package me.dankofuk.discord;
 
+import me.dankofuk.DiscordLogger;
 import me.dankofuk.discord.commands.ConsoleCommand;
 import me.dankofuk.discord.commands.ReloadCommand;
 import me.dankofuk.discord.listeners.ListPlayers;
@@ -29,8 +30,12 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin botTask;
     public FileConfiguration config;
     public String ServerStatusChannelID;
+    public String logChannelId;
+    private DiscordLogger discordLogger;
+    public boolean logAsEmbed;
+    private boolean serverName;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -40,6 +45,8 @@ public class DiscordBot extends ListenerAdapter {
         this.botTask = botTask;
         this.config = config;
         this.ServerStatusChannelID = ServerStatusChannelID;
+        this.logChannelId = logChannelId;
+        this.logAsEmbed = logAsEmbed;
 
     }
 
@@ -64,7 +71,7 @@ public class DiscordBot extends ListenerAdapter {
         // Register Discord Events
         jda.addEventListener(new ListPlayers(this, commandPrefix));
         jda.addEventListener(new ServerStatus(this, ServerStatusChannelID));
-        jda.addEventListener(new ReloadCommand(this, commandPrefix, config));
+        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed));
         jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
     }
 
@@ -101,7 +108,7 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -111,6 +118,7 @@ public class DiscordBot extends ListenerAdapter {
         this.botTask = botTask;
         this.config = config;
         this.ServerStatusChannelID = ServerStatusChannelID;
+        this.logChannelId = logChannelId;
     }
 
 

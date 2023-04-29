@@ -13,6 +13,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import me.dankofuk.discord.DiscordBot;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.attribute.IGuildChannelContainer;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bukkit.Bukkit;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -20,17 +24,23 @@ import org.json.simple.parser.JSONParser;
 public class DiscordLogger {
     private List<String> messageFormats;
 
-    private String webhookUrl;
-
     private String serverName;
 
     private List<String> embedTitleFormats;
 
-    public DiscordLogger(String webhookUrl, List<String> messageFormat, List<String> embedTitleFormat, String serverName) {
-        this.webhookUrl = webhookUrl;
+    public boolean logAsEmbed;
+
+    public String logChannelId;
+
+    public DiscordBot discordBot;
+
+    public DiscordLogger(List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, DiscordBot discordBot, String logChannelId) {
+        this.discordBot = discordBot;
         this.messageFormats = messageFormat;
         this.serverName = serverName;
         this.embedTitleFormats = embedTitleFormat;
+        this.logAsEmbed = logAsEmbed;
+        this.logChannelId = logChannelId;
     }
 
     public void reloadMessageFormats(List<String> messageFormats) {
@@ -45,8 +55,8 @@ public class DiscordLogger {
         this.serverName = serverName;
     }
 
-    public void webhookUrl(String webhookUrl) {
-        this.webhookUrl = webhookUrl;
+    public void reloadLogChannelID(String logChannelId) {
+        this.logChannelId = logChannelId;
     }
 
     public void logCommand(String command, String playerName) {
@@ -63,7 +73,7 @@ public class DiscordLogger {
                 embedTitles.add(embedTitle);
             }
             String playerHeadUrl = getPlayerHeadUrl(playerName);
-            sendToDiscord(messages, embedTitles, playerHeadUrl);
+            sendToDiscord(messages, embedTitles, playerHeadUrl, discordBot, logChannelId);
         });
     }
 
@@ -85,39 +95,43 @@ public class DiscordLogger {
         return playerHeadUrl;
     }
 
-    private void sendToDiscord(List<String> messages, List<String> embedTitles, String playerHeadUrl) {
+    private void sendToDiscord(List<String> messages, List<String> embedTitles, String playerHeadUrl, DiscordBot jda, String logChannelId) {
         CompletableFuture.runAsync(() -> {
-            if (this.webhookUrl == null || this.webhookUrl.isEmpty()) {
-                Bukkit.getLogger().warning("[DiscordLogger] No webhook URL specified.");
+            if (logChannelId == null || logChannelId.isEmpty()) {
+                Bukkit.getLogger().warning("[DiscordLogger] No log channel specified.");
                 return;
             }
             try {
-                URL url = new URL(this.webhookUrl);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setRequestProperty("User-Agent", "KushStaffLogger");
-                connection.setDoOutput(true);
-                StringBuilder jsonString = new StringBuilder();
-                for (int i = 0; i < messages.size(); i++)
-                    jsonString.append("{\"title\":\"").append(embedTitles.get(i).replace("\n", "\\n")).append("\",\"description\":\"").append(messages.get(i).replace("\n", "\\n")).append("\",\"thumbnail\":{\"url\":\"").append(playerHeadUrl).append("\"}},");
-                jsonString = new StringBuilder("{\"embeds\":[" + jsonString.substring(0, jsonString.length() - 1) + "]}");
-                try (OutputStream os = connection.getOutputStream()) {
-                    os.write(jsonString.toString().getBytes());
+                TextChannel channel = discordBot.getJda().getTextChannelById(logChannelId);
+                if (channel == null) {
+                    Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + logChannelId);
+                    return;
                 }
-                connection.getResponseCode();
-                connection.getResponseMessage();
-            } catch (MalformedURLException e) {
-                Bukkit.getLogger().warning("[DiscordLogger] Invalid webhook URL specified: " + this.webhookUrl);
+                for (int i = 0; i < messages.size(); i++) {
+                    String message = messages.get(i);
+                    if (logAsEmbed) {
+                        String embedTitle = embedTitles.get(i);
+                        EmbedBuilder embedBuilder = new EmbedBuilder();
+                        embedBuilder.setTitle(embedTitle);
+                        embedBuilder.setDescription(message);
+                        embedBuilder.setThumbnail(playerHeadUrl);
+                        channel.sendMessageEmbeds(embedBuilder.build()).queue();
+                    } else {
+                        channel.sendMessage(message).queue();
+                    }
+                }
+            } catch (NumberFormatException e) {
+                Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + logChannelId);
                 e.printStackTrace();
-            } catch (ProtocolException e) {
-                Bukkit.getLogger().warning("[DiscordLogger] Invalid protocol specified in webhook URL: " + this.webhookUrl);
-                e.printStackTrace();
-            } catch (IOException e) {
-                Bukkit.getLogger().warning("[DiscordLogger] Error sending message to Discord webhook.");
+            } catch (Exception e) {
+                Bukkit.getLogger().warning("[DiscordLogger] Error sending message to Discord.");
                 e.printStackTrace();
             }
         });
     }
 
+
+
+    public void reloadLogAsEmbed(boolean logAsEmbed) {
+    }
 }

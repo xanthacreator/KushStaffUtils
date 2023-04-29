@@ -12,25 +12,24 @@
 # Discord Bot Settings
 #
 bot:
-  enabled: false
+  enabled: true
   discord_token: ""
-  command_prefix: "@"
+  command_prefix: "+"
   adminRoleID: ""
-  discord_activity: "with KushPvP"
-  activity:
-    type: LISTENING
-    name: some music
-    url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  discord_activity: "with Hello"
+  # Command Logger Configuration
+  command_log_channel_id: ""
+  command_log_logAsEmbed: false
 
-# Command Logger Discord Webhook - If you need help watch this: https://www.youtube.com/watch?v=fKksxz2Gdnc
-webhook_url: ""
+# Server Shutdown/Startup Logger
+serverstatus:
+  channel_id: "1096952523585245195"
 
 # Enable this if you want it to log commands to a file per use! (STORED VIA UUIDS)
 log_commands: false # this logs in KushStaffLogger/logs
 
 
-
-suggestion: #Uses The Discord Bot - If the discord
+suggestion:
   title: "New Suggestion from %player%"
   description: "%suggestion%"
   color: "#94157f"
@@ -47,7 +46,7 @@ suggestion: #Uses The Discord Bot - If the discord
 # Player Reporting Configuration
 enabled: true # If disabled it will not work
 # Chat Reporting Webhook Lang
-webhook-url: ""
+webhook-url: "https://discord.com/api/webhooks/1101921122993315960/_7MP0KWNdhlJVXLi02LUCdfuL0YB5XXkC26NvhArDuGJ-mcSBdDxe2kVlmYuzSqf5F-I"
 username: "OBN"
 avatar-url: "https://example.com/avatar.png"
 report-message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%"
@@ -111,7 +110,7 @@ ignored_commands:
 
 # If false it will log all commands (ignored_commands wont ever be logged)
 # If true it will only log the command in the whitelist_commands (ignored_commands wont ever be logged)
-whitelist_enabled: true
+whitelist_enabled: false
 # Commands the will be logged if set to true (ignored_commands wont ever be logged)
 whitelisted_commands:
   - "/kick"
@@ -162,7 +161,7 @@ strike:
   usageMessage: "&cUsage: /strike <group> <amount> <reason>"
 
 # Bug Command Webhook
-bug_webhook_url: ""
+bug_webhook_url: "YOUR-WEBHOOK-HERE"
 bug_username: "BUG REPORT"
 bug_thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
 bug_avatar_url: "https://example.com/bug-avatar.png"

@@ -1,5 +1,6 @@
 package me.dankofuk.discord.commands;
 
+import me.dankofuk.DiscordLogger;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -32,12 +33,15 @@ public class ReloadCommand extends ListenerAdapter {
     private JDA jda;
     private String adminRoleID;
     private String ServerStatusChannelID;
+    private DiscordLogger discordLogger;
+    public String logChannelId;
+    public boolean logAsEmbed;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config) {
+    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config, String logChannelId, boolean logAsEmbed) {
         this.discordBot = discordBot;
         this.commandPrefix = commandPrefix;
         this.config = config;
@@ -47,6 +51,8 @@ public class ReloadCommand extends ListenerAdapter {
         this.adminRoleID = discordBot.adminRoleID;
         this.discordActivity = discordBot.discordActivity;
         this.ServerStatusChannelID = discordBot.ServerStatusChannelID;
+        this.logChannelId = logChannelId;
+        this.logAsEmbed = logAsEmbed;
     }
 
     @Override
@@ -81,11 +87,13 @@ public class ReloadCommand extends ListenerAdapter {
             String commandPrefix = config.getString("bot.command_prefix");
             String discordActivity = config.getString("bot.discord_activity");
             String ServerStatusChannelID = config.getString("serverstatus.channel_id");
+            String logChannelId = config.getString("bot.command_log_channel_id");
+            boolean logAsEmbed = config.getBoolean("bot.command_log_logAsEmbed");
             Server minecraftServer = Bukkit.getServer();
             Bukkit.getScheduler().getPendingTasks().stream()
                     .filter(task -> task.getOwner() == botTask)
                     .forEach(task -> task.cancel());
-            discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID);
+            discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId);
             discordBot.stop();
 
             // Reload config strings
@@ -95,6 +103,8 @@ public class ReloadCommand extends ListenerAdapter {
             this.adminRoleID = adminRoleID;
             this.discordActivity = discordActivity;
             this.ServerStatusChannelID = ServerStatusChannelID;
+            this.logChannelId = logChannelId;
+            this.logAsEmbed = logAsEmbed;
 
             EmbedBuilder stoppedEmbed = new EmbedBuilder();
             stoppedEmbed.setColor(Color.RED);
@@ -114,7 +124,7 @@ public class ReloadCommand extends ListenerAdapter {
             startedEmbed.setDescription(">  `Reload Complete!`");
             startedEmbed.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
             event.getChannel().sendMessageEmbeds(startedEmbed.build()).queue();
+           }
         }
     }
-}
 

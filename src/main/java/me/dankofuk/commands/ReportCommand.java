@@ -40,11 +40,11 @@ public class ReportCommand implements Listener, CommandExecutor {
 
     public FileConfiguration config;
 
-    public ReportCommand(String ReportWebhookUrl, String username, String avatarUrl, boolean isEnabled, String reportMessage, int cooldownSeconds, String reportSentMessage, String noPermissionMessage, String usageMessage, FileConfiguration config) {
+    public ReportCommand(String ReportWebhookUrl, String username, String avatarUrl, boolean isReportEnabled, String reportMessage, int cooldownSeconds, String reportSentMessage, String noPermissionMessage, String usageMessage, FileConfiguration config) {
         this.ReportWebhookUrl = ReportWebhookUrl;
         this.username = username;
         this.avatarUrl = avatarUrl;
-        this.isReportEnabled = isEnabled;
+        this.isReportEnabled = isReportEnabled;
         this.reportMessage = reportMessage;
         this.reportCooldown = cooldownSeconds;
         this.reportSentMessage = reportSentMessage;
@@ -110,21 +110,44 @@ public class ReportCommand implements Listener, CommandExecutor {
         });
     }
 
-    public void reloadReportWebhook(String ReportWebhookUrl, String username, String avatarUrl, boolean isEnabled, ArrayList<String> reportMessage, int cooldownSeconds, String reportSentMessage, String noPermissionMessage, String usageMessage, FileConfiguration config) {
+    public void reloadReportWebhook(String ReportWebhookUrl) {
         this.ReportWebhookUrl = ReportWebhookUrl;
-        this.username = username;
-        this.avatarUrl = avatarUrl;
-        this.isReportEnabled = isReportEnabled;
-        this.reportCooldown = cooldownSeconds;
-        this.reportSentMessage = reportSentMessage;
-        this.noPermissionMessage = noPermissionMessage;
-        this.usageMessage = usageMessage;
-        this.reportMessage = reportMessage;
+    }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public void setEnabled(boolean isReportEnabled) {
+        this.isReportEnabled = isReportEnabled;
     }
 
     private int getColorCode(String color) {
         color = color.replace("#", "");
         return Integer.parseInt(color, 16);
+    }
+
+    public void reloadCooldown(int cooldownSeconds) {
+        this.reportCooldown = cooldownSeconds;
+    }
+
+    public void reloadSentMessage(String reportSentMessage) {
+        this.reportSentMessage = reportSentMessage;
+    }
+
+    public void reloadNoPermMessage(String noPermissionMessage) {
+        this.noPermissionMessage = noPermissionMessage;
+    }
+
+    public void reloadUsageMessage(String usageMessage) {
+        this.usageMessage = usageMessage;
+    }
+
+    public void reloadReportMessage(String reportMessage) {
+        this.reportMessage = reportMessage;
     }
 }

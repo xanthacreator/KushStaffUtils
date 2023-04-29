@@ -35,7 +35,6 @@ public class ListPlayers extends ListenerAdapter {
                 event.getChannel().sendMessage(">  No players are online.").queue();
                 return;
             }
-
             EmbedBuilder embed = new EmbedBuilder();
             embed.setTitle("Online Players");
             embed.setThumbnail(event.getGuild().getIconUrl());
