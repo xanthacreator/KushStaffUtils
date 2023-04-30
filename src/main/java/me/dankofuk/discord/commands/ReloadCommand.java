@@ -93,7 +93,7 @@ public class ReloadCommand extends ListenerAdapter {
             Bukkit.getScheduler().getPendingTasks().stream()
                     .filter(task -> task.getOwner() == botTask)
                     .forEach(task -> task.cancel());
-            discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId);
+            discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed);
             discordBot.stop();
 
             // Reload config strings

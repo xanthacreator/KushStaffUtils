@@ -18,6 +18,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.awt.*;
+import java.util.List;
 
 public class DiscordBot extends ListenerAdapter {
     public String discordToken;
@@ -33,9 +34,9 @@ public class DiscordBot extends ListenerAdapter {
     public String logChannelId;
     private DiscordLogger discordLogger;
     public boolean logAsEmbed;
-    private boolean serverName;
+    private String serverName;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -47,6 +48,7 @@ public class DiscordBot extends ListenerAdapter {
         this.ServerStatusChannelID = ServerStatusChannelID;
         this.logChannelId = logChannelId;
         this.logAsEmbed = logAsEmbed;
+        this.serverName = serverName;
 
     }
 
@@ -73,6 +75,9 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new ServerStatus(this, ServerStatusChannelID));
         jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed));
         jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
+        List<String> messageFormat = config.getStringList("");
+        List<String> embedTitleFormat = config.getStringList("");
+        jda.addEventListener(new DiscordLogger(this, messageFormat, embedTitleFormat, serverName, logAsEmbed, logChannelId));
     }
 
     // Method for stopping the Discord Bot
@@ -108,7 +113,7 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -119,6 +124,7 @@ public class DiscordBot extends ListenerAdapter {
         this.config = config;
         this.ServerStatusChannelID = ServerStatusChannelID;
         this.logChannelId = logChannelId;
+        this.logAsEmbed = logAsEmbed;
     }
 
 

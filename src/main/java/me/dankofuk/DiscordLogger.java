@@ -1,11 +1,16 @@
 package me.dankofuk;
 
+import me.dankofuk.discord.DiscordBot;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.bukkit.Bukkit;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,15 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import me.dankofuk.discord.DiscordBot;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.channel.attribute.IGuildChannelContainer;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import org.bukkit.Bukkit;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-
-public class DiscordLogger {
+public class DiscordLogger extends ListenerAdapter {
     private List<String> messageFormats;
 
     private String serverName;
@@ -34,7 +31,7 @@ public class DiscordLogger {
 
     public DiscordBot discordBot;
 
-    public DiscordLogger(List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, DiscordBot discordBot, String logChannelId) {
+    public DiscordLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId) {
         this.discordBot = discordBot;
         this.messageFormats = messageFormat;
         this.serverName = serverName;
@@ -42,7 +39,6 @@ public class DiscordLogger {
         this.logAsEmbed = logAsEmbed;
         this.logChannelId = logChannelId;
     }
-
     public void reloadMessageFormats(List<String> messageFormats) {
         this.messageFormats = messageFormats;
     }
@@ -133,5 +129,6 @@ public class DiscordLogger {
 
 
     public void reloadLogAsEmbed(boolean logAsEmbed) {
+        this.logAsEmbed = logAsEmbed;
     }
 }

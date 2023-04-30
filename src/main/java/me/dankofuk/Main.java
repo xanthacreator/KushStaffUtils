@@ -90,6 +90,7 @@ public class Main extends JavaPlugin implements Listener {
         //System.out.println("[KushStaffUtils - List Players] Starting Module..");
 
         // Main Discord Bot
+        String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         Server minecraftServer = getServer();
@@ -99,7 +100,7 @@ public class Main extends JavaPlugin implements Listener {
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
         String logChannelId = getConfig().getString("bot.command_log_channel_id");
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
-        discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed);
+        discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName);
         try {
             discordBot.start();
             System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
@@ -197,7 +198,6 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(reportCommand, this);
         getCommand("report").setExecutor(reportCommand);
         // JoinLeave - Command Logger Webhook
-        String serverName = getConfig().getString("server_name");
         this.ignoredCommands = getConfig().getStringList("ignored_commands");
         List<String> messageFormats = getConfig().getStringList("message_formats");
         List<String> embedTitleFormats = getConfig().getStringList("embed_title_formats");
@@ -208,7 +208,7 @@ public class Main extends JavaPlugin implements Listener {
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.JoinLeaveLogger = new JoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
-        this.DLogger = new DiscordLogger(messageFormats, embedTitleFormats, serverName, logAsEmbed, discordBot, logChannelId);
+        DLogger = new DiscordLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.JoinLeaveLogger, this);
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
