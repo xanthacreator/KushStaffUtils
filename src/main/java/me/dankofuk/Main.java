@@ -3,7 +3,6 @@ package me.dankofuk;
 import me.clip.placeholderapi.metrics.bukkit.Metrics;
 import me.dankofuk.chat.ChatWebhook;
 import me.dankofuk.commands.BugCommand;
-import me.dankofuk.commands.FreezeCommand;
 import me.dankofuk.commands.ReportCommand;
 import me.dankofuk.commands.SuggestionCommand;
 import me.dankofuk.discord.DiscordBot;
@@ -59,7 +58,6 @@ public class Main extends JavaPlugin implements Listener {
     private FactionStrike factionStrike;
     private static Main instance;
     private EnderPearlCooldown enderPearlCooldown;
-    private FreezeCommand freezeCommand;
     private FactionStrike FactionStrike;
     private BugCommand BugCommand;
     private SuggestionCommand suggestionCommand;
@@ -124,27 +122,6 @@ public class Main extends JavaPlugin implements Listener {
         boolean enabled = config.getBoolean("chatwebhook.enabled", true);
         ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
         getServer().getPluginManager().registerEvents(chatWebhook, this);
-        // Freeze Command
-        this.freezeCommand = new FreezeCommand(config, this);
-        this.freezeCommand.setFreezeMessages(getConfig().getStringList("freeze.freezeMessages"));
-        this.freezeCommand.setNoPermissionMessage(getConfig().getString("freeze.noPermissionMessage"));
-        this.freezeCommand.setPlayerNotFoundMessage(getConfig().getString("freeze.playerNotFoundMessage"));
-        this.freezeCommand.setCannotFreezeOpPlayerMessage(getConfig().getString("freeze.cannotFreezeOpPlayerMessage"));
-        this.freezeCommand.setCannotFreezeSelfMessage(getConfig().getString("freeze.cannotFreezeSelfMessage"));
-        this.freezeCommand.setFreezeSuccessMessage(getConfig().getString("freeze.freezeSuccessMessage"));
-        this.freezeCommand.setUnfreezeSuccessMessage(getConfig().getString("freeze.unfreezeSuccessMessage"));
-        this.freezeCommand.setFrozenGUITitle(getConfig().getString("freeze.frozenGUITitle"));
-        this.freezeCommand.setFrozenGUIBarrierName(getConfig().getString("freeze.frozenGUIBarrierName"));
-        this.freezeCommand.setFrozenGUILore(getConfig().getString("freeze.frozenGUILore"));
-        this.freezeCommand.setCannotUseEnderpearlsOrChorusFruit(getConfig().getString("freeze.cannotUseEnderpearlsOrChorusFruit"));
-        this.freezeCommand.setCannotChat(getConfig().getString("freeze.cannotChat"));
-        this.freezeCommand.setCannotUseCommands(getConfig().getString("freeze.cannotUseCommands"));
-        this.freezeCommand.setCannotPlaceBlocks(getConfig().getString("freeze.cannotPlaceBlocks"));
-        this.freezeCommand.setCannotBreakBlocks(getConfig().getString("freeze.cannotBreakBlocks"));
-        this.freezeCommand.setDiscordServerMessage(getConfig().getString("freeze.discordServerMessage"));
-        this.freezeCommand.setLogoutCommand(getConfig().getString("freeze.logOutCommand"));
-        getCommand("freeze").setExecutor(this.freezeCommand);
-        getServer().getPluginManager().registerEvents(this.freezeCommand, this);
         // Strike Command
         this.factionStrike = new FactionStrike(config.getString("strike.webhookUrl"), config.getString("strike.username"), config.getString("strike.avatarUrl"), config.getBoolean("strike.enabled"), config.getString("strike.message"), config.getString("strike.noPermissionMessage"), config.getString("strike.usageMessage"), config.getString("strike.sendCommand"), config.getString("strike.embedTitle"), config.getString("strike.thumbnail"), config);
         getCommand("strike").setExecutor(this.FactionStrike);
@@ -219,7 +196,6 @@ public class Main extends JavaPlugin implements Listener {
         // stop Discord bot
         discordBot.stop();
         serverStatus.sendStatusUpdateMessage(false);
-        Bukkit.getScheduler().cancelTasks(this);
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been disabled!");
     }
 
@@ -277,7 +253,6 @@ public class Main extends JavaPlugin implements Listener {
         FileConfiguration config = getConfig();
         String noPermissionMessage = config.getString("no-permission-message");
         // stop Discord bot
-        Bukkit.getScheduler().cancelTasks(this);
         String ChatwebhookUrl = config.getString("chatwebhook.url");
         String ChatserverName = config.getString("chatwebhook.serverName");
         String Chatusername = config.getString("chatwebhook.username");
@@ -349,23 +324,6 @@ public class Main extends JavaPlugin implements Listener {
         this.enderPearlCooldown.setChorusCooldownMessage(getConfig().getString("chorus.cooldown-message"));
         this.enderPearlCooldown.setChorusCooldownTime(getConfig().getInt("chorus.cooldown-time"));
         this.enderPearlCooldown.setChorusEnabled(getConfig().getBoolean("chorus.enabled"));
-        this.freezeCommand.setFreezeMessages(getConfig().getStringList("freeze.freezeMessages"));
-        this.freezeCommand.setNoPermissionMessage(getConfig().getString("freeze.noPermissionMessage"));
-        this.freezeCommand.setPlayerNotFoundMessage(getConfig().getString("freeze.playerNotFoundMessage"));
-        this.freezeCommand.setCannotFreezeOpPlayerMessage(getConfig().getString("freeze.cannotFreezeOpPlayerMessage"));
-        this.freezeCommand.setCannotFreezeSelfMessage(getConfig().getString("freeze.cannotFreezeSelfMessage"));
-        this.freezeCommand.setFreezeSuccessMessage(getConfig().getString("freeze.freezeSuccessMessage"));
-        this.freezeCommand.setUnfreezeSuccessMessage(getConfig().getString("freeze.unfreezeSuccessMessage"));
-        this.freezeCommand.setFrozenGUITitle(getConfig().getString("freeze.frozenGUITitle"));
-        this.freezeCommand.setFrozenGUIBarrierName(getConfig().getString("freeze.frozenGUIBarrierName"));
-        this.freezeCommand.setFrozenGUILore(getConfig().getString("freeze.frozenGUILore"));
-        this.freezeCommand.setCannotUseEnderpearlsOrChorusFruit(getConfig().getString("freeze.cannotUseEnderpearlsOrChorusFruit"));
-        this.freezeCommand.setCannotChat(getConfig().getString("freeze.cannotChat"));
-        this.freezeCommand.setCannotUseCommands(getConfig().getString("freeze.cannotUseCommands"));
-        this.freezeCommand.setCannotPlaceBlocks(getConfig().getString("freeze.cannotPlaceBlocks"));
-        this.freezeCommand.setCannotBreakBlocks(getConfig().getString("freeze.cannotBreakBlocks"));
-        this.freezeCommand.setDiscordServerMessage(getConfig().getString("freeze.discordServerMessage"));
-        this.freezeCommand.setLogoutCommand(getConfig().getString("freeze.logOutCommand"));
         // load new configuration
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");

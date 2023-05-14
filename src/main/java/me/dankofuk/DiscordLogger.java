@@ -31,14 +31,21 @@ public class DiscordLogger extends ListenerAdapter {
 
     public DiscordBot discordBot;
 
+    private static DiscordLogger instance;
+
     public DiscordLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId) {
-        this.discordBot = discordBot;
-        this.messageFormats = messageFormat;
-        this.serverName = serverName;
-        this.embedTitleFormats = embedTitleFormat;
-        this.logAsEmbed = logAsEmbed;
-        this.logChannelId = logChannelId;
+            this.discordBot = discordBot;
+            this.messageFormats = messageFormat;
+            this.serverName = serverName;
+            this.embedTitleFormats = embedTitleFormat;
+            this.logAsEmbed = logAsEmbed;
+            this.logChannelId = logChannelId;
+            instance = this;
     }
+    public static DiscordLogger getInstance() {
+        return instance;
+    }
+
     public void reloadMessageFormats(List<String> messageFormats) {
         this.messageFormats = messageFormats;
     }
@@ -129,6 +136,9 @@ public class DiscordLogger extends ListenerAdapter {
 
 
     public void reloadLogAsEmbed(boolean logAsEmbed) {
-        this.logAsEmbed = logAsEmbed;
+    }
+
+    public void DLoggerInstance() {
+        instance = this;
     }
 }
