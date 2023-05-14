@@ -172,27 +172,6 @@ no_bug_permission_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have 
 bug_usage_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/bug <report>"
 bug_sent_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been logged.\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fOverview: &c%reason%"
 
-freeze:
-  frozenGUITitle: "&8&lYOUR FROZEN"
-  frozenGUIBarrierName: " "
-  frozenGUILore: "&c&lʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ʜᴀs ʙᴇᴇɴ ғʀᴏᴢᴇɴ."
-  freezeMessages:
-    - "&cyour account has been frozen."
-    - "&f&ki&4ᴅᴏ ɴᴏᴛ ᴍᴏᴠᴇ ᴏʀ ʏᴏᴜʀ ᴀᴄᴄᴏᴜɴᴛ ᴡɪʟʟ ʙᴇ ᴘᴜɴɪsʜᴇᴅ.&f&ki"
-  cannotUseEnderpearlsOrChorusFruit: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot use enderpearls or chorus fruit while frozen!"
-  cannotChat: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot chat while frozen!"
-  cannotUseCommands: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot use commands while frozen!"
-  cannotPlaceBlocks: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot place blocks while frozen!"
-  cannotBreakBlocks: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot break blocks while frozen!"
-  discordServerMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fDiscord: &chttps://discord.gg/SM7bmYbKYs"
-  noPermissionMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command.'
-  playerNotFoundMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fPlayer not found.'
-  cannotFreezeOpPlayerMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot freeze an OP player.'
-  cannotFreezeSelfMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou cannot freeze yourself.'
-  freezeSuccessMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c%1$s &fhas been &cFrozen&f.'
-  unfreezeSuccessMessage: '&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c%1$s &fhas been &cUnfrozen&f.'
-  logOutCommand: "ban %player% Loggin Out While Frozen."
-
 # Enderpearl Cooldown Configuration
 enderpearl:
   enabled: false
