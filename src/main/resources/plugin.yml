@@ -16,8 +16,6 @@ commands:
   strike:
     description: strike a group, island, faction
     aliases: [strikes]
-  freeze:
-    description: Freezes a player
   suggestion:
     description: Make a suggestion
   suggest:
