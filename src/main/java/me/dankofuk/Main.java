@@ -98,13 +98,23 @@ public class Main extends JavaPlugin implements Listener {
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
         String logChannelId = getConfig().getString("bot.command_log_channel_id");
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
-        discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName);
-        try {
-            discordBot.start();
-            System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (config.getBoolean("bot.enabled")) {
+            if (discordToken == null || discordToken.isEmpty()) {
+                System.out.println("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
+                return;
+            }
+
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName);
+            try {
+                discordBot.start();
+                System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
         }
+
         // Online Command
         serverStatus = new ServerStatus(discordBot, ServerStatusChannelID);
         serverStatus.sendStatusUpdateMessage(true);
@@ -176,8 +186,8 @@ public class Main extends JavaPlugin implements Listener {
         getCommand("report").setExecutor(reportCommand);
         // JoinLeave - Command Logger Webhook
         this.ignoredCommands = getConfig().getStringList("ignored_commands");
-        List<String> messageFormats = getConfig().getStringList("message_formats");
-        List<String> embedTitleFormats = getConfig().getStringList("embed_title_formats");
+        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
+        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         this.joinWebhookUrl = getConfig().getString("joinWebhookUrl");
         this.leaveWebhookUrl = getConfig().getString("leaveWebhookUrl");
         this.joinMessage = getConfig().getStringList("joinMessage");

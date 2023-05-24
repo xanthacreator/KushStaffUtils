@@ -75,9 +75,9 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new ServerStatus(this, ServerStatusChannelID));
         jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed));
         jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
-        List<String> messageFormat = config.getStringList("");
-        List<String> embedTitleFormat = config.getStringList("");
-        jda.addEventListener(new DiscordLogger(this, messageFormat, embedTitleFormat, serverName, logAsEmbed, logChannelId));
+        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
+        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
+        jda.addEventListener(new DiscordLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
     }
 
     // Method for stopping the Discord Bot

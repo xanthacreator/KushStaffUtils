@@ -133,7 +133,7 @@ public class FileCommandLogger implements Listener {
     }
 
     private BufferedWriter createBufferedWriter(UUID playerId) {
-        File file = new File(dataFolder + File.separator + "logs", playerId + ".txt");
+        File file = new File(dataFolder + File.separator + playerId + ".txt");
         try {
             if (!file.exists()) {
                 if (!file.createNewFile()) {

@@ -15,11 +15,17 @@ bot:
   enabled: true
   discord_token: ""
   command_prefix: "+"
-  adminRoleID: ""
-  discord_activity: "with Hello"
+  adminRoleID: "1057520326373801995"
+  discord_activity: "with KushStaffUtils"
   # Command Logger Configuration
-  command_log_channel_id: ""
-  command_log_logAsEmbed: false
+  command_log_channel_id: "1096952523585245195"
+  command_log_logAsEmbed: true
+  # Message format to use when logging a command
+  command_log_message_formats:
+    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
+  # Embed title format to use when logging a command
+  command_log_embed_title_formats:
+    - ":information_source: COMMAND LOGGER"
 
 # Server Shutdown/Startup Logger
 serverstatus:
@@ -161,7 +167,7 @@ strike:
   usageMessage: "&cUsage: /strike <group> <amount> <reason>"
 
 # Bug Command Webhook
-bug_webhook_url: "YOUR-WEBHOOK-HERE"
+bug_webhook_url: ""
 bug_username: "BUG REPORT"
 bug_thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
 bug_avatar_url: "https://example.com/bug-avatar.png"
