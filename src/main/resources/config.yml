@@ -98,15 +98,6 @@ no_permission: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission t
 # Change the no permission message!
 reload_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fThe config files have been reloaded!"
 
-# Message format to use when logging a command
-message_formats:
-  - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
-
-# Embed title format to use when logging a command
-embed_title_formats:
-  - ":information_source: COMMAND LOGGER"
-
-
 # Commands the plugin will ingore
 ignored_commands:
   - "/pin"

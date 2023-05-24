@@ -36,12 +36,17 @@ public class ReloadCommand extends ListenerAdapter {
     private DiscordLogger discordLogger;
     public String logChannelId;
     public boolean logAsEmbed;
+    private boolean enabled;
+    private String channelId;
+    private String format;
+    private boolean roleIdRequired;
+    private String roleId;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config, String logChannelId, boolean logAsEmbed) {
+    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config, String logChannelId, boolean logAsEmbed, boolean enabled, String channelId, String format, boolean roleIdRequired, String roleId) {
         this.discordBot = discordBot;
         this.commandPrefix = commandPrefix;
         this.config = config;
@@ -53,6 +58,11 @@ public class ReloadCommand extends ListenerAdapter {
         this.ServerStatusChannelID = discordBot.ServerStatusChannelID;
         this.logChannelId = logChannelId;
         this.logAsEmbed = logAsEmbed;
+        this.enabled = enabled;
+        this.channelId = channelId;
+        this.format = format;
+        this.roleIdRequired = roleIdRequired;
+        this.roleId = roleId;
     }
 
     @Override
@@ -82,6 +92,11 @@ public class ReloadCommand extends ListenerAdapter {
                 e.printStackTrace();
             }
 
+            boolean enabled = config.getBoolean("bot.discord_to_game_enabled");
+            String channelId = config.getString("bot.discord_to_game_channel_id");
+            String roleId = config.getString("bot.discord_to_game_roleId");
+            boolean roleIdRequired = config.getBoolean("bot.discord_to_game_roleIdRequired");
+            String format = config.getString("bot.discord_to_game_format");
             String discordToken = config.getString("bot.discord_token");
             boolean discordBotEnabled = config.getBoolean("bot.enabled");
             String commandPrefix = config.getString("bot.command_prefix");
@@ -105,6 +120,11 @@ public class ReloadCommand extends ListenerAdapter {
             this.ServerStatusChannelID = ServerStatusChannelID;
             this.logChannelId = logChannelId;
             this.logAsEmbed = logAsEmbed;
+            this.enabled = enabled;
+            this.channelId = channelId;
+            this.format = format;
+            this.roleIdRequired = roleIdRequired;
+            this.roleId = roleId;
 
             EmbedBuilder stoppedEmbed = new EmbedBuilder();
             stoppedEmbed.setColor(Color.RED);

@@ -3,6 +3,7 @@ package me.dankofuk.discord;
 import me.dankofuk.DiscordLogger;
 import me.dankofuk.discord.commands.ConsoleCommand;
 import me.dankofuk.discord.commands.ReloadCommand;
+import me.dankofuk.discord.listeners.DiscordChat2Game;
 import me.dankofuk.discord.listeners.ListPlayers;
 import me.dankofuk.discord.listeners.ServerStatus;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -73,11 +74,21 @@ public class DiscordBot extends ListenerAdapter {
         // Register Discord Events
         jda.addEventListener(new ListPlayers(this, commandPrefix));
         jda.addEventListener(new ServerStatus(this, ServerStatusChannelID));
-        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed));
         jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
+        // Discord Logger
         List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
         List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         jda.addEventListener(new DiscordLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
+        // Discord2Chat
+        boolean enabled = config.getBoolean("bot.discord_to_game_enabled");
+        boolean roleIdRequired = config.getBoolean("bot.discord_to_game_roleIdRequired");
+        String channelId = config.getString("bot.discord_to_game_channel_id");
+        String format = config.getString("bot.discord_to_game_format");
+        String roleId = config.getString("bot.discord_to_game_roleId");
+        jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
+
+        // Reload Command
+        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed, enabled, channelId, format, roleIdRequired, roleId));
     }
 
     // Method for stopping the Discord Bot
