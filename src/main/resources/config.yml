@@ -191,3 +191,11 @@ chorus:
   enabled: false # (DO NOT ENABLE IF YOUR BELOW 1.9+)
   cooldown-time: 10 # (DO NOT ENABLE IF YOUR BELOW 1.9+)
   cooldown-message: '&cYou must wait %time_left% seconds before using this again!' # (DO NOT ENABLE IF YOUR BELOW 1.9+)
+
+# Fly Speed Limiter
+player-speed-limiter:
+  enabled: true
+  move-max-speed: 2.15 #2.15 is 2x on 99% on clients
+  kick-message: '&8&m--------[&r &dKush Fly Boost Limiter &8&m]--------&r\n&7\n&a�
+    &cYou have exceeded the maximum fly speed!\n&7\n&a�&cPlease do not fly boost.\n&7\n&7�
+    &c&lMAX FLY BOOST: &a&l2x'

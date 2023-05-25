@@ -117,7 +117,8 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         // Fly Boost Limiter
-        //FlyBoostListener flyBoostListener = new FlyBoostListener(this, config);
+        FlyBoostListener flyBoostListener = new FlyBoostListener(this, getConfig());
+        Bukkit.getServer().getPluginManager().registerEvents(flyBoostListener, this);
 
         // Sign Edit Command
         getCommand("signedit").setExecutor(new SignEditCommand(this));
