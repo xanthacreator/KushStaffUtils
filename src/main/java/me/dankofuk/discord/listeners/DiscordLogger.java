@@ -1,4 +1,4 @@
-package me.dankofuk;
+package me.dankofuk.discord.listeners;
 
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;

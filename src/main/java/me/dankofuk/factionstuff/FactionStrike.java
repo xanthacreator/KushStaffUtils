@@ -3,7 +3,7 @@ package me.dankofuk.factionstuff;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import me.dankofuk.ColorUtils;
+import me.dankofuk.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

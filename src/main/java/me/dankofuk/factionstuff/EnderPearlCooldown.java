@@ -1,6 +1,6 @@
 package me.dankofuk.factionstuff;
 
-import me.dankofuk.ColorUtils;
+import me.dankofuk.utils.ColorUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

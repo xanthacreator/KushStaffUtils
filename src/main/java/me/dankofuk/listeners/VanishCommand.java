@@ -1,4 +1,4 @@
-package me.dankofuk.notready;
+package me.dankofuk.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -1,4 +1,4 @@
-package me.dankofuk;
+package me.dankofuk.commands;
 
 import java.io.BufferedReader;
 import java.io.File;

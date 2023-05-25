@@ -1,4 +1,4 @@
-package me.dankofuk;
+package me.dankofuk.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

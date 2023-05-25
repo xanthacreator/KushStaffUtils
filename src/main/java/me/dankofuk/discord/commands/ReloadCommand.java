@@ -1,6 +1,6 @@
 package me.dankofuk.discord.commands;
 
-import me.dankofuk.DiscordLogger;
+import me.dankofuk.discord.listeners.DiscordLogger;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;

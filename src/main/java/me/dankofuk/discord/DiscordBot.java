@@ -1,6 +1,6 @@
 package me.dankofuk.discord;
 
-import me.dankofuk.DiscordLogger;
+import me.dankofuk.discord.listeners.DiscordLogger;
 import me.dankofuk.discord.commands.ConsoleCommand;
 import me.dankofuk.discord.commands.ReloadCommand;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.managers.RoleManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -20,9 +19,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.awt.*;
-import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 public class DiscordBot extends ListenerAdapter {
     public String discordToken;

@@ -9,14 +9,13 @@ import java.util.concurrent.CompletableFuture;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import me.dankofuk.ColorUtils;
+import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
