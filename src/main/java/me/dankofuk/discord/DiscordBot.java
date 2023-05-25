@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.managers.RoleManager;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -19,7 +20,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.awt.*;
+import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 public class DiscordBot extends ListenerAdapter {
     public String discordToken;
@@ -36,8 +39,11 @@ public class DiscordBot extends ListenerAdapter {
     private DiscordLogger discordLogger;
     public boolean logAsEmbed;
     private String serverName;
+    private String titleFormat;
+    private String footerFormat;
+    private String listThumbnailUrl;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -50,7 +56,9 @@ public class DiscordBot extends ListenerAdapter {
         this.logChannelId = logChannelId;
         this.logAsEmbed = logAsEmbed;
         this.serverName = serverName;
-
+        this.titleFormat = titleFormat;
+        this.footerFormat = footerFormat;
+        this.listThumbnailUrl = listThumbnailUrl;
     }
 
     public JDA getJda() {
@@ -72,7 +80,11 @@ public class DiscordBot extends ListenerAdapter {
                 .awaitReady();
 
         // Register Discord Events
-        jda.addEventListener(new ListPlayers(this, commandPrefix));
+        // List Players
+        String titleFormat = config.getString("bot.listplayers_title_format");
+        String footerFormat = config.getString("bot.listplayers_footer_format");
+        String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
+        jda.addEventListener(new ListPlayers(this, commandPrefix, titleFormat, footerFormat, listThumbnailUrl));
         jda.addEventListener(new ServerStatus(this, ServerStatusChannelID));
         jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
         // Discord Logger
@@ -88,7 +100,7 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
 
         // Reload Command
-        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed, enabled, channelId, format, roleIdRequired, roleId));
+        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl));
     }
 
     // Method for stopping the Discord Bot
@@ -124,7 +136,7 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -136,6 +148,9 @@ public class DiscordBot extends ListenerAdapter {
         this.ServerStatusChannelID = ServerStatusChannelID;
         this.logChannelId = logChannelId;
         this.logAsEmbed = logAsEmbed;
+        this.titleFormat = titleFormat;
+        this.footerFormat = footerFormat;
+        this.listThumbnailUrl = listThumbnailUrl;
     }
 
 

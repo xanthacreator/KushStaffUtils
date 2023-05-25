@@ -36,17 +36,15 @@ public class ReloadCommand extends ListenerAdapter {
     private DiscordLogger discordLogger;
     public String logChannelId;
     public boolean logAsEmbed;
-    private boolean enabled;
-    private String channelId;
-    private String format;
-    private boolean roleIdRequired;
-    private String roleId;
+    private String titleFormat;
+    private String footerFormat;
+    private String listThumbnailUrl;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config, String logChannelId, boolean logAsEmbed, boolean enabled, String channelId, String format, boolean roleIdRequired, String roleId) {
+    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl) {
         this.discordBot = discordBot;
         this.commandPrefix = commandPrefix;
         this.config = config;
@@ -58,11 +56,9 @@ public class ReloadCommand extends ListenerAdapter {
         this.ServerStatusChannelID = discordBot.ServerStatusChannelID;
         this.logChannelId = logChannelId;
         this.logAsEmbed = logAsEmbed;
-        this.enabled = enabled;
-        this.channelId = channelId;
-        this.format = format;
-        this.roleIdRequired = roleIdRequired;
-        this.roleId = roleId;
+        this.titleFormat = titleFormat;
+        this.footerFormat = footerFormat;
+        this.listThumbnailUrl = listThumbnailUrl;
     }
 
     @Override
@@ -104,11 +100,14 @@ public class ReloadCommand extends ListenerAdapter {
             String ServerStatusChannelID = config.getString("serverstatus.channel_id");
             String logChannelId = config.getString("bot.command_log_channel_id");
             boolean logAsEmbed = config.getBoolean("bot.command_log_logAsEmbed");
+            String titleFormat = config.getString("bot.listplayers_title_format");
+            String footerFormat = config.getString("bot.listplayers_footer_format");
+            String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
             Server minecraftServer = Bukkit.getServer();
             Bukkit.getScheduler().getPendingTasks().stream()
                     .filter(task -> task.getOwner() == botTask)
                     .forEach(task -> task.cancel());
-            discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed);
+            discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl);
             discordBot.stop();
 
             // Reload config strings
@@ -120,11 +119,9 @@ public class ReloadCommand extends ListenerAdapter {
             this.ServerStatusChannelID = ServerStatusChannelID;
             this.logChannelId = logChannelId;
             this.logAsEmbed = logAsEmbed;
-            this.enabled = enabled;
-            this.channelId = channelId;
-            this.format = format;
-            this.roleIdRequired = roleIdRequired;
-            this.roleId = roleId;
+            this.titleFormat = titleFormat;
+            this.footerFormat = footerFormat;
+            this.listThumbnailUrl = listThumbnailUrl;
 
             EmbedBuilder stoppedEmbed = new EmbedBuilder();
             stoppedEmbed.setColor(Color.RED);

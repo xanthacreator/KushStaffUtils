@@ -10,6 +10,8 @@ import me.dankofuk.discord.listeners.ServerStatus;
 import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.managers.RoleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -63,7 +65,10 @@ public class Main extends JavaPlugin implements Listener {
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
     private ServerStatus serverStatus;
+    public Guild guild;
+    public RoleManager roleManager;
     private JDA jda;
+
 
 
     public void onEnable() {
@@ -87,6 +92,7 @@ public class Main extends JavaPlugin implements Listener {
         //discordListPlayers.start();
         //System.out.println("[KushStaffUtils - List Players] Starting Module..");
 
+
         // Main Discord Bot
         String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
@@ -97,6 +103,9 @@ public class Main extends JavaPlugin implements Listener {
         String discordActivity = getConfig().getString("bot.discord_activity");;
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
         String logChannelId = getConfig().getString("bot.command_log_channel_id");
+        String titleFormat = config.getString("bot.listplayers_title_format");
+        String footerFormat = config.getString("bot.listplayers_footer_format");
+        String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         if (config.getBoolean("bot.enabled")) {
             if (discordToken == null || discordToken.isEmpty()) {
@@ -104,7 +113,7 @@ public class Main extends JavaPlugin implements Listener {
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl);
             try {
                 discordBot.start();
                 System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
@@ -155,7 +164,7 @@ public class Main extends JavaPlugin implements Listener {
         String thumbnailUrl = config.getString("suggestion.thumbnail_url");
 
         suggestionCommand = new SuggestionCommand(discordBot, channelId, threadId, suggestionMessage,
-                noPermissionMessage, suggestionUsageMessage, responseMessage, cooldown, title, description, footer, color, thumbnailUrl, config);
+                noPermissionMessage, suggestionUsageMessage, responseMessage, cooldown, title, description, footer, color, listThumbnailUrl, config);
 
         // Register the SuggestionCommand as a command executor
         getCommand("suggest").setExecutor(suggestionCommand);

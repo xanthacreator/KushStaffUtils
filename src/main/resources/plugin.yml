@@ -20,3 +20,5 @@ commands:
     description: Make a suggestion
   suggest:
     description: make a suggestion
+  link:
+    description: Link your discord to mc

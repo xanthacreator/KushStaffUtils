@@ -12,10 +12,16 @@ import org.bukkit.Bukkit;
 public class ListPlayers extends ListenerAdapter {
     private final DiscordBot discordBot;
     private final String commandPrefix;
+    private String titleFormat;
+    private String footerFormat;
+    private String listThumbnailUrl;
 
-    public ListPlayers(DiscordBot discordBot, String commandPrefix) {
+    public ListPlayers(DiscordBot discordBot, String commandPrefix, String titleFormat, String footerFormat, String listThumbnailUrl) {
         this.discordBot = discordBot;
         this.commandPrefix = commandPrefix;
+        this.titleFormat = titleFormat;
+        this.footerFormat = footerFormat;
+        this.listThumbnailUrl = listThumbnailUrl;
     }
 
     @Override
@@ -36,9 +42,9 @@ public class ListPlayers extends ListenerAdapter {
                 return;
             }
             EmbedBuilder embed = new EmbedBuilder();
-            embed.setTitle("Online Players");
-            embed.setThumbnail(event.getGuild().getIconUrl());
-            embed.setFooter("Total Online: " + Bukkit.getOnlinePlayers().size());
+            embed.setTitle(titleFormat.replace("%online%", String.valueOf(playerNames.size())));
+            embed.setThumbnail(listThumbnailUrl);
+            embed.setFooter(footerFormat.replace("%online%", String.valueOf(playerNames.size())));
             embed.setDescription(String.join("\n", playerNames));
 
             event.getChannel().sendMessageEmbeds(embed.build()).queue();
