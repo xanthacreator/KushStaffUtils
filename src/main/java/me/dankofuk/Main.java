@@ -2,21 +2,17 @@ package me.dankofuk;
 
 import me.clip.placeholderapi.metrics.bukkit.Metrics;
 import me.dankofuk.chat.ChatWebhook;
-import me.dankofuk.commands.BugCommand;
-import me.dankofuk.commands.CommandLogViewer;
-import me.dankofuk.commands.ReportCommand;
-import me.dankofuk.commands.SuggestionCommand;
+import me.dankofuk.commands.*;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.listeners.DiscordLogger;
 import me.dankofuk.discord.listeners.ServerStatus;
 import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
 import me.dankofuk.listeners.FileCommandLogger;
+import me.dankofuk.listeners.FlyBoostListener;
 import me.dankofuk.listeners.JoinLeaveLogger;
 import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.managers.RoleManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -70,8 +66,7 @@ public class Main extends JavaPlugin implements Listener {
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
     private ServerStatus serverStatus;
-    public Guild guild;
-    public RoleManager roleManager;
+    private FlyBoostListener flyBoostListener;
     private JDA jda;
 
 
@@ -90,7 +85,7 @@ public class Main extends JavaPlugin implements Listener {
         boolean logCommands = getConfig().getBoolean("log_commands", true);
         this.FileCommandLogger.reloadLogCommands(logCommands);
 
-        // Main Discord Bot
+          // Main Discord Bot
         String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
@@ -121,6 +116,16 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
         }
 
+        // Fly Boost Limiter
+        //FlyBoostListener flyBoostListener = new FlyBoostListener(this, config);
+
+        // Sign Edit Command
+        getCommand("signedit").setExecutor(new SignEditCommand(this));
+
+        // Server GUI Command
+        ServerCommand serverCommand = new ServerCommand(this);
+        getCommand("server").setExecutor(serverCommand);
+        getServer().getPluginManager().registerEvents(serverCommand, this);
         // Online Command
         serverStatus = new ServerStatus(discordBot, ServerStatusChannelID);
         serverStatus.sendStatusUpdateMessage(true);

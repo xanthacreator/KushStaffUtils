@@ -20,5 +20,7 @@ commands:
     description: Make a suggestion
   suggest:
     description: make a suggestion
-  link:
-    description: Link your discord to mc
+  signedit:
+    description: edit signs
+  server:
+    description: gamerule gui
