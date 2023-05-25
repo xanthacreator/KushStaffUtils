@@ -84,14 +84,6 @@ public class Main extends JavaPlugin implements Listener {
         this.FileCommandLogger = new FileCommandLogger(logsFolder);
         boolean logCommands = getConfig().getBoolean("log_commands", true);
         this.FileCommandLogger.reloadLogCommands(logCommands);
-        // Discord Bot - List Players // TOO-DOO
-        //String LPchannelID = getConfig().getString("listplayers.channel_id");
-        //int periodSeconds = getConfig().getInt("listplayers.timer"); // Local variable for periodSeconds
-        //Color LPcolor = Color.decode(getConfig().getString("listplayers.color"));
-        //discordListPlayers = new ListPlayers(discordBot, LPchannelID, periodSeconds, LPcolor);
-        //discordListPlayers.start();
-        //System.out.println("[KushStaffUtils - List Players] Starting Module..");
-
 
         // Main Discord Bot
         String serverName = getConfig().getString("server_name");
