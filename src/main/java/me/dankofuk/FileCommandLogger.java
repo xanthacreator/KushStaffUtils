@@ -27,7 +27,7 @@ public class FileCommandLogger implements Listener {
 
     public FileCommandLogger(String dataFolder) {
         this.dataFolder = dataFolder;
-        File logsFolder = new File(dataFolder, "logs");
+        File logsFolder = new File(dataFolder);
         boolean success = logsFolder.mkdirs();
         if (!success && !logsFolder.exists()) {
             // Handle the error here
