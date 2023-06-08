@@ -20,15 +20,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinLeaveLogger implements Listener {
     public String joinWebhookUrl;
-
     public String leaveWebhookUrl;
-
     public List<String> joinMessage;
-
     public List<String> leaveMessage;
-
     public boolean useEmbed;
-
     public boolean isEnabled;
 
     public JoinLeaveLogger(String joinWebhookUrl, String leaveWebhookUrl, List<String> joinMessage, List<String> leaveMessage, boolean useEmbed, boolean isEnabled) {

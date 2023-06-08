@@ -1,13 +1,12 @@
 package me.dankofuk.discord.listeners;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.bukkit.Bukkit;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ListPlayers extends ListenerAdapter {
     private final DiscordBot discordBot;

@@ -24,3 +24,5 @@ commands:
     description: edit signs
   server:
     description: gamerule gui
+  link:
+    description: link discord to game

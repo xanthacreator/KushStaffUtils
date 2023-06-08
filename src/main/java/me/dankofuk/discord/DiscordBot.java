@@ -39,8 +39,9 @@ public class DiscordBot extends ListenerAdapter {
     private String titleFormat;
     private String footerFormat;
     private String listThumbnailUrl;
+    private Plugin plugin;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, Plugin plugin) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -56,6 +57,7 @@ public class DiscordBot extends ListenerAdapter {
         this.titleFormat = titleFormat;
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
+        this.plugin = plugin;
     }
 
     public JDA getJda() {
@@ -124,13 +126,20 @@ public class DiscordBot extends ListenerAdapter {
             EmbedBuilder helpEmbed = new EmbedBuilder();
             helpEmbed.setColor(Color.RED);
             helpEmbed.setTitle("__`Help Page 1/1`__");
-            helpEmbed.setDescription(">  `Command List` \n  \n> `" + commandPrefix + "help` - Shows this menu \n  \n> `" + commandPrefix + "servercommand [command]` - Sends a command to the server! \n  \n> `" + commandPrefix + "online` - Shows the players online \n  \n> `" + commandPrefix + "reloadconfig` - Reloads the configs for the bot related stuff.");
+            helpEmbed.setDescription("Command List");
+
+            helpEmbed.addField(commandPrefix + "help", "Shows this menu", false);
+            helpEmbed.addField(commandPrefix + "servercommand [command]", "Sends a command to the server!", false);
+            helpEmbed.addField(commandPrefix + "online", "Shows the players online", false);
+            helpEmbed.addField(commandPrefix + "reloadconfig", "Reloads the configs for the bot related stuff.", false);
+            helpEmbed.addField(commandPrefix + "link", "Links your Minecraft account with Discord.", false);
+
             helpEmbed.setFooter("Help Page 1/1 - Made by DankOfUK/ChatGPT");
             event.getChannel().sendMessageEmbeds(helpEmbed.build()).queue();
-
-            // Server Console Command
         }
+
     }
+
 
     // Reload Discord Elements
     public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl) {
@@ -149,6 +158,8 @@ public class DiscordBot extends ListenerAdapter {
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
     }
+
+
 
 
     public Server getMinecraftServer() {

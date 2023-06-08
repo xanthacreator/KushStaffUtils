@@ -21,6 +21,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.awt.*;
@@ -68,7 +69,7 @@ public class Main extends JavaPlugin implements Listener {
     private ServerStatus serverStatus;
     private FlyBoostListener flyBoostListener;
     private JDA jda;
-
+    private Plugin plugin;
 
 
     public void onEnable() {
@@ -105,7 +106,7 @@ public class Main extends JavaPlugin implements Listener {
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, plugin);
             try {
                 discordBot.start();
                 System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
