@@ -128,9 +128,6 @@ public class Main extends JavaPlugin implements Listener {
         ServerCommand serverCommand = new ServerCommand(this);
         getCommand("server").setExecutor(serverCommand);
         getServer().getPluginManager().registerEvents(serverCommand, this);
-        // Online Command
-        serverStatus = new ServerStatus(discordBot, ServerStatusChannelID);
-        serverStatus.sendStatusUpdateMessage(true);
         // Command Log Viewer Command
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);

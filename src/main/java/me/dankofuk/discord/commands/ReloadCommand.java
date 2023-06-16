@@ -24,7 +24,7 @@ public class ReloadCommand extends ListenerAdapter {
 
     private final DiscordBot discordBot;
     private String commandPrefix;
-    private FileConfiguration config;
+    public FileConfiguration config;
     public Plugin botTask;
     public String discordToken;
     private boolean discordBotEnabled;

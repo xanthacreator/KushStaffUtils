@@ -6,7 +6,7 @@
 
     <groupId>KushStaffUtils</groupId>
     <artifactId>KushStaffUtils</artifactId>
-    <version>2.1.9-BETA</version>
+    <version>2.2.0-BETA</version>
     <packaging>jar</packaging>
 
     <name>KushStaffUtils</name>
