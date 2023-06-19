@@ -22,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.awt.*;
@@ -78,6 +79,20 @@ public class Main extends JavaPlugin implements Listener {
         // BStats
         int pluginId = 18185; // <-- Replace with the id of your plugin!
         Metrics metrics = new Metrics(this, pluginId);
+
+        // Check if PlaceholderAPI is installed
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        Plugin placeholderAPI = pluginManager.getPlugin("PlaceholderAPI");
+        if (placeholderAPI == null || !placeholderAPI.isEnabled()) {
+            getLogger().warning("PlaceholderAPI is not installed or enabled. Some placeholders may not work.");
+        }
+
+        // Check if Vault is installed
+        Plugin vault = pluginManager.getPlugin("Vault");
+        if (vault == null || !vault.isEnabled()) {
+            getLogger().warning("Vault is not installed or enabled. Some functionality may be limited.");
+        }
+
         // No Permission String
         String noPermissionMessage = config.getString("no-permission-message");
         // Files
