@@ -1,6 +1,5 @@
 package me.dankofuk.discord;
 
-import me.dankofuk.discord.commands.TranslateCommand;
 import me.dankofuk.discord.listeners.DiscordLogger;
 import me.dankofuk.discord.commands.ConsoleCommand;
 import me.dankofuk.discord.commands.ReloadCommand;
@@ -98,7 +97,6 @@ public class DiscordBot extends ListenerAdapter {
         String format = config.getString("bot.discord_to_game_format");
         String roleId = config.getString("bot.discord_to_game_roleId");
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
-        jda.addEventListener(new TranslateCommand(commandPrefix));
 
         // Reload Command
         jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl));
