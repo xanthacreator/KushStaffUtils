@@ -21,8 +21,9 @@ public class FlyBoostListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (config.getBoolean("player-speed-limiter.enabled")) {
-            if (!player.hasPermission("flyboostlimiter.bypass")) {
+        if (config.getBoolean("player-speed-limiter.enabled") == true) {
+            return;
+        } else if (!player.hasPermission("flyboostlimiter.bypass")) {
                 double maxMoveSpeed = config.getDouble("player-speed-limiter.move-max-speed");
                 double currentMoveSpeed = event.getFrom().distance(event.getTo());
                 if (currentMoveSpeed > maxMoveSpeed) {
@@ -32,4 +33,3 @@ public class FlyBoostListener implements Listener {
             }
         }
     }
-}
