@@ -21,9 +21,3 @@ commands:
     description: Make a suggestion
   suggest:
     description: make a suggestion
-  signedit:
-    description: edit signs
-  server:
-    description: gamerule gui
-  link:
-    description: link discord to game
