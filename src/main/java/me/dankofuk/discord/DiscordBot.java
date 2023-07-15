@@ -40,6 +40,7 @@ public class DiscordBot extends ListenerAdapter {
     private String footerFormat;
     private String listThumbnailUrl;
     private Plugin plugin;
+    public ServerStatus serverStatus;
 
     public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, Plugin plugin) {
         this.discordToken = discordToken;

@@ -74,6 +74,7 @@ public class Main extends JavaPlugin implements Listener {
 
 
     public void onEnable() {
+        getConfig().options().copyDefaults();
         saveDefaultConfig();
         FileConfiguration config = getConfig();
         // BStats
@@ -116,7 +117,7 @@ public class Main extends JavaPlugin implements Listener {
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         if (config.getBoolean("bot.enabled")) {
-            if (discordToken == null || discordToken.isEmpty()) {
+            if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 System.out.println("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
@@ -132,17 +133,11 @@ public class Main extends JavaPlugin implements Listener {
             System.out.println("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
         }
 
+
         // Fly Boost Limiter
-        FlyBoostListener flyBoostListener = new FlyBoostListener(this, getConfig());
+        FlyBoostListener flyBoostListener = new FlyBoostListener(this, config);
         Bukkit.getServer().getPluginManager().registerEvents(flyBoostListener, this);
 
-        // Sign Edit Command
-        getCommand("signedit").setExecutor(new SignEditCommand(this));
-
-        // Server GUI Command
-        ServerCommand serverCommand = new ServerCommand(this);
-        getCommand("server").setExecutor(serverCommand);
-        getServer().getPluginManager().registerEvents(serverCommand, this);
         // Command Log Viewer Command
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
@@ -227,12 +222,20 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
+        FileConfiguration config = getConfig();
         this.enderPearlCooldown = null;
-        // stop Discord bot
-        discordBot.stop();
-        serverStatus.sendStatusUpdateMessage(false);
+        boolean discordBotEnabled = config.getBoolean("bot.enabled");
+
+        // Stop Discord bot if it is enabled
+        if (discordBotEnabled) {
+            discordBot.stop();
+            System.out.println("[Discord Bot] Bot has been disabled!");
+        } else {
+            System.out.println("Discord Bot is disabled, won't stop.");
+        }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been disabled!");
     }
+
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
@@ -379,5 +382,4 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
 
     }
-
 }

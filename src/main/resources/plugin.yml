@@ -2,6 +2,7 @@ name: KushStaffUtils
 version: '${project.version}'
 main: me.dankofuk.Main
 load-after: [InteractiveChat]
+softdepend: [PlaceholderAPI, Vault]
 commands:
   stafflogger:
     description: reloads the config.
