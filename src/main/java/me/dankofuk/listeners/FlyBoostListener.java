@@ -22,6 +22,7 @@ public class FlyBoostListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (config.getBoolean("player-speed-limiter.enabled") == true) {
+            System.out.println("[KushStaffUtils] Fly Speed Limiter is not enabled.");
             return;
         } else if (!player.hasPermission("flyboostlimiter.bypass")) {
                 double maxMoveSpeed = config.getDouble("player-speed-limiter.move-max-speed");
