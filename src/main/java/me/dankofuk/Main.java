@@ -40,8 +40,8 @@ public class Main extends JavaPlugin implements Listener {
     public String joinWebhookUrl;
     private ReportCommand reportCommand;
     public String leaveWebhookUrl;
-    public List<String> joinMessage;
-    public List<String> leaveMessage;
+    public ArrayList<String> joinMessage;
+    public ArrayList<String> leaveMessage;
     public boolean useEmbed;
     public boolean isEnabled;
     public boolean isReportEnabled;
@@ -210,8 +210,8 @@ public class Main extends JavaPlugin implements Listener {
         List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         this.joinWebhookUrl = getConfig().getString("joinWebhookUrl");
         this.leaveWebhookUrl = getConfig().getString("leaveWebhookUrl");
-        this.joinMessage = getConfig().getStringList("joinMessage");
-        this.leaveMessage = getConfig().getStringList("leaveMessage");
+        this.joinMessage = (ArrayList<String>) getConfig().getStringList("joinMessage");
+        this.leaveMessage = (ArrayList<String>) getConfig().getStringList("leaveMessage");
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.JoinLeaveLogger = new JoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
@@ -324,12 +324,7 @@ public class Main extends JavaPlugin implements Listener {
         this.DLogger.reloadLogChannelID(logChannelId);
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.isEnabled = getConfig().getBoolean("isEnabled", false);
-        this.JoinLeaveLogger.reloadJoinWebhook(getConfig().getString("joinWebhookUrl"));
-        this.JoinLeaveLogger.reloadLeaveWebhook(getConfig().getString("leaveWebhookUrl"));
-        this.JoinLeaveLogger.setEnabled(this.isEnabled);
-        this.JoinLeaveLogger.reloadJoinMessage((ArrayList<String>)this.joinMessage);
-        this.JoinLeaveLogger.reloadLeaveMessage((ArrayList<String>)this.leaveMessage);
-        this.JoinLeaveLogger.reloadEmbedOption(this.useEmbed);
+        this.JoinLeaveLogger.reloadJoinLeaveLogger(joinWebhookUrl, leaveWebhookUrl, joinMessage, leaveMessage, useEmbed, isEnabled);
         String suggestionWebhookUrl = config.getString("suggestion.webhook_url");
         String suggestionThumbnail = config.getString("suggestion.thumbnail");
         String channelId = config.getString("suggestion.channel_id");

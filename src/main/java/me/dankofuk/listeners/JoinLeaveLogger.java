@@ -119,27 +119,13 @@ public class JoinLeaveLogger implements Listener {
         }
     }
 
-    public void reloadJoinWebhook(String joinWebhookUrl) {
+
+    public void reloadJoinLeaveLogger(String joinWebhookUrl, String leaveWebhookUrl, ArrayList<String> joinMessage, ArrayList<String> leaveMessage, boolean useEmbed, boolean isEnabled) {
         this.joinWebhookUrl = joinWebhookUrl;
-    }
-
-    public void reloadLeaveWebhook(String leaveWebhookUrl) {
         this.leaveWebhookUrl = leaveWebhookUrl;
-    }
-
-    public void reloadJoinMessage(ArrayList<String> joinMessage) {
         this.joinMessage = joinMessage;
-    }
-
-    public void reloadLeaveMessage(ArrayList<String> leaveMessage) {
         this.leaveMessage = leaveMessage;
-    }
-
-    public void reloadEmbedOption(boolean useEmbed) {
         this.useEmbed = useEmbed;
-    }
-
-    public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
     }
 }
