@@ -324,6 +324,7 @@ public class Main extends JavaPlugin implements Listener {
         this.DLogger.reloadLogChannelID(logChannelId);
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.isEnabled = getConfig().getBoolean("isEnabled", false);
+        // Join Leave Logger
         this.JoinLeaveLogger.reloadJoinLeaveLogger(joinWebhookUrl, leaveWebhookUrl, joinMessage, leaveMessage, useEmbed, isEnabled);
         String suggestionWebhookUrl = config.getString("suggestion.webhook_url");
         String suggestionThumbnail = config.getString("suggestion.thumbnail");
