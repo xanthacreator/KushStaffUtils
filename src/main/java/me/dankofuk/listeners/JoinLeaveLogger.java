@@ -93,7 +93,7 @@ public class JoinLeaveLogger implements Listener {
                     connection.setRequestProperty("Content-Type", "application/json");
                     connection.setRequestProperty("User-Agent", "PlayerJoinLeaveWebhook");
                     connection.setDoOutput(true);
-                    String message = ((String) this.leaveMessage.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n"))).replace("%player%", playerName);
+                    String message = this.leaveMessage.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n")).replace("%player%", playerName);
 
                     if (this.useEmbed) {
                         message = "{\"username\":\"" + playerName + "\",\"embeds\":[{\"description\":\"" + message.replace("\n", "\\n") + "\",\"thumbnail\":{\"url\":\"" + playerHeadUrl + "\"}}]}";

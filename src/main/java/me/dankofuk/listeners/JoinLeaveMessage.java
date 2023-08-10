@@ -1,5 +1,6 @@
 package me.dankofuk.listeners;
 
+import me.dankofuk.utils.ColorUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,29 +9,29 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JoinLeaveMessage implements Listener {
 
-    public String joinMessage;
-    public String leaveMessage;
-    public String playerName;
-    public FileConfiguration config;
+    private String joinMessage;
+    private String leaveMessage;
+    private FileConfiguration config;
 
 
-    public JoinLeaveMessage(String joinMessage, String leaveMessage, String playerName) {
+    public JoinLeaveMessage(String joinMessage, String leaveMessage) {
         this.joinMessage = joinMessage;
         this.leaveMessage = leaveMessage;
-        this.playerName = playerName;
     }
 
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        String joinMessage = config.getString("messages.join-message");
-        event.setJoinMessage(playerName + joinMessage);
+        String playerName = event.getPlayer().getName(); // Get the player's name
+        String joinMessage = ColorUtils.translateColorCodes(config.getString("messages.join-message").replace("%player%", playerName));
+        event.setJoinMessage(joinMessage);
     }
 
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        String leaveMessage = config.getString("messages.leave-message");
-        event.setQuitMessage(playerName + leaveMessage);
+        String playerName = event.getPlayer().getName(); // Get the player's name
+        String leaveMessage = ColorUtils.translateColorCodes(config.getString("messages.leave-message").replace("%player%", playerName));
+        event.setQuitMessage(leaveMessage);
     }
 }

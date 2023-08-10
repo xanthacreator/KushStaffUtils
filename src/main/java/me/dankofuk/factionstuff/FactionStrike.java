@@ -20,6 +20,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,12 +33,13 @@ public class FactionStrike implements Listener, CommandExecutor {
     public final Map<String, Integer> strikes = new HashMap<>();
     public String StrikenoPermissionMessage;
     public String StrikeusageMessage;
-    public String StrikeCommand;
+    public List<String> ConsoleCommands;
     public String StrikeEmbedTitle;
     public String StrikeThumbnail;
+    public String strikeStaffMessage;
     public FileConfiguration config;
 
-    public FactionStrike(String StrikeWebhookUrl, String Strikeusername, String StrikeavatarUrl, boolean isStrikeEnabled, String strikeMessage, String StrikenoPermissionMessage, String StrikeusageMessage, String StrikeCommand, String StrikeEmbedTitle, String StrikeThumbnail, FileConfiguration config) {
+    public FactionStrike(String StrikeWebhookUrl, String Strikeusername, String StrikeavatarUrl, boolean isStrikeEnabled, String strikeMessage, String StrikenoPermissionMessage, String StrikeusageMessage, List<String> ConsoleCommands, String StrikeEmbedTitle, String StrikeThumbnail, String strikeStaffMessage, FileConfiguration config) {
         this.StrikeWebhookUrl = StrikeWebhookUrl;
         this.Strikeusername = Strikeusername;
         this.StrikeavatarUrl = StrikeavatarUrl;
@@ -45,9 +47,10 @@ public class FactionStrike implements Listener, CommandExecutor {
         this.strikeMessage = strikeMessage;
         this.StrikenoPermissionMessage = StrikenoPermissionMessage;
         this.StrikeusageMessage = StrikeusageMessage;
-        this.StrikeCommand = StrikeCommand;
+        this.ConsoleCommands = ConsoleCommands;
         this.StrikeEmbedTitle = StrikeEmbedTitle;
         this.StrikeThumbnail = StrikeThumbnail;
+        this.strikeStaffMessage = strikeStaffMessage;
         this.config = config;
     }
 
@@ -89,18 +92,24 @@ public class FactionStrike implements Listener, CommandExecutor {
             strikes.put(groupName, strikeAmount);
         }
 
-        // Execute the strike command with placeholders
-        String strikeCommand = StrikeCommand.replace("%group%", groupName)
-                .replace("%amount%", Integer.toString(strikeAmount))
-                .replace("%reason%", strikeReason);
+        for (String cmd : ConsoleCommands) {
+            String formattedCommand = cmd
+                    .replace("%group%", groupName)
+                    .replace("%amount%", Integer.toString(strikeAmount))
+                    .replace("%reason%", strikeReason);
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), strikeCommand);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), formattedCommand);
+        }
+
 
         sendWebhook(player, groupName, strikeAmount, strikeReason);
 
         // Send a separate message to the player
-        String strikeResponse = "&aYou have given &c" + groupName + " &a" + strikeAmount + " strikes for: &e" + strikeReason;
-        player.sendMessage(ColorUtils.translateColorCodes(strikeResponse));
+        String strikeResponse = ColorUtils.translateColorCodes(strikeStaffMessage)
+                .replace("%group%", groupName)
+                .replace("%amount%", Integer.toString(strikeAmount))
+                .replace("%reason%", strikeReason);
+        player.sendMessage(strikeResponse);
 
         return true;
     }
@@ -173,7 +182,7 @@ public class FactionStrike implements Listener, CommandExecutor {
         }
     }
 
-    public void reloadConfigOptions(String StrikeWebhookUrl, String Strikeusername, String StrikeavatarUrl, boolean isStrikeEnabled, String strikeMessage, String StrikenoPermissionMessage, String StrikeusageMessage, String StrikeCommand, String StrikeEmbedTitle, String StrikeThumbnail, FileConfiguration config) {
+    public void reloadConfigOptions(String StrikeWebhookUrl, String Strikeusername, String StrikeavatarUrl, boolean isStrikeEnabled, String strikeMessage, String StrikenoPermissionMessage, String StrikeusageMessage, List<String> ConsoleCommands, String StrikeEmbedTitle, String StrikeThumbnail, String strikeStaffMessage, FileConfiguration config) {
         this.StrikeWebhookUrl = StrikeWebhookUrl;
         this.Strikeusername = Strikeusername;
         this.StrikeavatarUrl = StrikeavatarUrl;
@@ -181,9 +190,10 @@ public class FactionStrike implements Listener, CommandExecutor {
         this.strikeMessage = strikeMessage;
         this.StrikenoPermissionMessage = StrikenoPermissionMessage;
         this.StrikeusageMessage = StrikeusageMessage;
-        this.StrikeCommand = StrikeCommand;
+        this.ConsoleCommands = ConsoleCommands;
         this.StrikeEmbedTitle = StrikeEmbedTitle;
         this.StrikeThumbnail = StrikeThumbnail;
+        this.strikeStaffMessage = strikeStaffMessage;
         this.config = config;
     }
 
