@@ -163,12 +163,10 @@ strike:
   username: "FactionStrikeBot"
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   embedTitle: ":book: `Faction Strike`"
-  staffMessage: "You have given %group% %amount% of strikes for %reason%"
+  staffMessage: "&aYou have given &c%group% %amount% &aof strikes for &c%reason%"
   message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%"
   thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
-  sendCommand:
-    "f strike add %group% %amount%"
-    "alert %group% has been striked %amount% for %reason%"
+  sendCommand: "f strike add %group% %amount%"
   noPermissionMessage: "&cYou do not have permission to use this command."
   usageMessage: "&cUsage: /strike <group> <amount> <reason>"
 
