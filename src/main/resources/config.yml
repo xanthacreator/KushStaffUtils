@@ -100,8 +100,6 @@ useEmbed: true
 # Gets the Server Name for the %server% placeholder
 server_name: "ONEBLOCK NATION"
 
-
-
 # Reload Config Config
 #
 # Change the no permission message!
@@ -141,12 +139,6 @@ whitelisted_commands:
   - "/invsee"
   - "/kill"
 
-# Configuration file for Log Viewer - COMING SOON
-#logs-header: "&6=== &e%player% Logs &6=== &ePage &f%currentPage%&e/&f%maxPage% &6==="
-#prev-page: "&a<< Previous Page"
-#next-page: "&aNext Page >>"
-#page_size: 15
-
 # Chat Webhook - BETA (LOGS GAME CHAT TO DISCORD)
 chatwebhook:
   enabled: false
@@ -166,13 +158,15 @@ strike:
   staffMessage: "&aYou have given &c%group% %amount% &aof strikes for &c%reason%"
   message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%"
   thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
-  sendCommand: "f strike add %group% %amount%"
+  sendCommand:
+    - "f strike add %group% %amount%"
+    - "broadcast added multple commands"
   noPermissionMessage: "&cYou do not have permission to use this command."
   usageMessage: "&cUsage: /strike <group> <amount> <reason>"
 
 # Factions Top Announcer
 announcer:
-  webhookUrl: "https://discord.com/api/webhooks/1067580388412764191/mEuoDytO56R4D7aWu9ubb1qmYxjlPCYIqbKV52T-rGALteWG18kF5lUgfAfCqan-WySp"
+  webhookUrl: "your-webhook"
   messages:
     - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
     - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
@@ -193,6 +187,7 @@ announcer:
   footer: "Factions Top Logger"
   thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
   avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  debuggerEnabled: false #Only enabled if debugging is required
 
 
 # Bug Command Webhook

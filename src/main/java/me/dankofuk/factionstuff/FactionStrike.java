@@ -22,6 +22,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,7 +36,7 @@ public class FactionStrike implements Listener, CommandExecutor {
     private final Map<String, Integer> strikes = new HashMap<>();
     private String strikeNoPermissionMessage;
     private String strikeUsageMessage;
-    private String strikeCommand;
+    private List<String> strikeCommand;
     private String strikeEmbedTitle;
     private String strikeThumbnail;
     private FileConfiguration config;
@@ -43,7 +44,7 @@ public class FactionStrike implements Listener, CommandExecutor {
 
     public FactionStrike(Main main, String strikeWebhookUrl, String strikeUsername, String strikeAvatarUrl,
                          boolean isStrikeEnabled, String strikeMessage, String strikeNoPermissionMessage,
-                         String strikeUsageMessage, String strikeCommand, String strikeEmbedTitle,
+                         String strikeUsageMessage, List<String> strikeCommand, String strikeEmbedTitle,
                          String strikeThumbnail, FileConfiguration config) {
 
         this.strikeWebhookUrl = strikeWebhookUrl;
@@ -92,13 +93,15 @@ public class FactionStrike implements Listener, CommandExecutor {
         } else {
             this.strikes.put(groupName, strikeAmount);
         }
-        // TOO-DO
-        String strikeCommand = this.strikeCommand.replace("%group%", groupName)
-                .replace("%amount%", Integer.toString(strikeAmount))
-                .replace("%reason%", strikeReason)
-                .replace("%staff%", player.getName());
 
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), strikeCommand);
+        for (String cmd : this.strikeCommand) {
+            cmd = cmd.replace("%group%", groupName)
+                    .replace("%amount%", Integer.toString(strikeAmount))
+                    .replace("%reason%", strikeReason)
+                    .replace("%staff%", player.getName());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+        }
+
         sendWebhook(player, groupName, strikeAmount, strikeReason);
 
         String strikeResponse = config.getString("strike.staffMessage")
@@ -172,7 +175,7 @@ public class FactionStrike implements Listener, CommandExecutor {
 
     public void reloadConfigOptions(String strikeWebhookUrl, String strikeUsername, String strikeAvatarUrl,
                                     boolean isStrikeEnabled, String strikeMessage, String strikeNoPermissionMessage,
-                                    String strikeUsageMessage, String strikeCommand, String strikeEmbedTitle,
+                                    String strikeUsageMessage, List<String> strikeCommand, String strikeEmbedTitle,
                                     String strikeThumbnail, FileConfiguration config) {
 
         this.strikeWebhookUrl = strikeWebhookUrl;
@@ -185,6 +188,6 @@ public class FactionStrike implements Listener, CommandExecutor {
         this.strikeCommand = strikeCommand;
         this.strikeEmbedTitle = strikeEmbedTitle;
         this.strikeThumbnail = strikeThumbnail;
-        this.config = config;
+           this.config = config;
     }
 }

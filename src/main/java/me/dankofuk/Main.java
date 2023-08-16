@@ -147,9 +147,9 @@ public class Main extends JavaPlugin implements Listener {
         ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
         getServer().getPluginManager().registerEvents(chatWebhook, this);
         // Factions Top Announcer Listener
-        this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"));
+        this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"), config.getBoolean("announcer.debuggerEnabled"));
         // Strike Command
-        this.factionStrike = new FactionStrike(this, config.getString("strike.webhookUrl"), config.getString("strike.username"), config.getString("strike.avatarUrl"), config.getBoolean("strike.enabled"), config.getString("strike.message"), config.getString("strike.noPermissionMessage"), config.getString("strike.usageMessage"), config.getString("strike.sendCommand"), config.getString("strike.embedTitle"), config.getString("strike.thumbnail"), config);
+        this.factionStrike = new FactionStrike(this, config.getString("strike.webhookUrl"), config.getString("strike.username"), config.getString("strike.avatarUrl"), config.getBoolean("strike.enabled"), config.getString("strike.message"), config.getString("strike.noPermissionMessage"), config.getString("strike.usageMessage"), config.getStringList("strike.sendCommand"), config.getString("strike.embedTitle"), config.getString("strike.thumbnail"), config);
         getCommand("strike").setExecutor(this.factionStrike);
         // Bug Command
         this.BugCommand = new BugCommand(config.getString("bug_webhook_url"), config.getString("bug_username"), config.getString("bug_avatar_url"), config.getBoolean("is_bug_enabled"), config.getString("bug_message"), config.getString("no_bug_permission_message"), config.getString("bug_usage_message"), config.getString("bug_thumbnail"), config.getLong("bug_cooldown"), config.getString("bug_sent_message"), config);
@@ -301,10 +301,9 @@ public class Main extends JavaPlugin implements Listener {
         String strikeMessage = config.getString("strike.message");
         String strikeNoPermissionMessage = config.getString("strike.noPermissionMessage");
         String strikeUsageMessage = config.getString("strike.usageMessage");
-        String strikeCommand = config.getString("strike.sendCommand");
+        List<String> strikeCommand = config.getStringList("strike.sendCommand");
         String strikeEmbedTitle = config.getString("strike.embedTitle");
         String strikeThumbnail = config.getString("strike.thumbnail");
-        //String strikeStaffMessage = config.getString("strike.staffMessage");
         factionStrike.reloadConfigOptions(
                 strikeWebhookUrl, strikeUsername, strikeAvatarUrl, isStrikeEnabled,
                 strikeMessage, strikeNoPermissionMessage, strikeUsageMessage,

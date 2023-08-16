@@ -29,8 +29,9 @@ public class FactionsTopAnnouncer implements Listener {
         private List<String> messages;
         private long announcementInterval; // in seconds
         private boolean isEnabled;
+        private boolean debuggerEnabled;
 
-        public FactionsTopAnnouncer(String webhookUrl, List<String> messages, long announcementInterval, boolean isEnabled, String title, String username, String thumbnailUrl, String avatarUrl, String footer) {
+        public FactionsTopAnnouncer(String webhookUrl, List<String> messages, long announcementInterval, boolean isEnabled, String title, String username, String thumbnailUrl, String avatarUrl, String footer, boolean debuggerEnabled) {
                 this.title = title;
                 this.footer = footer;
                 this.username = username;
@@ -40,6 +41,7 @@ public class FactionsTopAnnouncer implements Listener {
                 this.messages = messages;
                 this.announcementInterval = announcementInterval * 20;
                 this.isEnabled = isEnabled;
+                this.debuggerEnabled = debuggerEnabled;
 
                 if (isEnabled) {
                         scheduleAnnouncements();
@@ -83,7 +85,11 @@ public class FactionsTopAnnouncer implements Listener {
                         embed.addProperty("description", message);
                         embed.addProperty("color", getColorCode("#00FF00")); // Change color code as needed
                         embed.addProperty("title", title);
-                        embed.addProperty("footer", footer);
+
+                        JsonObject footerObj = new JsonObject();
+                        footerObj.addProperty("text", footer);
+
+                        embed.add("footer", footerObj);
 
                         JsonObject thumbnail = new JsonObject();
                         thumbnail.addProperty("url", thumbnailUrl);
@@ -101,6 +107,11 @@ public class FactionsTopAnnouncer implements Listener {
 
                         int responseCode = connection.getResponseCode();
                         String responseMessage = connection.getResponseMessage();
+
+                        if (debuggerEnabled) {
+                                System.out.println("Response Code: " + responseCode);
+                                System.out.println("Response Message: " + responseMessage);
+                        }
 
                 } catch (MalformedURLException e) {
                         Bukkit.getLogger().warning("[FactionsTopAnnouncerWebhook] Invalid webhook URL specified: " + this.webhookUrl);
