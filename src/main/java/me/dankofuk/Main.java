@@ -5,7 +5,7 @@ import me.dankofuk.chat.ChatWebhook;
 import me.dankofuk.commands.*;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.listeners.DiscordLogger;
-import me.dankofuk.discord.listeners.ServerStatus;
+import me.dankofuk.discord.listeners.StartStopLogger;
 import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
 import me.dankofuk.factionstuff.FactionsTopAnnouncer;
@@ -66,7 +66,7 @@ public class Main extends JavaPlugin implements Listener {
     private BugCommand BugCommand;
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
-    private ServerStatus serverStatus;
+    private StartStopLogger serverStatus;
     private FactionStrike factionStrike;
     private FactionsTopAnnouncer factionsTopAnnouncer;
     private JDA jda;

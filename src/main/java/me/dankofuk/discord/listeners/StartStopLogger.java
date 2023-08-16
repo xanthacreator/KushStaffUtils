@@ -7,13 +7,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 
-public class ServerStatus extends ListenerAdapter {
+public class StartStopLogger extends ListenerAdapter {
 
     private final DiscordBot discordBot;
     private final String ServerStatusChannelID;
     public boolean discordBotEnabled;
 
-    public ServerStatus(DiscordBot discordBot, String ServerStatusChannelID) {
+    public StartStopLogger(DiscordBot discordBot, String ServerStatusChannelID) {
         this.discordBot = discordBot;
         this.ServerStatusChannelID = ServerStatusChannelID;
 

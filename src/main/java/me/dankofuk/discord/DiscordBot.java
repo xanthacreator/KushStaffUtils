@@ -5,7 +5,7 @@ import me.dankofuk.discord.commands.ConsoleCommand;
 import me.dankofuk.discord.commands.ReloadCommand;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
 import me.dankofuk.discord.listeners.ListPlayers;
-import me.dankofuk.discord.listeners.ServerStatus;
+import me.dankofuk.discord.listeners.StartStopLogger;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -40,7 +40,7 @@ public class DiscordBot extends ListenerAdapter {
     private String footerFormat;
     private String listThumbnailUrl;
     private Plugin plugin;
-    public ServerStatus serverStatus;
+    public StartStopLogger serverStatus;
 
     public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, Plugin plugin) {
         this.discordToken = discordToken;
@@ -85,7 +85,7 @@ public class DiscordBot extends ListenerAdapter {
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         jda.addEventListener(new ListPlayers(this, commandPrefix, titleFormat, footerFormat, listThumbnailUrl));
-        jda.addEventListener(new ServerStatus(this, ServerStatusChannelID));
+        jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
         jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
         // Discord Logger
         List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
