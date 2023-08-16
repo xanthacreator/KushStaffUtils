@@ -59,6 +59,9 @@ public class ChatWebhook implements Listener {
             // Remove color codes from webhook message
             webhookMessage = ChatColor.stripColor(webhookMessage);
 
+            // Escape special characters in the webhook message
+            webhookMessage = escapeSpecialCharacters(webhookMessage);
+
             // Create URL object with your Discord webhook URL
             URL url = new URL(ChatwebhookUrl);
 
@@ -92,4 +95,20 @@ public class ChatWebhook implements Listener {
         }
     }
 
+    private String escapeSpecialCharacters(String input) {
+        input = input.replaceAll("\\$", "\\\\\\$");
+        input = input.replaceAll("\\\\", "\\\\\\\\");
+        input = input.replaceAll("\\.", "\\\\.");
+        input = input.replaceAll("\\(", "\\\\(");
+        input = input.replaceAll("\\)", "\\\\)");
+        input = input.replaceAll("\\[", "\\\\[").replaceAll("\\]", "\\\\]");
+        input = input.replaceAll("\\?", "\\\\?");
+        input = input.replaceAll("\\*", "\\\\*");
+        input = input.replaceAll("\\+", "\\\\+");
+        input = input.replaceAll("\\{", "\\\\{").replaceAll("\\}", "\\\\}");
+        input = input.replaceAll("\\|", "\\\\|");
+        input = input.replaceAll("\\^", "\\\\^");
+        input = input.replaceAll("\\$", "\\\\\\$");
+        return input;
+    }
 }
