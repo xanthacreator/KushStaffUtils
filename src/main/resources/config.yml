@@ -170,6 +170,32 @@ strike:
   noPermissionMessage: "&cYou do not have permission to use this command."
   usageMessage: "&cUsage: /strike <group> <amount> <reason>"
 
+# Factions Top Announcer
+announcer:
+  webhookUrl: "https://discord.com/api/webhooks/1067580388412764191/mEuoDytO56R4D7aWu9ubb1qmYxjlPCYIqbKV52T-rGALteWG18kF5lUgfAfCqan-WySp"
+  messages:
+    - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
+    - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
+    - "Factions Top #3: %factionstop_ftop3% - `$%factionstop_ftop3-totalworth%`"
+    - "Factions Top #4: %factionstop_ftop4% - `$%factionstop_ftop4-totalworth%`"
+    - "Factions Top #5: %factionstop_ftop5% - `$%factionstop_ftop5-totalworth%`"
+    - "Factions Top #6: %factionstop_ftop6% - `$%factionstop_ftop6-totalworth%`"
+    - "Factions Top #7: %factionstop_ftop7% - `$%factionstop_ftop7-totalworth%`"
+    - "Factions Top #8: %factionstop_ftop8% - `$%factionstop_ftop8-totalworth%`"
+    - "Factions Top #9: %factionstop_ftop9% - `$%factionstop_ftop9-totalworth%`"
+    - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
+    - ""
+    - "Join our server to compete!"
+  useEmbed: true
+  sendEvery: 60
+  enabled: true
+  title: "Factions Top Announcement"
+  username: "FactionsBot"
+  footer: "Factions Top Logger"
+  thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+
+
 # Bug Command Webhook
 bug_webhook_url: ""
 bug_username: "BUG REPORT"

@@ -8,6 +8,7 @@ import me.dankofuk.discord.listeners.DiscordLogger;
 import me.dankofuk.discord.listeners.ServerStatus;
 import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
+import me.dankofuk.factionstuff.FactionsTopAnnouncer;
 import me.dankofuk.listeners.FileCommandLogger;
 //import me.dankofuk.listeners.FlyBoostListener;
 import me.dankofuk.listeners.JoinLeaveLogger;
@@ -67,7 +68,7 @@ public class Main extends JavaPlugin implements Listener {
     private DiscordBot discordBot;
     private ServerStatus serverStatus;
     private FactionStrike factionStrike;
-    //private FlyBoostListener flyBoostListener;
+    private FactionsTopAnnouncer factionsTopAnnouncer;
     private JDA jda;
     private Plugin plugin;
 
@@ -131,12 +132,6 @@ public class Main extends JavaPlugin implements Listener {
         } else {
             System.out.println("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
         }
-
-
-        // Fly Boost Limiter
-        //FlyBoostListener flyBoostListener = new FlyBoostListener(this, config);
-        //Bukkit.getServer().getPluginManager().registerEvents(flyBoostListener, this);
-
         // Command Log Viewer Command
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
@@ -151,6 +146,8 @@ public class Main extends JavaPlugin implements Listener {
         boolean enabled = config.getBoolean("chatwebhook.enabled", true);
         ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
         getServer().getPluginManager().registerEvents(chatWebhook, this);
+        // Factions Top Announcer Listener
+        this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"));
         // Strike Command
         this.factionStrike = new FactionStrike(this, config.getString("strike.webhookUrl"), config.getString("strike.username"), config.getString("strike.avatarUrl"), config.getBoolean("strike.enabled"), config.getString("strike.message"), config.getString("strike.noPermissionMessage"), config.getString("strike.usageMessage"), config.getString("strike.sendCommand"), config.getString("strike.embedTitle"), config.getString("strike.thumbnail"), config);
         getCommand("strike").setExecutor(this.factionStrike);
