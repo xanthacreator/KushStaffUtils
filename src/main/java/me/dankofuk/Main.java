@@ -8,8 +8,9 @@ import me.dankofuk.discord.listeners.DiscordLogger;
 import me.dankofuk.discord.listeners.ServerStatus;
 import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
+import me.dankofuk.factionstuff.FactionsTopAnnouncer;
 import me.dankofuk.listeners.FileCommandLogger;
-import me.dankofuk.listeners.FlyBoostListener;
+//import me.dankofuk.listeners.FlyBoostListener;
 import me.dankofuk.listeners.JoinLeaveLogger;
 import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
@@ -60,15 +61,14 @@ public class Main extends JavaPlugin implements Listener {
     public FileConfiguration FileConfiguration;
     public String reportSentMessage;
     public String usageMessage;
-    private FactionStrike factionStrike;
     private static Main instance;
     private EnderPearlCooldown enderPearlCooldown;
-    private FactionStrike FactionStrike;
     private BugCommand BugCommand;
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
     private ServerStatus serverStatus;
-    private FlyBoostListener flyBoostListener;
+    private FactionStrike factionStrike;
+    private FactionsTopAnnouncer factionsTopAnnouncer;
     private JDA jda;
     private Plugin plugin;
 
@@ -132,12 +132,6 @@ public class Main extends JavaPlugin implements Listener {
         } else {
             System.out.println("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
         }
-
-
-        // Fly Boost Limiter
-        FlyBoostListener flyBoostListener = new FlyBoostListener(this, config);
-        Bukkit.getServer().getPluginManager().registerEvents(flyBoostListener, this);
-
         // Command Log Viewer Command
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
@@ -152,9 +146,11 @@ public class Main extends JavaPlugin implements Listener {
         boolean enabled = config.getBoolean("chatwebhook.enabled", true);
         ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
         getServer().getPluginManager().registerEvents(chatWebhook, this);
+        // Factions Top Announcer Listener
+        this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"), config.getBoolean("announcer.debuggerEnabled"));
         // Strike Command
-        this.factionStrike = new FactionStrike(config.getString("strike.webhookUrl"), config.getString("strike.username"), config.getString("strike.avatarUrl"), config.getBoolean("strike.enabled"), config.getString("strike.message"), config.getString("strike.noPermissionMessage"), config.getString("strike.usageMessage"), config.getString("strike.sendCommand"), config.getString("strike.embedTitle"), config.getString("strike.thumbnail"), config);
-        getCommand("strike").setExecutor(this.FactionStrike);
+        this.factionStrike = new FactionStrike(this, config.getString("strike.webhookUrl"), config.getString("strike.username"), config.getString("strike.avatarUrl"), config.getBoolean("strike.enabled"), config.getString("strike.message"), config.getString("strike.noPermissionMessage"), config.getString("strike.usageMessage"), config.getStringList("strike.sendCommand"), config.getString("strike.embedTitle"), config.getString("strike.thumbnail"), config);
+        getCommand("strike").setExecutor(this.factionStrike);
         // Bug Command
         this.BugCommand = new BugCommand(config.getString("bug_webhook_url"), config.getString("bug_username"), config.getString("bug_avatar_url"), config.getBoolean("is_bug_enabled"), config.getString("bug_message"), config.getString("no_bug_permission_message"), config.getString("bug_usage_message"), config.getString("bug_thumbnail"), config.getLong("bug_cooldown"), config.getString("bug_sent_message"), config);
         getServer().getPluginManager().registerEvents(this.BugCommand, this);
@@ -299,16 +295,21 @@ public class Main extends JavaPlugin implements Listener {
         boolean enabled = config.getBoolean("chatwebhook.enabled", true);
         ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
         String strikeWebhookUrl = config.getString("strike.webhookUrl");
-        String strikeusername = config.getString("strike.username");
-        String strikeavatarUrl = config.getString("strike.avatarUrl");
+        String strikeUsername = config.getString("strike.username");
+        String strikeAvatarUrl = config.getString("strike.avatarUrl");
         boolean isStrikeEnabled = config.getBoolean("strike.enabled");
         String strikeMessage = config.getString("strike.message");
-        String strikenoPermissionMessage = config.getString("strike.noPermissionMessage");
-        String strikeusageMessage = config.getString("strike.usageMessage");
-        String strikeCommand = config.getString("strike.sendCommand");
-        String strikeembedTitle = config.getString("strike.embedTitle");
+        String strikeNoPermissionMessage = config.getString("strike.noPermissionMessage");
+        String strikeUsageMessage = config.getString("strike.usageMessage");
+        List<String> strikeCommand = config.getStringList("strike.sendCommand");
+        String strikeEmbedTitle = config.getString("strike.embedTitle");
         String strikeThumbnail = config.getString("strike.thumbnail");
-        this.factionStrike.reloadConfigOptions(strikeWebhookUrl, strikeusername, strikeavatarUrl, isStrikeEnabled, strikeMessage, strikenoPermissionMessage, strikeusageMessage, strikeCommand, strikeembedTitle, strikeThumbnail, config);
+        factionStrike.reloadConfigOptions(
+                strikeWebhookUrl, strikeUsername, strikeAvatarUrl, isStrikeEnabled,
+                strikeMessage, strikeNoPermissionMessage, strikeUsageMessage,
+                strikeCommand, strikeEmbedTitle, strikeThumbnail, config
+        );
+
         boolean logCommands = getConfig().getBoolean("log_commands");
         this.FileCommandLogger.reloadLogCommands(logCommands);
         String serverName = getConfig().getString("server_name");
@@ -324,6 +325,7 @@ public class Main extends JavaPlugin implements Listener {
         this.DLogger.reloadLogChannelID(logChannelId);
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.isEnabled = getConfig().getBoolean("isEnabled", false);
+        // Join Leave Logger
         this.JoinLeaveLogger.reloadJoinLeaveLogger(joinWebhookUrl, leaveWebhookUrl, joinMessage, leaveMessage, useEmbed, isEnabled);
         String suggestionWebhookUrl = config.getString("suggestion.webhook_url");
         String suggestionThumbnail = config.getString("suggestion.thumbnail");

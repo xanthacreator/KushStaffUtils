@@ -46,21 +46,6 @@ public class DiscordLogger extends ListenerAdapter {
         return instance;
     }
 
-    public void reloadMessageFormats(List<String> messageFormats) {
-        this.messageFormats = messageFormats;
-    }
-
-    public void reloadEmbedTitleFormats(List<String> embedTitleFormats) {
-        this.embedTitleFormats = embedTitleFormats;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public void reloadLogChannelID(String logChannelId) {
-        this.logChannelId = logChannelId;
-    }
 
     public void logCommand(String command, String playerName) {
         CompletableFuture.runAsync(() -> {
@@ -133,9 +118,24 @@ public class DiscordLogger extends ListenerAdapter {
         });
     }
 
+    public void reloadMessageFormats(List<String> messageFormats) {
+        this.messageFormats = messageFormats;
+    }
 
+    public void reloadEmbedTitleFormats(List<String> embedTitleFormats) {
+        this.embedTitleFormats = embedTitleFormats;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public void reloadLogChannelID(String logChannelId) {
+        this.logChannelId = logChannelId;
+    }
 
     public void reloadLogAsEmbed(boolean logAsEmbed) {
+        this.logAsEmbed = logAsEmbed;
     }
 
     public void DLoggerInstance() {

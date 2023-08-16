@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -51,7 +52,7 @@ public class JoinLeaveLogger implements Listener {
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestProperty("User-Agent", "PlayerJoinLeaveWebhook");
                 connection.setDoOutput(true);
-                String message = ((String) this.joinMessage.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n"))).replace("%player%", playerName);
+                String message = this.joinMessage.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n")).replace("%player%", playerName);
 
                 if (this.useEmbed) {
                     message = "{\"username\":\"" + playerName + "\",\"embeds\":[{\"description\":\"" + message.replace("\n", "\\n") + "\",\"thumbnail\":{\"url\":\"" + playerHeadUrl + "\"}}]}";
@@ -93,7 +94,7 @@ public class JoinLeaveLogger implements Listener {
                     connection.setRequestProperty("Content-Type", "application/json");
                     connection.setRequestProperty("User-Agent", "PlayerJoinLeaveWebhook");
                     connection.setDoOutput(true);
-                    String message = ((String) this.leaveMessage.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n"))).replace("%player%", playerName);
+                    String message = this.leaveMessage.stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n")).replace("%player%", playerName);
 
                     if (this.useEmbed) {
                         message = "{\"username\":\"" + playerName + "\",\"embeds\":[{\"description\":\"" + message.replace("\n", "\\n") + "\",\"thumbnail\":{\"url\":\"" + playerHeadUrl + "\"}}]}";
@@ -118,7 +119,6 @@ public class JoinLeaveLogger implements Listener {
             });
         }
     }
-
 
     public void reloadJoinLeaveLogger(String joinWebhookUrl, String leaveWebhookUrl, ArrayList<String> joinMessage, ArrayList<String> leaveMessage, boolean useEmbed, boolean isEnabled) {
         this.joinWebhookUrl = joinWebhookUrl;

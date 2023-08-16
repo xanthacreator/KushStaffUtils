@@ -25,8 +25,6 @@ public class EnderPearlCooldown implements Listener {
 
     public EnderPearlCooldown(Plugin plugin) {
         this.plugin = plugin;
-
-        plugin.saveDefaultConfig();
         enderpearlCooldownTime = plugin.getConfig().getInt("enderpearl.cooldown-time", 10);
         enderpearlEnabled = plugin.getConfig().getBoolean("enderpearl.enabled", true);
         chorusCooldownTime = plugin.getConfig().getInt("chorus.cooldown-time", 10);
