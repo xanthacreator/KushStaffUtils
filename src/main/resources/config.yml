@@ -186,9 +186,8 @@ announcer:
     - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
     - ""
     - "Join our server to compete!"
-  useEmbed: true
-  sendEvery: 60
-  enabled: true
+  sendEvery: 60 #in seconds
+  enabled: false
   title: "Factions Top Announcement"
   username: "FactionsBot"
   footer: "Factions Top Logger"
