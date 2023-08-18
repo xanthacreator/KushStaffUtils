@@ -6,4 +6,4 @@ Spigot Page: https://www.spigotmc.org/resources/kushstaffutils-1-8-1-19-fully-co
 
 Exotic Development: http://discord.gg/2xYgHUfubM
 
-DankOfUK: DankOfUK#0026
+Discord: DankOfUK

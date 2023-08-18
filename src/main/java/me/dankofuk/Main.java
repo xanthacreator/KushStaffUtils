@@ -5,7 +5,7 @@ import me.dankofuk.chat.ChatWebhook;
 import me.dankofuk.commands.*;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.listeners.DiscordLogger;
-import me.dankofuk.discord.listeners.ServerStatus;
+import me.dankofuk.discord.listeners.StartStopLogger;
 import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
 import me.dankofuk.factionstuff.FactionsTopAnnouncer;
@@ -66,7 +66,7 @@ public class Main extends JavaPlugin implements Listener {
     private BugCommand BugCommand;
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
-    private ServerStatus serverStatus;
+    private StartStopLogger serverStatus;
     private FactionStrike factionStrike;
     private FactionsTopAnnouncer factionsTopAnnouncer;
     private JDA jda;
@@ -138,13 +138,7 @@ public class Main extends JavaPlugin implements Listener {
         if (logCommands)
             Bukkit.getServer().getPluginManager().registerEvents(this.FileCommandLogger, this);
         // Chat Webhook
-        String ChatwebhookUrl = config.getString("chatwebhook.url");
-        String ChatserverName = config.getString("chatwebhook.serverName");
-        String Chatusername = config.getString("chatwebhook.username");
-        String ChatavatarUrl = config.getString("chatwebhook.avatarUrl");
-        String ChatmessageFormat = config.getString("chatwebhook.message");
-        boolean enabled = config.getBoolean("chatwebhook.enabled", true);
-        ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
+        ChatWebhook chatWebhook = new ChatWebhook(config.getString("chatwebhook.url"), config.getString("chatwebhook.username"), config.getString("chatwebhook.avatarUrl"), config.getString("chatwebhook.message"), config.getBoolean("chatwebhook.enabled"), config);
         getServer().getPluginManager().registerEvents(chatWebhook, this);
         // Factions Top Announcer Listener
         this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"), config.getBoolean("announcer.debuggerEnabled"));
@@ -286,14 +280,7 @@ public class Main extends JavaPlugin implements Listener {
         reloadConfig();
         FileConfiguration config = getConfig();
         String noPermissionMessage = config.getString("no-permission-message");
-        // stop Discord bot
-        String ChatwebhookUrl = config.getString("chatwebhook.url");
-        String ChatserverName = config.getString("chatwebhook.serverName");
-        String Chatusername = config.getString("chatwebhook.username");
-        String ChatavatarUrl = config.getString("chatwebhook.avatarUrl");
-        String ChatmessageFormat = config.getString("chatwebhook.message");
-        boolean enabled = config.getBoolean("chatwebhook.enabled", true);
-        ChatWebhook chatWebhook = new ChatWebhook(ChatwebhookUrl, ChatserverName, Chatusername, ChatavatarUrl, ChatmessageFormat, enabled, config);
+        ChatWebhook chatWebhook = new ChatWebhook(config.getString("chatwebhook.url"), config.getString("chatwebhook.username"), config.getString("chatwebhook.avatarUrl"), config.getString("chatwebhook.message"), config.getBoolean("chatwebhook.enabled"), config);
         String strikeWebhookUrl = config.getString("strike.webhookUrl");
         String strikeUsername = config.getString("strike.username");
         String strikeAvatarUrl = config.getString("strike.avatarUrl");

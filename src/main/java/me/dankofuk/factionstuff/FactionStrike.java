@@ -188,6 +188,6 @@ public class FactionStrike implements Listener, CommandExecutor {
         this.strikeCommand = strikeCommand;
         this.strikeEmbedTitle = strikeEmbedTitle;
         this.strikeThumbnail = strikeThumbnail;
-           this.config = config;
+        this.config = config;
     }
 }

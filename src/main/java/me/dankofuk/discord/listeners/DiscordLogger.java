@@ -20,19 +20,12 @@ import java.util.concurrent.CompletableFuture;
 
 public class DiscordLogger extends ListenerAdapter {
     private List<String> messageFormats;
-
     private String serverName;
-
     private List<String> embedTitleFormats;
-
     public boolean logAsEmbed;
-
     public String logChannelId;
-
     public DiscordBot discordBot;
-
     private static DiscordLogger instance;
-
     public DiscordLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId) {
             this.discordBot = discordBot;
             this.messageFormats = messageFormat;
@@ -76,9 +69,13 @@ public class DiscordLogger extends ListenerAdapter {
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject)parser.parse(new InputStreamReader(connection.getInputStream()));
             String playerUuid = json.get("id").toString();
-            playerHeadUrl = "https://crafatar.com/avatars/" + playerUuid + "?overlay=head";
+
+            // Check if the player UUID length matches the format used for Java Edition players
+            if (playerUuid.length() == 32) {
+                playerHeadUrl = "https://crafatar.com/avatars/" + playerUuid + "?overlay=head";
+            }
         } catch (IOException|org.json.simple.parser.ParseException e) {
-            e.printStackTrace();
+            // Handle the exception
         }
         return playerHeadUrl;
     }
@@ -97,15 +94,29 @@ public class DiscordLogger extends ListenerAdapter {
                 }
                 for (int i = 0; i < messages.size(); i++) {
                     String message = messages.get(i);
-                    if (logAsEmbed) {
-                        String embedTitle = embedTitles.get(i);
-                        EmbedBuilder embedBuilder = new EmbedBuilder();
-                        embedBuilder.setTitle(embedTitle);
-                        embedBuilder.setDescription(message);
-                        embedBuilder.setThumbnail(playerHeadUrl);
-                        channel.sendMessageEmbeds(embedBuilder.build()).queue();
+                    String embedTitle = embedTitles.get(i);
+
+                    if (!isJavaPlayer(playerHeadUrl)) {
+                        // If it's a Bedrock player, remove the thumbnail
+                        if (logAsEmbed) {
+                            EmbedBuilder embedBuilder = new EmbedBuilder();
+                            embedBuilder.setTitle(embedTitle);
+                            embedBuilder.setDescription(message);
+                            channel.sendMessageEmbeds(embedBuilder.build()).queue();
+                        } else {
+                            channel.sendMessage(message).queue();
+                        }
                     } else {
-                        channel.sendMessage(message).queue();
+                        // For Java players, add the thumbnail
+                        if (logAsEmbed) {
+                            EmbedBuilder embedBuilder = new EmbedBuilder();
+                            embedBuilder.setTitle(embedTitle);
+                            embedBuilder.setDescription(message);
+                            embedBuilder.setThumbnail(playerHeadUrl);
+                            channel.sendMessageEmbeds(embedBuilder.build()).queue();
+                        } else {
+                            channel.sendMessage(message).queue();
+                        }
                     }
                 }
             } catch (NumberFormatException e) {
@@ -117,6 +128,12 @@ public class DiscordLogger extends ListenerAdapter {
             }
         });
     }
+
+    private boolean isJavaPlayer(String playerHeadUrl) {
+        // Check if the playerHeadUrl contains the Java Edition player UUID format
+        return playerHeadUrl.contains("crafatar.com/avatars/");
+    }
+
 
     public void reloadMessageFormats(List<String> messageFormats) {
         this.messageFormats = messageFormats;
