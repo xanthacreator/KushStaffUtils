@@ -143,7 +143,6 @@ whitelisted_commands:
 chatwebhook:
   enabled: false
   url: "YOUR-WEBHOOK-HERE"
-  serverName: "My Server Name"
   username: "My Bot Username"
   avatarUrl: "https://example.com/avatar.png"
   message: "[%vault_groups% %player_name%]: %message%"
