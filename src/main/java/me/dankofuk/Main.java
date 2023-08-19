@@ -102,7 +102,7 @@ public class Main extends JavaPlugin implements Listener {
         boolean logCommands = getConfig().getBoolean("log_commands", true);
         this.FileCommandLogger.reloadLogCommands(logCommands);
 
-          // Main Discord Bot
+        // Main Discord Bot
         String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");

@@ -66,32 +66,57 @@ public class FileCommandLogger implements Listener {
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
-        String item = event.getItemDrop().getItemStack().getType().toString();
-        int itemAmount = event.getItemDrop().getItemStack().getAmount();
-        log(player.getUniqueId(), "drop", "Dropped item: " + "x" + itemAmount + " " + item );
+        ItemStack droppedItem = event.getItemDrop().getItemStack();
+        String itemName = droppedItem.getType().toString();
+        String itemLore = "";
+
+        if (droppedItem.hasItemMeta() && droppedItem.getItemMeta().hasLore()) {
+            itemLore = String.join(", ", droppedItem.getItemMeta().getLore());
+        }
+
+        int itemAmount = droppedItem.getAmount();
+        log(player.getUniqueId(), "drop", "Dropped item: " + "x" + itemAmount + " " + itemName + " with lore: " + itemLore);
     }
+
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getWhoClicked() instanceof Player) {
             Player player = (Player) event.getWhoClicked();
-            ItemStack item = event.getCurrentItem();
+            ItemStack movedItem = event.getCurrentItem();
 
             // Check if the player moved an item in the inventory
-            if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && item != null) {
-                int amount = item.getAmount();
-                String itemName = item.getType().toString();
-                String inventoryType = event.getClickedInventory().getType().toString();
-                String topInventoryType = event.getView().getTopInventory().getType().toString();
-                String locationType = "real";
-                if (inventoryType.equals("CRAFTING") && topInventoryType.equals("PLAYER")) {
-                    locationType = "virtual";
+            if (event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY && movedItem != null) {
+                int amount = movedItem.getAmount();
+                String itemName = movedItem.hasItemMeta() && movedItem.getItemMeta().hasDisplayName() ?
+                        movedItem.getItemMeta().getDisplayName() : movedItem.getType().toString();
+
+                String itemLore = "";
+
+                if (movedItem.hasItemMeta() && movedItem.getItemMeta().hasLore()) {
+                    itemLore = String.join(", ", movedItem.getItemMeta().getLore());
                 }
-                String message = String.format("Moved %d %s from %s %s to %s %s at X:%.2f Y:%.2f Z:%.2f in world %s", amount, itemName, locationType, inventoryType, locationType, topInventoryType, player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), player.getWorld().getName());
+
+                String locationType = "real";
+                String destination = event.getClickedInventory().getType().toString();
+
+                if (destination.equals("CHEST") || destination.equals("TRAPPED_CHEST")) {
+                    if (event.getClickedInventory().getLocation() != null) {
+                        // Check if the inventory is a chest and has a location
+                        Location chestLocation = event.getClickedInventory().getLocation();
+                        locationType = "chest";
+                        destination = "at X:" + chestLocation.getX() + " Y:" + chestLocation.getY() + " Z:" + chestLocation.getZ() + " in world " + chestLocation.getWorld().getName();
+                    }
+                } else if (destination.equals("ENDER_CHEST")) {
+                    locationType = "enderchest";
+                }
+
+                String message = String.format("Moved %d %s from %s to %s", amount, itemName, locationType, destination);
                 log(player.getUniqueId(), "inventory", message);
             }
         }
     }
+
 
     @EventHandler
     public void onLeaveEvent(PlayerQuitEvent event) {
