@@ -14,13 +14,14 @@
 bot:
   enabled: true
   discord_token: ""
-  command_prefix: "+"
   adminRoleID: "1057520326373801995"
   discord_activity: "with KushStaffUtils"
 
   # Command Logger Configuration
   command_log_channel_id: "1067570285999570984"
   command_log_logAsEmbed: true
+  #command_log_message_formats: (Config Example with thats not a embed or multiple lines)
+  #  - "[%time%] [`%server%`] __**%player%:**__ `%command%`"
   command_log_message_formats:
     - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
   command_log_embed_title_formats:
@@ -28,15 +29,16 @@ bot:
 
   # Discord Chat 2 Game Chat
   discord_to_game_enabled: true
-  discord_to_game_roleIdRequired: true
+  discord_to_game_roleIdRequired: false
   discord_to_game_roleId: "967958848369487943" #This is if roleIdRequired is true
   discord_to_game_channel_id: "1067570285999570984"
   discord_to_game_format: "&9[Discord] &c%author%: &7%message%"
 
   # List Players
-
-  listplayers_title_format: "Online (%online%)"
-  listplayers_footer_format: "Online (%online%)"
+  listplayers_requireAdminRole: false
+  listplayers_no_players_online_title: "`Online Players`"
+  listplayers_title_format: "Players Online `(%online%)` - %time%"
+  listplayers_footer_format: "Server IP: play.example.com - Test"
   listplayers_thumbnail_url: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=1024"
 
 # Server Shutdown/Startup Logger
@@ -59,17 +61,42 @@ suggestion:
   sent_message: "&aYour suggestion (%suggestion%) has been sent!"
   cooldown: 60
 
+# Factions Top Announcer
+announcer:
+  webhookUrl: "your-webhook-here"
+  messages:
+    - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
+    - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
+    - "Factions Top #3: %factionstop_ftop3% - `$%factionstop_ftop3-totalworth%`"
+    - "Factions Top #4: %factionstop_ftop4% - `$%factionstop_ftop4-totalworth%`"
+    - "Factions Top #5: %factionstop_ftop5% - `$%factionstop_ftop5-totalworth%`"
+    - "Factions Top #6: %factionstop_ftop6% - `$%factionstop_ftop6-totalworth%`"
+    - "Factions Top #7: %factionstop_ftop7% - `$%factionstop_ftop7-totalworth%`"
+    - "Factions Top #8: %factionstop_ftop8% - `$%factionstop_ftop8-totalworth%`"
+    - "Factions Top #9: %factionstop_ftop9% - `$%factionstop_ftop9-totalworth%`"
+    - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
+    - ""
+    - "Join our server to compete!"
+  sendEvery: 15
+  enabled: false
+  title: "Factions Top Announcement"
+  username: "FactionsBot"
+  footer: "Factions Top Logger"
+  thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  debuggerEnabled: false #Only enabled if debugging is required
+
 
 
 # Player Reporting Configuration
-enabled: true # If disabled it will not work
+enabled: false # If disabled it will not work
 # Chat Reporting Webhook Lang
-webhook-url: "https://discord.com/api/webhooks/1101921122993315960/_7MP0KWNdhlJVXLi02LUCdfuL0YB5XXkC26NvhArDuGJ-mcSBdDxe2kVlmYuzSqf5F-I"
+webhook-url: "your-webhook-here"
 username: "OBN"
 avatar-url: "https://example.com/avatar.png"
 report-message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%"
 # Chat Reporting Lang
-cooldown-seconds: 15 # seconds
+cooldown-seconds: 600 # seconds
 report-sent-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour report has been sent!\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fThank you for helping us make the server safer!"
 no-permission-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
 usage-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/report <player> <reason>\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fPlease use &cImgur&f or &cYoutube&f for proof."
@@ -78,8 +105,8 @@ usage-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/report <player> <reason>\n&
 
 # Join Leave Webhooks Logger
 isEnabled: false
-joinWebhookUrl: "https://discord.com/api/webhooks/1090091527742689280/2EWe1JJ3R-e5dkVcugE-4gdepyRhMkH0d1yLIBfNNA-ZH9Dwmx8oPREQwgzQ4v_dIeLk"
-leaveWebhookUrl: "https://discord.com/api/webhooks/1090710491367743560/pGxPya19ypXpM886o7zBTWeHvlC3G8ziuE07nEUixKYm734GAXwxuZnHFO3u0HIbUuLl"
+joinWebhookUrl: "your-webhook-here"
+leaveWebhookUrl: "your-webhook-here"
 # Join and leave messages (THESE ARE SEND WHEN A PLAYER JOINS OR LEAVES THE SERVER)
 joinMessage:
   - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
@@ -99,6 +126,8 @@ leaveMessage:
 useEmbed: true
 # Gets the Server Name for the %server% placeholder
 server_name: "ONEBLOCK NATION"
+
+
 
 # Reload Config Config
 #
@@ -139,62 +168,39 @@ whitelisted_commands:
   - "/invsee"
   - "/kill"
 
+
 # Chat Webhook - BETA (LOGS GAME CHAT TO DISCORD)
 chatwebhook:
   enabled: false
-  url: "YOUR-WEBHOOK-HERE"
+  url: "your-webhook-here"
   username: "My Bot Username"
-  avatarUrl: "https://example.com/avatar.png"
+  avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   message: "[%vault_groups% %player_name%]: %message%"
 
 # Configure StrikeWebhook
 strike:
-  enabled: true
-  webhookUrl: "YOUR-WEBHOOK-HERE"
+  enabled: false
+  webhookUrl: "your-webhook-here"
   username: "FactionStrikeBot"
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   embedTitle: ":book: `Faction Strike`"
-  staffMessage: "&aYou have given &c%group% %amount% &aof strikes for &c%reason%"
-  message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%"
+  message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%\n \n:man_beard: `Striked by:`\n> %staff%"
   thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
+  staffMessage: "&aYou have given &c%group% %amount% &aof strikes for &c%reason%"
   sendCommand:
-    - "f strike add %group% %amount%"
-    - "broadcast added multple commands"
+    - "me test"
+    - "me test2"
+    - "me test3"
+    - "me test4"
   noPermissionMessage: "&cYou do not have permission to use this command."
   usageMessage: "&cUsage: /strike <group> <amount> <reason>"
 
-# Factions Top Announcer
-announcer:
-  webhookUrl: "your-webhook"
-  messages:
-    - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
-    - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
-    - "Factions Top #3: %factionstop_ftop3% - `$%factionstop_ftop3-totalworth%`"
-    - "Factions Top #4: %factionstop_ftop4% - `$%factionstop_ftop4-totalworth%`"
-    - "Factions Top #5: %factionstop_ftop5% - `$%factionstop_ftop5-totalworth%`"
-    - "Factions Top #6: %factionstop_ftop6% - `$%factionstop_ftop6-totalworth%`"
-    - "Factions Top #7: %factionstop_ftop7% - `$%factionstop_ftop7-totalworth%`"
-    - "Factions Top #8: %factionstop_ftop8% - `$%factionstop_ftop8-totalworth%`"
-    - "Factions Top #9: %factionstop_ftop9% - `$%factionstop_ftop9-totalworth%`"
-    - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
-    - ""
-    - "Join our server to compete!"
-  sendEvery: 60 #in seconds
-  enabled: false
-  title: "Factions Top Announcement"
-  username: "FactionsBot"
-  footer: "Factions Top Logger"
-  thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
-  avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
-  debuggerEnabled: false #Only enabled if debugging is required
-
-
 # Bug Command Webhook
-bug_webhook_url: ""
+bug_webhook_url: "your-webhook-here"
 bug_username: "BUG REPORT"
 bug_thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
 bug_avatar_url: "https://example.com/bug-avatar.png"
-is_bug_enabled: true
+is_bug_enabled: false
 bug_cooldown: 30
 bug_message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**"
 no_bug_permission_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
@@ -204,18 +210,10 @@ bug_sent_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been 
 # Enderpearl Cooldown Configuration
 enderpearl:
   enabled: false
-  cooldown-time: 10
+  cooldown-time: 3
   cooldown-message: '&cYou must wait %time_left% seconds before using this again!'
 # Chorus Fruit Cooldown Configuration (DO NOT ENABLE IF YOUR BELOW 1.9+)
 chorus:
   enabled: false # (DO NOT ENABLE IF YOUR BELOW 1.9+)
   cooldown-time: 10 # (DO NOT ENABLE IF YOUR BELOW 1.9+)
   cooldown-message: '&cYou must wait %time_left% seconds before using this again!' # (DO NOT ENABLE IF YOUR BELOW 1.9+)
-
-# Configuration for FlyBoostLimiter
-flyboosting:
-  enabled: false            # Whether fly boosting limiting is enabled
-  move-max-speed: 2.0      # Maximum allowed move speed while flying
-  kick-user: true          # Whether to kick the user if they exceed the move speed
-  kick-message: '&cYou were kicked for flying too fast!'  # Kick message
-  player-message: '&cSlow down while flying!'             # Message sent to the player if not kicked
