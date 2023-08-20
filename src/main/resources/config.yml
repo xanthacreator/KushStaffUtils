@@ -206,14 +206,3 @@ bug_message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circ
 no_bug_permission_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
 bug_usage_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/bug <report>"
 bug_sent_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been logged.\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fOverview: &c%reason%"
-
-# Enderpearl Cooldown Configuration
-enderpearl:
-  enabled: false
-  cooldown-time: 3
-  cooldown-message: '&cYou must wait %time_left% seconds before using this again!'
-# Chorus Fruit Cooldown Configuration (DO NOT ENABLE IF YOUR BELOW 1.9+)
-chorus:
-  enabled: false # (DO NOT ENABLE IF YOUR BELOW 1.9+)
-  cooldown-time: 10 # (DO NOT ENABLE IF YOUR BELOW 1.9+)
-  cooldown-message: '&cYou must wait %time_left% seconds before using this again!' # (DO NOT ENABLE IF YOUR BELOW 1.9+)
