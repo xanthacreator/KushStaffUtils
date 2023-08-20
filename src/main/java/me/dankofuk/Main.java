@@ -106,7 +106,6 @@ public class Main extends JavaPlugin implements Listener {
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         Server minecraftServer = getServer();
-        String commandPrefix = getConfig().getString("bot.command_prefix");
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActivity = getConfig().getString("bot.discord_activity");;
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
@@ -122,7 +121,7 @@ public class Main extends JavaPlugin implements Listener {
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, plugin);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, plugin);
             try {
                 discordBot.start();
                 System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
