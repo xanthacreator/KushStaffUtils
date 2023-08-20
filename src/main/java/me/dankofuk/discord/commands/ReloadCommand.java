@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class ReloadCommand extends ListenerAdapter {
 
     private final DiscordBot discordBot;
-    private String commandPrefix;
     public FileConfiguration config;
     public Plugin botTask;
     public String discordToken;
@@ -48,9 +47,8 @@ public class ReloadCommand extends ListenerAdapter {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, String commandPrefix, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle) {
+    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle) {
         this.discordBot = discordBot;
-        this.commandPrefix = commandPrefix;
         this.config = config;
         this.botTask = discordBot.botTask;
         this.discordToken = discordBot.discordToken;
@@ -84,7 +82,6 @@ public class ReloadCommand extends ListenerAdapter {
                 String format = config.getString("bot.discord_to_game_format");
                 String discordToken = config.getString("bot.discord_token");
                 boolean discordBotEnabled = config.getBoolean("bot.enabled");
-                String commandPrefix = config.getString("bot.command_prefix");
                 String discordActivity = config.getString("bot.discord_activity");
                 String ServerStatusChannelID = config.getString("serverstatus.channel_id");
                 String logChannelId = config.getString("bot.command_log_channel_id");
@@ -97,13 +94,12 @@ public class ReloadCommand extends ListenerAdapter {
                 Bukkit.getScheduler().getPendingTasks().stream()
                         .filter(task -> task.getOwner() == botTask)
                         .forEach(task -> task.cancel());
-                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle);
+                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle);
                 discordBot.stop();
 
                 // Reload config strings
                 this.discordToken = discordToken;
                 this.discordBotEnabled = discordBotEnabled;
-                this.commandPrefix = commandPrefix;
                 this.adminRoleID = adminRoleID;
                 this.discordActivity = discordActivity;
                 this.ServerStatusChannelID = ServerStatusChannelID;

@@ -33,7 +33,6 @@ public class DiscordBot extends ListenerAdapter {
     public String discordToken;
     public boolean discordBotEnabled;
     public Server minecraftServer;
-    public String commandPrefix;
     public String discordActivity;
     public JDA jda;
     public String adminRoleID;
@@ -51,11 +50,10 @@ public class DiscordBot extends ListenerAdapter {
     public StartStopLogger serverStatus;
     public String noPlayersTitle;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, Plugin plugin) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, Plugin plugin) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
-        this.commandPrefix = commandPrefix;
         this.adminRoleID = adminRoleID;
         this.discordActivity = discordActivity;
         this.botTask = botTask;
@@ -95,7 +93,8 @@ public class DiscordBot extends ListenerAdapter {
         String titleFormat = config.getString("bot.listplayers_title_format");
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
-        jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl));
+        boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
+        jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl, requireAdminRole));
         jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
         jda.addEventListener(new ConsoleCommand(this));
         jda.addEventListener(new HelpCommand(this));
@@ -112,7 +111,7 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
 
         // Reload Command
-        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle));
+        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle));
     }
 
     @Override
@@ -149,11 +148,10 @@ public class DiscordBot extends ListenerAdapter {
 
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
-        this.commandPrefix = commandPrefix;
         this.adminRoleID = adminRoleID;
         this.discordActivity = discordActivity;
         this.botTask = botTask;

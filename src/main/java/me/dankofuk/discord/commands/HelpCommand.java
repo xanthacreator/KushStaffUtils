@@ -39,7 +39,7 @@ public class HelpCommand extends ListenerAdapter {
                 helpEmbed.addField("/help", "Shows this menu", false);
                 helpEmbed.addField("/command [command]", "Sends a command to the server!", false);
                 helpEmbed.addField("/online", "Shows the players online", false);
-                helpEmbed.addField("/reloadconfig", "Reloads the configs for the bot related stuff.", false);
+                helpEmbed.addField("/reload", "Reloads the configs for the bot related stuff.", false);
                 helpEmbed.addField("/link", "Links your Minecraft account with Discord.", false);
 
                 helpEmbed.setFooter("Help Page 1/1 - Made by Exotic Development");
