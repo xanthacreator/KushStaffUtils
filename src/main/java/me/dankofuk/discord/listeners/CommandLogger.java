@@ -18,15 +18,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class DiscordLogger extends ListenerAdapter {
+public class CommandLogger extends ListenerAdapter {
     private List<String> messageFormats;
     private String serverName;
     private List<String> embedTitleFormats;
     public boolean logAsEmbed;
     public String logChannelId;
     public DiscordBot discordBot;
-    private static DiscordLogger instance;
-    public DiscordLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId) {
+    private static CommandLogger instance;
+    public CommandLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId) {
             this.discordBot = discordBot;
             this.messageFormats = messageFormat;
             this.serverName = serverName;
@@ -35,7 +35,7 @@ public class DiscordLogger extends ListenerAdapter {
             this.logChannelId = logChannelId;
             instance = this;
     }
-    public static DiscordLogger getInstance() {
+    public static CommandLogger getInstance() {
         return instance;
     }
 
