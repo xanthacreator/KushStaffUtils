@@ -15,21 +15,25 @@ public class OnlinePlayersCommand extends ListenerAdapter {
     private String title;
     private String footer;
     private String thumbnailUrl;
+    private Boolean requireAdminRole;
     private DiscordBot discordBot;
 
-    public OnlinePlayersCommand(DiscordBot discordBot, String noPlayersTitle, String title, String footer, String thumbnailUrl) {
+    public OnlinePlayersCommand(DiscordBot discordBot, String noPlayersTitle, String title, String footer, String thumbnailUrl, boolean requireAdminRole) {
         this.discordBot = discordBot;
         this.noPlayersTitle = noPlayersTitle;
         this.title = title;
         this.footer = footer;
         this.thumbnailUrl = thumbnailUrl;
+        this.requireAdminRole = requireAdminRole;
     }
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals("online")) {
-            if (event.getMember() != null && event.getMember().getRoles().stream()
-                    .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID()))) {
+            // Check if requireAdminRole is true and if the user has the admin role
+            if (!requireAdminRole || (event.getMember() != null && event.getMember().getRoles().stream()
+                    .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID())))) {
+
                 List<String> playerNames = discordBot.getMinecraftServer().getOnlinePlayers().stream()
                         .map(player -> player.getName())
                         .collect(Collectors.toList());
