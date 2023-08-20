@@ -115,7 +115,7 @@ public class ReloadCommand extends ListenerAdapter {
                 stoppedEmbed.setTitle("Bot stopped!");
                 stoppedEmbed.setDescription(">  `Reloading configuration....`");
                 stoppedEmbed.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
-                event.getChannel().sendMessageEmbeds(stoppedEmbed.build()).queue();
+                event.replyEmbeds(stoppedEmbed.build()).queue();
                 try {
                     discordBot.start();
                     System.out.println("[KushStaffUtils - Discord Bot] Reloading Discord Bot...");
@@ -127,7 +127,7 @@ public class ReloadCommand extends ListenerAdapter {
                 startedEmbed.setTitle("Bot started!");
                 startedEmbed.setDescription(">  `Reload Complete!`");
                 startedEmbed.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
-                event.getChannel().sendMessageEmbeds(startedEmbed.build()).queue();
+                event.replyEmbeds(startedEmbed.build()).queue();
             } else {
                 EmbedBuilder noPerms = new EmbedBuilder();
                 noPerms.setColor(Color.RED);
