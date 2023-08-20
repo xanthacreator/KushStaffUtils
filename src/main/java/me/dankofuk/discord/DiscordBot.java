@@ -49,8 +49,9 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin plugin;
     public StartStopLogger serverStatus;
     public String noPlayersTitle;
+    private boolean requireAdminRole;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, Plugin plugin) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, Plugin plugin) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -66,6 +67,7 @@ public class DiscordBot extends ListenerAdapter {
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
         this.noPlayersTitle = noPlayersTitle;
+        this.requireAdminRole = requireAdminRole;
         this.plugin = plugin;
     }
 
@@ -111,7 +113,7 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
 
         // Reload Command
-        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle));
+        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole));
     }
 
     @Override
@@ -148,7 +150,7 @@ public class DiscordBot extends ListenerAdapter {
 
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -163,6 +165,7 @@ public class DiscordBot extends ListenerAdapter {
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
         this.noPlayersTitle = noPlayersTitle;
+        this.requireAdminRole = requireAdminRole;
     }
 
 

@@ -42,12 +42,13 @@ public class ReloadCommand extends ListenerAdapter {
     private String footerFormat;
     private String listThumbnailUrl;
     private String noPlayersTitle;
+    private boolean requireAdminRole;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle) {
+    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole) {
         this.discordBot = discordBot;
         this.config = config;
         this.botTask = discordBot.botTask;
@@ -62,6 +63,7 @@ public class ReloadCommand extends ListenerAdapter {
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
         this.noPlayersTitle = noPlayersTitle;
+        this.requireAdminRole = requireAdminRole;
     }
 
     @Override
@@ -90,11 +92,12 @@ public class ReloadCommand extends ListenerAdapter {
                 String footerFormat = config.getString("bot.listplayers_footer_format");
                 String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
                 String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
+                boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
                 Server minecraftServer = Bukkit.getServer();
                 Bukkit.getScheduler().getPendingTasks().stream()
                         .filter(task -> task.getOwner() == botTask)
                         .forEach(task -> task.cancel());
-                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle);
+                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole);
                 discordBot.stop();
 
                 // Reload config strings
@@ -109,6 +112,7 @@ public class ReloadCommand extends ListenerAdapter {
                 this.footerFormat = footerFormat;
                 this.listThumbnailUrl = listThumbnailUrl;
                 this.noPlayersTitle = listThumbnailUrl;
+                this.requireAdminRole = requireAdminRole;
 
                 EmbedBuilder stoppedEmbed = new EmbedBuilder();
                 stoppedEmbed.setColor(Color.RED);
