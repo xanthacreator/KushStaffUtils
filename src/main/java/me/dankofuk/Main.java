@@ -4,13 +4,11 @@ import me.clip.placeholderapi.metrics.bukkit.Metrics;
 import me.dankofuk.chat.ChatWebhook;
 import me.dankofuk.commands.*;
 import me.dankofuk.discord.DiscordBot;
-import me.dankofuk.discord.listeners.DiscordLogger;
+import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.StartStopLogger;
-import me.dankofuk.factionstuff.EnderPearlCooldown;
 import me.dankofuk.factionstuff.FactionStrike;
 import me.dankofuk.factionstuff.FactionsTopAnnouncer;
 import me.dankofuk.listeners.FileCommandLogger;
-//import me.dankofuk.listeners.FlyBoostListener;
 import me.dankofuk.listeners.JoinLeaveLogger;
 import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
@@ -36,7 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin implements Listener {
-    private DiscordLogger DLogger;
+    private CommandLogger DLogger;
     private List<String> ignoredCommands;
     public String joinWebhookUrl;
     private ReportCommand reportCommand;
@@ -62,7 +60,6 @@ public class Main extends JavaPlugin implements Listener {
     public String reportSentMessage;
     public String usageMessage;
     private static Main instance;
-    private EnderPearlCooldown enderPearlCooldown;
     private BugCommand BugCommand;
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
@@ -102,27 +99,28 @@ public class Main extends JavaPlugin implements Listener {
         boolean logCommands = getConfig().getBoolean("log_commands", true);
         this.FileCommandLogger.reloadLogCommands(logCommands);
 
-          // Main Discord Bot
+        // Main Discord Bot
         String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         Server minecraftServer = getServer();
-        String commandPrefix = getConfig().getString("bot.command_prefix");
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActivity = getConfig().getString("bot.discord_activity");;
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
         String logChannelId = getConfig().getString("bot.command_log_channel_id");
+        String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
         String titleFormat = config.getString("bot.listplayers_title_format");
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
+        boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 System.out.println("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, commandPrefix, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, plugin);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, plugin);
             try {
                 discordBot.start();
                 System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
@@ -173,15 +171,6 @@ public class Main extends JavaPlugin implements Listener {
 
         // Register the SuggestionCommand as a listener to handle the suggestion sent event
         getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
-        // Enderpearl and Chorus Fruit Cooldown
-        this.enderPearlCooldown = new EnderPearlCooldown(this);
-        this.enderPearlCooldown.setEnderpearlCooldownMessage(getConfig().getString("enderpearl.cooldown-message"));
-        this.enderPearlCooldown.setEnderpearlCooldown(getConfig().getInt("enderpearl.cooldown-time"));
-        this.enderPearlCooldown.setEnderpearlEnabled(getConfig().getBoolean("enderpearl.enabled"));
-        this.enderPearlCooldown.setChorusCooldownMessage(getConfig().getString("chorus.cooldown-message"));
-        this.enderPearlCooldown.setChorusCooldownTime(getConfig().getInt("chorus.cooldown-time"));
-        this.enderPearlCooldown.setChorusEnabled(getConfig().getBoolean("chorus.enabled"));
-        this.enderPearlCooldown.start();
         // Report Webhook
         String ReportWebhookUrl = config.getString("webhook-url");
         String username = config.getString("username");
@@ -205,7 +194,7 @@ public class Main extends JavaPlugin implements Listener {
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.JoinLeaveLogger = new JoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
-        DLogger = new DiscordLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId);
+        DLogger = new CommandLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.JoinLeaveLogger, this);
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
@@ -213,7 +202,6 @@ public class Main extends JavaPlugin implements Listener {
 
     public void onDisable() {
         FileConfiguration config = getConfig();
-        this.enderPearlCooldown = null;
         boolean discordBotEnabled = config.getBoolean("bot.enabled");
 
         // Stop Discord bot if it is enabled
@@ -340,16 +328,9 @@ public class Main extends JavaPlugin implements Listener {
         String noBugPermissionMessage = config.getString("no_bug_permission_message");
         String bugUsageMessage = config.getString("bug_usage_message");
         this.BugCommand.reloadConfigOptions(bugWebhookUrl, bugUsername, bugAvatarUrl, isBugEnabled, bugMessage, noBugPermissionMessage, bugUsageMessage, bugThumbnail, bugCooldown, bugResponse, config);
-        this.enderPearlCooldown.setEnderpearlCooldownMessage(getConfig().getString("enderpearl.cooldown-message"));
-        this.enderPearlCooldown.setEnderpearlCooldown(getConfig().getInt("enderpearl.cooldown-time"));
-        this.enderPearlCooldown.setEnderpearlEnabled(getConfig().getBoolean("enderpearl.enabled"));
-        this.enderPearlCooldown.setChorusCooldownMessage(getConfig().getString("chorus.cooldown-message"));
-        this.enderPearlCooldown.setChorusCooldownTime(getConfig().getInt("chorus.cooldown-time"));
-        this.enderPearlCooldown.setChorusEnabled(getConfig().getBoolean("chorus.enabled"));
         // load new configuration
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
-        String commandPrefix = getConfig().getString("bot.command_prefix");
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActivity = getConfig().getString("bot.discord_activity");
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");

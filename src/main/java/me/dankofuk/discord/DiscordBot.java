@@ -1,31 +1,38 @@
 package me.dankofuk.discord;
 
-import me.dankofuk.discord.listeners.DiscordLogger;
+import me.dankofuk.discord.commands.HelpCommand;
+import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.commands.ConsoleCommand;
 import me.dankofuk.discord.commands.ReloadCommand;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
-import me.dankofuk.discord.listeners.ListPlayers;
+import me.dankofuk.discord.commands.OnlinePlayersCommand;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DiscordBot extends ListenerAdapter {
     public String discordToken;
     public boolean discordBotEnabled;
     public Server minecraftServer;
-    public String commandPrefix;
     public String discordActivity;
     public JDA jda;
     public String adminRoleID;
@@ -33,20 +40,21 @@ public class DiscordBot extends ListenerAdapter {
     public FileConfiguration config;
     public String ServerStatusChannelID;
     public String logChannelId;
-    private DiscordLogger discordLogger;
+    public CommandLogger commandLogger;
     public boolean logAsEmbed;
-    private String serverName;
-    private String titleFormat;
-    private String footerFormat;
-    private String listThumbnailUrl;
-    private Plugin plugin;
+    public String serverName;
+    public String titleFormat;
+    public String footerFormat;
+    public String listThumbnailUrl;
+    public Plugin plugin;
     public StartStopLogger serverStatus;
+    public String noPlayersTitle;
+    private boolean requireAdminRole;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, Plugin plugin) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, Plugin plugin) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
-        this.commandPrefix = commandPrefix;
         this.adminRoleID = adminRoleID;
         this.discordActivity = discordActivity;
         this.botTask = botTask;
@@ -58,6 +66,8 @@ public class DiscordBot extends ListenerAdapter {
         this.titleFormat = titleFormat;
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
+        this.noPlayersTitle = noPlayersTitle;
+        this.requireAdminRole = requireAdminRole;
         this.plugin = plugin;
     }
 
@@ -81,16 +91,19 @@ public class DiscordBot extends ListenerAdapter {
 
         // Register Discord Events
         // List Players
+        String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
         String titleFormat = config.getString("bot.listplayers_title_format");
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
-        jda.addEventListener(new ListPlayers(this, commandPrefix, titleFormat, footerFormat, listThumbnailUrl));
+        boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
+        jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl, requireAdminRole));
         jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
-        jda.addEventListener(new ConsoleCommand(this, commandPrefix, config, minecraftServer));
+        jda.addEventListener(new ConsoleCommand(this));
+        jda.addEventListener(new HelpCommand(this));
         // Discord Logger
         List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
         List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
-        jda.addEventListener(new DiscordLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
+        jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
         // Discord2Chat
         boolean enabled = config.getBoolean("bot.discord_to_game_enabled");
         boolean roleIdRequired = config.getBoolean("bot.discord_to_game_roleIdRequired");
@@ -100,8 +113,29 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
 
         // Reload Command
-        jda.addEventListener(new ReloadCommand(this, commandPrefix, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl));
+        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole));
     }
+
+    @Override
+    public void onGuildReady(@NotNull GuildReadyEvent event) {
+        List<CommandData> commandsData =  new ArrayList<>();
+        commandsData.add(Commands.slash("help", "Shows the list of all commands in this bot."));
+        commandsData.add(Commands.slash("online", "Lists Online Players."));
+        commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
+        commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
+        event.getJDA().updateCommands().addCommands(commandsData).queue();
+    }
+
+    @Override
+    public void onReady(@NotNull ReadyEvent event) {
+        List<CommandData> commandsData =  new ArrayList<>();
+        commandsData.add(Commands.slash("help", "Shows the list of all commands in this bot."));
+        commandsData.add(Commands.slash("online", "Lists Online Players."));
+        commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
+        commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
+        event.getJDA().updateCommands().addCommands(commandsData).queue();
+    }
+
 
     // Method for stopping the Discord Bot
     public void stop() {
@@ -115,39 +149,11 @@ public class DiscordBot extends ListenerAdapter {
     }
 
 
-    @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) {
-            return;
-        }
-
-        String message = event.getMessage().getContentRaw();
-        // Help Command
-        if (message.equalsIgnoreCase(commandPrefix + "help")) {
-            EmbedBuilder helpEmbed = new EmbedBuilder();
-            helpEmbed.setColor(Color.RED);
-            helpEmbed.setTitle("__`Help Page 1/1`__");
-            helpEmbed.setDescription("Command List");
-
-            helpEmbed.addField(commandPrefix + "help", "Shows this menu", false);
-            helpEmbed.addField(commandPrefix + "servercommand [command]", "Sends a command to the server!", false);
-            helpEmbed.addField(commandPrefix + "online", "Shows the players online", false);
-            helpEmbed.addField(commandPrefix + "reloadconfig", "Reloads the configs for the bot related stuff.", false);
-            helpEmbed.addField(commandPrefix + "link", "Links your Minecraft account with Discord.", false);
-
-            helpEmbed.setFooter("Help Page 1/1 - Made by DankOfUK/ChatGPT");
-            event.getChannel().sendMessageEmbeds(helpEmbed.build()).queue();
-        }
-
-    }
-
-
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String commandPrefix, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
-        this.commandPrefix = commandPrefix;
         this.adminRoleID = adminRoleID;
         this.discordActivity = discordActivity;
         this.botTask = botTask;
@@ -158,13 +164,16 @@ public class DiscordBot extends ListenerAdapter {
         this.titleFormat = titleFormat;
         this.footerFormat = footerFormat;
         this.listThumbnailUrl = listThumbnailUrl;
+        this.noPlayersTitle = noPlayersTitle;
+        this.requireAdminRole = requireAdminRole;
     }
-
-
 
 
     public Server getMinecraftServer() {
         return Bukkit.getServer();
     }
 
+    public String getAdminRoleID() {
+        return adminRoleID;
+    }
 }
