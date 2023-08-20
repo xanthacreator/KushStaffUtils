@@ -211,3 +211,11 @@ chorus:
   enabled: false # (DO NOT ENABLE IF YOUR BELOW 1.9+)
   cooldown-time: 10 # (DO NOT ENABLE IF YOUR BELOW 1.9+)
   cooldown-message: '&cYou must wait %time_left% seconds before using this again!' # (DO NOT ENABLE IF YOUR BELOW 1.9+)
+
+# Configuration for FlyBoostLimiter
+flyboosting:
+  enabled: false            # Whether fly boosting limiting is enabled
+  move-max-speed: 2.0      # Maximum allowed move speed while flying
+  kick-user: true          # Whether to kick the user if they exceed the move speed
+  kick-message: '&cYou were kicked for flying too fast!'  # Kick message
+  player-message: '&cSlow down while flying!'             # Message sent to the player if not kicked
