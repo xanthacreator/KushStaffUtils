@@ -105,13 +105,14 @@ public class DiscordBot extends ListenerAdapter {
         String channelId = config.getString("bot.discord_to_game_channel_id");
         String format = config.getString("bot.discord_to_game_format");
         String roleId = config.getString("bot.discord_to_game_roleId");
+        boolean logCommands = config.getBoolean("per-user-logging.enabled");
 
         // Event Listeners
         jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl, requireAdminRole));
         jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
         jda.addEventListener(new ConsoleCommand(this));
         jda.addEventListener(new HelpCommand(this));
-        jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, config));
+        jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, logCommands, config));
         jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
         jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole));

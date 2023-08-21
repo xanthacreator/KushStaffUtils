@@ -93,8 +93,7 @@ public final class UUIDFetcher {
                     line = br.readLine();
                 }
             }
-        } catch (Throwable t) {
-            t.printStackTrace();
+        } catch (Throwable ignored) {
         } finally {
             if (br != null) {
                 try {

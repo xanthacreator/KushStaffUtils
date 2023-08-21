@@ -6,9 +6,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -16,18 +14,19 @@ import java.io.File;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class LogsCommand extends ListenerAdapter {
 
     private DiscordBot discordBot;
     private boolean requireAdminRole;
     private FileConfiguration config;
+    private boolean logCommands;
 
-    public LogsCommand(DiscordBot discordBot, boolean requireAdminRole, FileConfiguration config) {
+    public LogsCommand(DiscordBot discordBot, boolean requireAdminRole, boolean logCommands, FileConfiguration config) {
         this.discordBot = discordBot;
         this.requireAdminRole = requireAdminRole;
         this.config = config;
+        this.logCommands = logCommands;
     }
 
     @Override
@@ -49,20 +48,18 @@ public class LogsCommand extends ListenerAdapter {
                 return;
             }
 
-                    try {
-                        UUID minecraftUUID = UUIDFetcher.getUUID(username);
-                        if (minecraftUUID != null) {
-                            String fileName = minecraftUUID + ".txt";
+            if (config.getBoolean("per-user-logging.enabled")) {
+                event.reply("Per Player Logging is not enabled in the config.").queue();;
+                return;
+            }
+               UUID minecraftUUID = UUIDFetcher.getUUID(username);
+               if (minecraftUUID != null) {
+                   String fileName = minecraftUUID + ".txt";
 
-                            FileUpload file = FileUpload.fromData(new File("plugins/KushStaffUtils/logs/" + fileName));
-                            event.reply("Log file for " + username).addFiles(file).queue();
-                        } else {
-                            event.reply("Could not find a log for " + username).queue();
-                        }
-                    } catch (Exception e) {
-                        event.reply("An error occurred while fetching or sending the log file.").queue();
-                        e.printStackTrace();
-                        Bukkit.getLogger().log(Level.SEVERE, "You can ignore this error, just means there is no file for the user you asked for.");
+                   FileUpload file = FileUpload.fromData(new File("plugins/KushStaffUtils/logs/" + fileName));
+                   event.reply("Log file for " + username).addFiles(file).queue();
+               } else {
+                   event.reply("Could not find a log for " + username).queue();
             }
         }
     }
