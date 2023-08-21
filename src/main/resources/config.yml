@@ -20,7 +20,7 @@ bot:
   # Command Logger Configuration
   command_log_channel_id: "1067570285999570984"
   command_log_logAsEmbed: true
-  #command_log_message_formats: (Config Example with thats not a embed or multiple lines)
+  #command_log_message_formats: (Config Example with thats not an embed or multiple lines)
   #  - "[%time%] [`%server%`] __**%player%:**__ `%command%`"
   command_log_message_formats:
     - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
