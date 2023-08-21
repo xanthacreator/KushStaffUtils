@@ -48,8 +48,12 @@ public class LogsCommand extends ListenerAdapter {
                 return;
             }
 
-            if (config.getBoolean("per-user-logging.enabled")) {
-                event.reply("Per Player Logging is not enabled in the config.").queue();;
+            if (!config.getBoolean("per-user-logging.enabled")) {
+                EmbedBuilder e = new EmbedBuilder();
+                e.setColor(Color.RED);
+                e.setTitle("Error 404");
+                e.setDescription(">  `Per Player Logging is not enabled in the config.`");
+                event.replyEmbeds(e.build()).queue();
                 return;
             }
                UUID minecraftUUID = UUIDFetcher.getUUID(username);
