@@ -22,8 +22,6 @@ public class ConsoleCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals("command")) {
-            if (event.getMember() != null && event.getMember().getRoles().stream()
-                    .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID()))) {
                 String subCommand = event.getSubcommandName();
                 String inGameCommand = event.getOption("command").getAsString();
 
@@ -57,7 +55,6 @@ public class ConsoleCommand extends ListenerAdapter {
 
                     event.replyEmbeds(embed.build()).queue();
                 });
-            }
         }
     }
 }

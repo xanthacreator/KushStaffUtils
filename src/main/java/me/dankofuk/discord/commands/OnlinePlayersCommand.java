@@ -30,7 +30,6 @@ public class OnlinePlayersCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals("online")) {
-            // Check if requireAdminRole is true and if the user has the admin role
             if (!requireAdminRole || (event.getMember() != null && event.getMember().getRoles().stream()
                     .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID())))) {
 

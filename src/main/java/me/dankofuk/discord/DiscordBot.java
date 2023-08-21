@@ -111,7 +111,7 @@ public class DiscordBot extends ListenerAdapter {
         jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
         jda.addEventListener(new ConsoleCommand(this));
         jda.addEventListener(new HelpCommand(this));
-        jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole));
+        jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, config));
         jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
         jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole));
