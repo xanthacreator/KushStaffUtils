@@ -66,6 +66,7 @@ public class Main extends JavaPlugin implements Listener {
     private StartStopLogger serverStatus;
     private FactionStrike factionStrike;
     private FactionsTopAnnouncer factionsTopAnnouncer;
+    public String logsFolder;
     private JDA jda;
     private Plugin plugin;
 
@@ -96,7 +97,7 @@ public class Main extends JavaPlugin implements Listener {
         // Files
         String logsFolder = (new File(getDataFolder(), "logs")).getPath();
         this.FileCommandLogger = new FileCommandLogger(logsFolder);
-        boolean logCommands = getConfig().getBoolean("log_commands", true);
+        boolean logCommands = getConfig().getBoolean("per-user-logging.enabled", true);
         this.FileCommandLogger.reloadLogCommands(logCommands);
 
         // Main Discord Bot
@@ -114,13 +115,14 @@ public class Main extends JavaPlugin implements Listener {
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
+        boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 System.out.println("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, plugin);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, plugin);
             try {
                 discordBot.start();
                 System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
@@ -346,5 +348,9 @@ public class Main extends JavaPlugin implements Listener {
         // start new Discord bot session if enabled
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
 
+    }
+
+    public String getCommandLoggerFolder() {
+        return logsFolder;
     }
 }

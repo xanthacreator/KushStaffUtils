@@ -12,6 +12,7 @@
 # Discord Bot Settings
 #
 bot:
+  # Main Bot Configuration
   enabled: true
   discord_token: ""
   adminRoleID: "1057520326373801995"
@@ -20,21 +21,24 @@ bot:
   # Command Logger Configuration
   command_log_channel_id: "1067570285999570984"
   command_log_logAsEmbed: true
-  #command_log_message_formats: (Config Example with thats not a embed or multiple lines)
+  #command_log_message_formats: (Config Example with thats not an embed or multiple lines)
   #  - "[%time%] [`%server%`] __**%player%:**__ `%command%`"
   command_log_message_formats:
     - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
   command_log_embed_title_formats:
     - ":information_source: COMMAND LOGGER"
 
-  # Discord Chat 2 Game Chat
+  # Log Commands Configuration
+  logsCommand_requireAdminRole: true
+
+  # Discord Chat 2 Game Chat Configuration
   discord_to_game_enabled: true
   discord_to_game_roleIdRequired: false
   discord_to_game_roleId: "967958848369487943" #This is if roleIdRequired is true
   discord_to_game_channel_id: "1067570285999570984"
   discord_to_game_format: "&9[Discord] &c%author%: &7%message%"
 
-  # List Players
+  # List Players Configuration
   listplayers_requireAdminRole: false
   listplayers_no_players_online_title: "`Online Players`"
   listplayers_title_format: "Players Online `(%online%)` - %time%"
@@ -46,7 +50,8 @@ serverstatus:
   channel_id: "1096952523585245195"
 
 # Enable this if you want it to log commands to a file per use! (STORED VIA UUIDS)
-log_commands: true # this logs in KushStaffLogger/logs
+per-user-logging:
+  enabled: true # this logs in KushStaffLogger/logs
 
 
 suggestion:
