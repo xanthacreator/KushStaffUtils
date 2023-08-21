@@ -43,12 +43,13 @@ public class ReloadCommand extends ListenerAdapter {
     private String listThumbnailUrl;
     private String noPlayersTitle;
     private boolean requireAdminRole;
+    private boolean logsCommandRequiresAdminRole;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole) {
+    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole) {
         this.discordBot = discordBot;
         this.config = config;
         this.botTask = discordBot.botTask;
@@ -64,6 +65,7 @@ public class ReloadCommand extends ListenerAdapter {
         this.listThumbnailUrl = listThumbnailUrl;
         this.noPlayersTitle = noPlayersTitle;
         this.requireAdminRole = requireAdminRole;
+        this.logsCommandRequiresAdminRole = logsCommandRequiresAdminRole;
     }
 
     @Override
@@ -93,11 +95,12 @@ public class ReloadCommand extends ListenerAdapter {
                 String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
                 String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
                 boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
+                boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
                 Server minecraftServer = Bukkit.getServer();
                 Bukkit.getScheduler().getPendingTasks().stream()
                         .filter(task -> task.getOwner() == botTask)
                         .forEach(task -> task.cancel());
-                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole);
+                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole);
                 discordBot.stop();
 
                 // Reload config strings
@@ -137,8 +140,7 @@ public class ReloadCommand extends ListenerAdapter {
                 noPerms.setColor(Color.RED);
                 noPerms.setTitle("Error #NotDankEnough");
                 noPerms.setDescription(">  `You lack the required permissions for this command!`");
-                noPerms.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
-                event.getChannel().sendMessageEmbeds(noPerms.build()).queue();
+                event.replyEmbeds(noPerms.build()).queue();
 
             }
         }

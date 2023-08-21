@@ -74,7 +74,7 @@ public class CommandLogViewer implements CommandExecutor {
             }
         }
 
-        String fileName = uuid.toString() + ".txt";
+        String fileName = uuid + ".txt";
         File logFile = new File(logsFolder, fileName);
 
         if (!logFile.exists()) {

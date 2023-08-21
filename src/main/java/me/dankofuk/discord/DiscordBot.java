@@ -1,11 +1,9 @@
 package me.dankofuk.discord;
 
-import me.dankofuk.discord.commands.HelpCommand;
+import me.dankofuk.Main;
+import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
-import me.dankofuk.discord.commands.ConsoleCommand;
-import me.dankofuk.discord.commands.ReloadCommand;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
-import me.dankofuk.discord.commands.OnlinePlayersCommand;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
@@ -49,9 +47,11 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin plugin;
     public StartStopLogger serverStatus;
     public String noPlayersTitle;
-    private boolean requireAdminRole;
+    public boolean requireAdminRole;
+    public boolean logsCommandRequiresAdminRole;
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, Plugin plugin) {
+
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole, Plugin plugin) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -68,8 +68,10 @@ public class DiscordBot extends ListenerAdapter {
         this.listThumbnailUrl = listThumbnailUrl;
         this.noPlayersTitle = noPlayersTitle;
         this.requireAdminRole = requireAdminRole;
+        this.logsCommandRequiresAdminRole = logsCommandRequiresAdminRole;
         this.plugin = plugin;
     }
+
 
     public JDA getJda() {
         return jda;
@@ -89,31 +91,30 @@ public class DiscordBot extends ListenerAdapter {
                 .build()
                 .awaitReady();
 
-        // Register Discord Events
-        // List Players
+        // Configuration Options
         String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
         String titleFormat = config.getString("bot.listplayers_title_format");
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
-        jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl, requireAdminRole));
-        jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
-        jda.addEventListener(new ConsoleCommand(this));
-        jda.addEventListener(new HelpCommand(this));
-        // Discord Logger
+        boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
         List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
         List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
-        jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
-        // Discord2Chat
         boolean enabled = config.getBoolean("bot.discord_to_game_enabled");
         boolean roleIdRequired = config.getBoolean("bot.discord_to_game_roleIdRequired");
         String channelId = config.getString("bot.discord_to_game_channel_id");
         String format = config.getString("bot.discord_to_game_format");
         String roleId = config.getString("bot.discord_to_game_roleId");
-        jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
 
-        // Reload Command
-        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole));
+        // Event Listeners
+        jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl, requireAdminRole));
+        jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
+        jda.addEventListener(new ConsoleCommand(this));
+        jda.addEventListener(new HelpCommand(this));
+        jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole));
+        jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
+        jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
+        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole));
     }
 
     @Override
@@ -122,6 +123,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("help", "Shows the list of all commands in this bot."));
         commandsData.add(Commands.slash("online", "Lists Online Players."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
+        commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -132,6 +134,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("help", "Shows the list of all commands in this bot."));
         commandsData.add(Commands.slash("online", "Lists Online Players."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
+        commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -150,7 +153,7 @@ public class DiscordBot extends ListenerAdapter {
 
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -166,6 +169,7 @@ public class DiscordBot extends ListenerAdapter {
         this.listThumbnailUrl = listThumbnailUrl;
         this.noPlayersTitle = noPlayersTitle;
         this.requireAdminRole = requireAdminRole;
+        this.logsCommandRequiresAdminRole = logsCommandRequiresAdminRole;
     }
 
 
