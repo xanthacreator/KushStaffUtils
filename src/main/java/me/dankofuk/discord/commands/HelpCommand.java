@@ -40,7 +40,7 @@ public class HelpCommand extends ListenerAdapter {
                 helpEmbed.addField("/reload", "Reloads the configs for the bot related stuff.", false);
 
                 helpEmbed.setFooter("Help Page 1/1 - Made by Exotic Development");
-                event.replyEmbeds(helpEmbed.build()).queue();
+                event.replyEmbeds(helpEmbed.build()).setEphemeral(true).queue();
         }
     }
 }
