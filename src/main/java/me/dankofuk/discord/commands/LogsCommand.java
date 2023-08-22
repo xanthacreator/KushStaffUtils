@@ -61,9 +61,9 @@ public class LogsCommand extends ListenerAdapter {
                    String fileName = minecraftUUID + ".txt";
 
                    FileUpload file = FileUpload.fromData(new File("plugins/KushStaffUtils/logs/" + fileName));
-                   event.reply("Log file for " + username).addFiles(file).queue();
+                   event.reply("Log file for " + username).addFiles(file).setEphemeral(true).queue();
                } else {
-                   event.reply("Could not find a log for " + username).queue();
+                   event.reply("Could not find a log for " + username).setEphemeral(true).queue();
             }
         }
     }
