@@ -39,6 +39,7 @@ public class FileCommandLogger implements Listener {
         this.writerMap = new ConcurrentHashMap<>();
     }
 
+
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         if (!logCommands) {
@@ -48,6 +49,15 @@ public class FileCommandLogger implements Listener {
         Player player = event.getPlayer();
         String command = event.getMessage();
         log(player.getUniqueId(), "command", "Executed command: " + command);
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+
+        Player player = event.getPlayer();
+        String message = event.getMessage();
+        log(player.getUniqueId(), "chat", "Sent message: " + message);
+
     }
 
     @EventHandler
