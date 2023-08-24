@@ -1,9 +1,10 @@
 package me.dankofuk;
 
 import me.clip.placeholderapi.metrics.bukkit.Metrics;
-import me.dankofuk.chat.ChatWebhook;
+import me.dankofuk.discord.listeners.ChatWebhook;
 import me.dankofuk.commands.*;
 import me.dankofuk.discord.DiscordBot;
+import me.dankofuk.discord.commands.botRequiredCommands.SuggestionCommand;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import me.dankofuk.factionstuff.FactionStrike;
@@ -118,19 +119,19 @@ public class Main extends JavaPlugin implements Listener {
         boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
-                System.out.println("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
+                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
 
             discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, plugin);
             try {
                 discordBot.start();
-                System.out.println("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
+                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
+            Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
         }
         // Command Log Viewer Command
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
@@ -209,13 +210,30 @@ public class Main extends JavaPlugin implements Listener {
         // Stop Discord bot if it is enabled
         if (discordBotEnabled) {
             discordBot.stop();
-            System.out.println("[Discord Bot] Bot has been disabled!");
+            Bukkit.getLogger().warning("[Discord Bot] Bot has been disabled!");
         } else {
-            System.out.println("Discord Bot is disabled, won't stop.");
+            Bukkit.getLogger().warning("Discord Bot is disabled, won't stop.");
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been disabled!");
     }
 
+
+
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (cmd.getName().equalsIgnoreCase("stafflogger")) {
+            if (!sender.hasPermission("commandlogger.reload")) {
+                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(getConfig().getString("no_permission"))));
+                return true;
+            }
+            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
+                reloadConfigOptions();
+                sender.sendMessage(ColorUtils.translateColorCodes(getConfig().getString("reload_message")));
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
@@ -246,22 +264,6 @@ public class Main extends JavaPlugin implements Listener {
         for (String whitelisted : whitelistedCommands) {
             if (whitelisted.trim().equalsIgnoreCase(command))
                 return true;
-        }
-        return false;
-    }
-
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("stafflogger")) {
-            if (!sender.hasPermission("commandlogger.reload")) {
-                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(getConfig().getString("no_permission"))));
-                return true;
-            }
-            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                reloadConfigOptions();
-                sender.sendMessage(ColorUtils.translateColorCodes(getConfig().getString("reload_message")));
-                return true;
-            }
-            return false;
         }
         return false;
     }

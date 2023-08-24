@@ -1,6 +1,8 @@
 name: KushStaffUtils
 version: '${project.version}'
 main: me.dankofuk.Main
+author: DankOfUK
+description: Made by Exotic Development
 load-after: [InteractiveChat]
 softdepend: [PlaceholderAPI, Vault]
 commands:

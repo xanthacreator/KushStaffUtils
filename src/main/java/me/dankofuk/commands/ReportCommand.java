@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import me.dankofuk.utils.ColorUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,25 +20,15 @@ import org.bukkit.event.Listener;
 
 public class ReportCommand implements Listener, CommandExecutor {
     public String ReportWebhookUrl;
-
     public String username;
-
     public String avatarUrl;
-
     public boolean isReportEnabled;
-
     public String reportMessage;
-
     public final Map<UUID, Long> cooldowns = new HashMap<>();
-
     public int reportCooldown;
-
     public String reportSentMessage;
-
     public String noPermissionMessage;
-
     public String usageMessage;
-
     public FileConfiguration config;
 
     public ReportCommand(String ReportWebhookUrl, String username, String avatarUrl, boolean isReportEnabled, String reportMessage, int cooldownSeconds, String reportSentMessage, String noPermissionMessage, String usageMessage, FileConfiguration config) {
@@ -59,7 +50,7 @@ public class ReportCommand implements Listener, CommandExecutor {
         Player player = (Player)sender;
         if (!player.hasPermission("commandlogger.report.use")) {
             player.sendMessage(ColorUtils.translateColorCodes(this.noPermissionMessage));
-            return true;
+              return true;
         }
         if (args.length < 2) {
             player.sendMessage(ColorUtils.translateColorCodes(this.usageMessage));

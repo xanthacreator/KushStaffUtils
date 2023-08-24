@@ -1,4 +1,4 @@
-package me.dankofuk.commands;
+package me.dankofuk.discord.commands.botRequiredCommands;
 
 import java.awt.Color;
 import java.util.HashMap;
