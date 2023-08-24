@@ -32,7 +32,7 @@ public class LogsCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals("logs")) {
-                    String username = event.getOption("user").getAsString();
+            String username = event.getOption("user").getAsString();
 
             // Check if user has permissions to execute the command
             boolean hasPermission = event.getMember().getRoles().stream()
@@ -44,7 +44,7 @@ public class LogsCommand extends ListenerAdapter {
                 noPerms.setTitle("Error #NotDankEnough");
                 noPerms.setDescription(">  `You lack the required permissions for this command!`");
                 noPerms.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
-                event.replyEmbeds(noPerms.build()).queue();
+                event.replyEmbeds(noPerms.build()).setEphemeral(true).queue();
                 return;
             }
 
@@ -53,17 +53,22 @@ public class LogsCommand extends ListenerAdapter {
                 e.setColor(Color.RED);
                 e.setTitle("Error 404");
                 e.setDescription(">  `Per Player Logging is not enabled in the config.`");
-                event.replyEmbeds(e.build()).queue();
+                event.replyEmbeds(e.build()).setEphemeral(true).queue();
                 return;
             }
-               UUID minecraftUUID = UUIDFetcher.getUUID(username);
-               if (minecraftUUID != null) {
-                   String fileName = minecraftUUID + ".txt";
+            UUID minecraftUUID = UUIDFetcher.getUUID(username);
+            if (minecraftUUID != null) {
+                String fileName = minecraftUUID + ".txt";
+                File logFile = new File("plugins/KushStaffUtils/logs/" + fileName);
 
-                   FileUpload file = FileUpload.fromData(new File("plugins/KushStaffUtils/logs/" + fileName));
-                   event.reply("Log file for " + username).addFiles(file).queue();
-               } else {
-                   event.reply("Could not find a log for " + username).queue();
+                if (logFile.exists()) {
+                    FileUpload file = FileUpload.fromData(logFile);
+                    event.reply("Log file for " + username).addFiles(file).setEphemeral(true).queue();
+                } else {
+                    event.reply("Log file for " + username + " does not exist.").setEphemeral(true).queue();
+                }
+            } else {
+                return;
             }
         }
     }

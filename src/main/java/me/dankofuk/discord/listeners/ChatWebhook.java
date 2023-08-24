@@ -1,4 +1,4 @@
-package me.dankofuk.chat;
+package me.dankofuk.discord.listeners;
 
 import com.google.gson.JsonObject;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -17,11 +17,11 @@ import java.net.URL;
 
 public class ChatWebhook implements Listener {
 
-    private final String chatWebhookUrl;
-    private final String chatUsername;
-    private final String chatAvatarUrl;
-    private final String chatMessageFormat;
-    private final boolean enabled;
+    private String chatWebhookUrl;
+    private String chatUsername;
+    private String chatAvatarUrl;
+    private String chatMessageFormat;
+    private boolean enabled;
 
     public ChatWebhook(String chatWebhookUrl, String chatUsername, String chatAvatarUrl, String chatMessageFormat, boolean enabled, FileConfiguration config) {
         this.chatWebhookUrl = chatWebhookUrl;
