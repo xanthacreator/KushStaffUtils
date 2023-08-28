@@ -1,10 +1,12 @@
 package me.dankofuk;
 
 import me.clip.placeholderapi.metrics.bukkit.Metrics;
-import me.dankofuk.discord.listeners.ChatWebhook;
-import me.dankofuk.commands.*;
+import me.dankofuk.commands.BugCommand;
+import me.dankofuk.commands.CommandLogViewer;
+import me.dankofuk.commands.ReportCommand;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.commands.botRequiredCommands.SuggestionCommand;
+import me.dankofuk.discord.listeners.ChatWebhook;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import me.dankofuk.factionstuff.FactionStrike;
@@ -18,9 +20,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,19 +45,15 @@ public class Main extends JavaPlugin implements Listener {
     public boolean useEmbed;
     public boolean isEnabled;
     public boolean isReportEnabled;
-    public me.dankofuk.listeners.JoinLeaveLogger JoinLeaveLogger;
-    public me.dankofuk.listeners.FileCommandLogger FileCommandLogger;
+    public JoinLeaveLogger JoinLeaveLogger;
+    public FileCommandLogger FileCommandLogger;
     public ReportCommand ReportCommand;
-    public String LogsHeader;
-    public String NextPage;
-    public String PrevPage;
     public String reportMessage;
     public String ReportWebhookUrl;
     public String username;
     public String avatarUrl;
     public int cooldownSeconds;
     public String UsageMessage;
-    public FileConfiguration FileConfiguration;
     public String reportSentMessage;
     public String usageMessage;
     private static Main instance;
@@ -70,7 +66,6 @@ public class Main extends JavaPlugin implements Listener {
     public String logsFolder;
     private JDA jda;
     private Plugin plugin;
-
 
     public void onEnable() {
         getConfig().options().copyDefaults();
@@ -102,7 +97,6 @@ public class Main extends JavaPlugin implements Listener {
         this.FileCommandLogger.reloadLogCommands(logCommands);
 
         // Main Discord Bot
-        String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         Server minecraftServer = getServer();
@@ -117,13 +111,17 @@ public class Main extends JavaPlugin implements Listener {
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
         boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
+        List<String> ignoredCommands = config.getStringList("commandlogger.ignored_commands");
+        List<String> whitelistCommands = config.getStringList("commandlogger.whitelisted_commands");
+        boolean whitelistMode = config.getBoolean("commandlogger.whitelist_mode_enabled");
+        String serverName = getConfig().getString("commandlogger.server_name");
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, plugin);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, ignoredCommands, plugin);
             try {
                 discordBot.start();
                 Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
@@ -167,27 +165,19 @@ public class Main extends JavaPlugin implements Listener {
 
         suggestionCommand = new SuggestionCommand(discordBot, channelId, threadId, suggestionMessage,
                 noPermissionMessage, suggestionUsageMessage, responseMessage, cooldown, title, description, footer, color, listThumbnailUrl, config);
-
-        // Register the SuggestionCommand as a command executor
         getCommand("suggest").setExecutor(suggestionCommand);
         getCommand("suggestion").setExecutor(suggestionCommand);
 
-        // Register the SuggestionCommand as a listener to handle the suggestion sent event
         getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
-        // Report Webhook
-        String ReportWebhookUrl = config.getString("webhook-url");
-        String username = config.getString("username");
-        String avatarUrl = config.getString("avatar-url");
-        boolean isReportEnabled = config.getBoolean("enabled");
-        String reportMessage = config.getString("report-message");
-        int cooldownSeconds = config.getInt("cooldown-seconds");
-        String reportSentMessage = config.getString("report-sent-message");
-        String usageMessage = config.getString("usage-message");
-        ReportCommand reportCommand = new ReportCommand(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, FileConfiguration);
+        // Report Command
+        ReportCommand reportCommand = new ReportCommand(config.getString("report.webhookUrl"),
+                config.getString("report.username"), config.getString("report.avatarUrl"),
+                config.getBoolean("report.enabled"), config.getString("report.message"),
+                config.getInt("report.cooldown"), config.getString("report.sent-message"),
+                config.getString("report.no-permission-message"), config.getString("report.command-usage"), config);
         Bukkit.getPluginManager().registerEvents(reportCommand, this);
         getCommand("report").setExecutor(reportCommand);
         // JoinLeave - Command Logger Webhook
-        this.ignoredCommands = getConfig().getStringList("ignored_commands");
         List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
         List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         this.joinWebhookUrl = getConfig().getString("joinWebhookUrl");
@@ -197,7 +187,7 @@ public class Main extends JavaPlugin implements Listener {
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.JoinLeaveLogger = new JoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
-        DLogger = new CommandLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId);
+        DLogger = new CommandLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId, ignoredCommands);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.JoinLeaveLogger, this);
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
@@ -235,38 +225,6 @@ public class Main extends JavaPlugin implements Listener {
         return false;
     }
 
-    @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (!event.getPlayer().hasPermission("commandlogger.log") || event.getPlayer().hasPermission("commandlogger.bypass"))
-            return;
-        String[] args = event.getMessage().split(" ");
-        String command = args[0];
-        if (isIgnoredCommand(command))
-            return;
-        if (getConfig().getBoolean("whitelist_enabled")) {
-            List<String> whitelistedCommands = getConfig().getStringList("whitelisted_commands");
-            if (!isWhitelistedCommand(command, whitelistedCommands))
-                return;
-        }
-        String playerName = event.getPlayer().getName();
-        this.DLogger.logCommand(event.getMessage(), playerName);
-    }
-
-    private boolean isIgnoredCommand(String command) {
-        for (String ignored : this.ignoredCommands) {
-            if (ignored.equalsIgnoreCase(command))
-                return true;
-        }
-        return false;
-    }
-
-    private boolean isWhitelistedCommand(String command, List<String> whitelistedCommands) {
-        for (String whitelisted : whitelistedCommands) {
-            if (whitelisted.trim().equalsIgnoreCase(command))
-                return true;
-        }
-        return false;
-    }
 
     public void reloadConfigOptions() {
         reloadConfig();
@@ -338,15 +296,11 @@ public class Main extends JavaPlugin implements Listener {
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActivity = getConfig().getString("bot.discord_activity");
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
-        String ReportWebhookUrl = config.getString("webhook-url");
-        String username = config.getString("username");
-        String avatarUrl = config.getString("avatar-url");
-        boolean isReportEnabled = config.getBoolean("enabled");
-        String reportMessage = config.getString("report-message");
-        int cooldownSeconds = config.getInt("cooldown-seconds");
-        String reportSentMessage = config.getString("report-sent-message");
-        String usageMessage = config.getString("usage-message");
-        reportCommand = new ReportCommand(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, config);
+        reportCommand = new ReportCommand(config.getString("report.webhookUrl"),
+                config.getString("report.username"), config.getString("report.avatarUrl"),
+                config.getBoolean("report.enabled"), config.getString("report.message"),
+                config.getInt("report.cooldown"), config.getString("report.sent-message"),
+                config.getString("report.no-permission-message"), config.getString("report.command-usage"), config);
         // start new Discord bot session if enabled
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
 

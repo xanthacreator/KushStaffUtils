@@ -45,9 +45,10 @@ public class DiscordBot extends ListenerAdapter {
     public String noPlayersTitle;
     public boolean requireAdminRole;
     public boolean logsCommandRequiresAdminRole;
+    public List<String> ignoredCommands;
 
 
-    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole, Plugin plugin) {
+    public DiscordBot(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String serverName, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole, List<String> ignoredCommands, Plugin plugin) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -65,6 +66,7 @@ public class DiscordBot extends ListenerAdapter {
         this.noPlayersTitle = noPlayersTitle;
         this.requireAdminRole = requireAdminRole;
         this.logsCommandRequiresAdminRole = logsCommandRequiresAdminRole;
+        this.ignoredCommands = ignoredCommands;
         this.plugin = plugin;
     }
 
@@ -94,8 +96,6 @@ public class DiscordBot extends ListenerAdapter {
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
         boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
-        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
-        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         boolean enabled = config.getBoolean("bot.discord_to_game_enabled");
         boolean roleIdRequired = config.getBoolean("bot.discord_to_game_roleIdRequired");
         String channelId = config.getString("bot.discord_to_game_channel_id");
@@ -103,15 +103,21 @@ public class DiscordBot extends ListenerAdapter {
         String roleId = config.getString("bot.discord_to_game_roleId");
         boolean logCommands = config.getBoolean("per-user-logging.enabled");
 
+        // Command Logger
+        List<String> ignoredCommands = config.getStringList("commandlogger.ignored_commands");
+        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
+        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
+
         // Event Listeners
         jda.addEventListener(new OnlinePlayersCommand(this, noPlayersTitle, titleFormat, footerFormat, listThumbnailUrl, requireAdminRole));
         jda.addEventListener(new StartStopLogger(this, ServerStatusChannelID));
         jda.addEventListener(new ConsoleCommand(this));
         jda.addEventListener(new HelpCommand(this));
         jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, logCommands, config));
-        jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId));
+        jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId, ignoredCommands));
         jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
-        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole));
+        // Reload Discord Related Config Options
+        jda.addEventListener(new ReloadCommand(this, config, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, ignoredCommands));
     }
 
     @Override
@@ -150,7 +156,7 @@ public class DiscordBot extends ListenerAdapter {
 
 
     // Reload Discord Elements
-    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole) {
+    public void reloadDiscordConfig(String discordToken, boolean discordBotEnabled, Server minecraftServer, String adminRoleID, String discordActivity, Plugin botTask, FileConfiguration config, String ServerStatusChannelID, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole, List<String> ignoredCommands) {
         this.discordToken = discordToken;
         this.discordBotEnabled = discordBotEnabled;
         this.minecraftServer = minecraftServer;
@@ -167,6 +173,7 @@ public class DiscordBot extends ListenerAdapter {
         this.noPlayersTitle = noPlayersTitle;
         this.requireAdminRole = requireAdminRole;
         this.logsCommandRequiresAdminRole = logsCommandRequiresAdminRole;
+        this.ignoredCommands = ignoredCommands;
     }
 
 

@@ -44,12 +44,13 @@ public class ReloadCommand extends ListenerAdapter {
     private String noPlayersTitle;
     private boolean requireAdminRole;
     private boolean logsCommandRequiresAdminRole;
+    private List<String> ignoredCommands;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole) {
+    public ReloadCommand(DiscordBot discordBot, FileConfiguration config, String logChannelId, boolean logAsEmbed, String titleFormat, String footerFormat, String listThumbnailUrl, String noPlayersTitle, boolean requireAdminRole, boolean logsCommandRequiresAdminRole, List<String> ignoredCommands) {
         this.discordBot = discordBot;
         this.config = config;
         this.botTask = discordBot.botTask;
@@ -66,6 +67,7 @@ public class ReloadCommand extends ListenerAdapter {
         this.noPlayersTitle = noPlayersTitle;
         this.requireAdminRole = requireAdminRole;
         this.logsCommandRequiresAdminRole = logsCommandRequiresAdminRole;
+        this.ignoredCommands = ignoredCommands;
     }
 
     @Override
@@ -86,6 +88,7 @@ public class ReloadCommand extends ListenerAdapter {
                 String format = config.getString("bot.discord_to_game_format");
                 String discordToken = config.getString("bot.discord_token");
                 boolean discordBotEnabled = config.getBoolean("bot.enabled");
+                String adminRoleID = config.getString("bot.adminRoleID");
                 String discordActivity = config.getString("bot.discord_activity");
                 String ServerStatusChannelID = config.getString("serverstatus.channel_id");
                 String logChannelId = config.getString("bot.command_log_channel_id");
@@ -96,11 +99,12 @@ public class ReloadCommand extends ListenerAdapter {
                 String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
                 boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
                 boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
+                List<String> ignoredCommands = config.getStringList("commandlogger.ignored_commands");
                 Server minecraftServer = Bukkit.getServer();
                 Bukkit.getScheduler().getPendingTasks().stream()
                         .filter(task -> task.getOwner() == botTask)
                         .forEach(task -> task.cancel());
-                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole);
+                discordBot.reloadDiscordConfig(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, botTask, config, ServerStatusChannelID, logChannelId, logAsEmbed, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, ignoredCommands);
                 discordBot.stop();
 
                 // Reload config strings
@@ -116,6 +120,7 @@ public class ReloadCommand extends ListenerAdapter {
                 this.listThumbnailUrl = listThumbnailUrl;
                 this.noPlayersTitle = listThumbnailUrl;
                 this.requireAdminRole = requireAdminRole;
+                this.ignoredCommands = ignoredCommands;
 
                 EmbedBuilder stoppedEmbed = new EmbedBuilder();
                 stoppedEmbed.setColor(Color.RED);
