@@ -22,18 +22,6 @@ bot:
   discord_activity: "with KushStaffUtils"
 
   #----------------------------------------------------------------
-  # Command Logger Configuration
-  #----------------------------------------------------------------
-  command_log_channel_id: "1067570285999570984"
-  command_log_logAsEmbed: true
-  #command_log_message_formats: (Config Example with thats not an embed or multiple lines)
-  #  - "[%time%] [`%server%`] __**%player%:**__ `%command%`"
-  command_log_message_formats:
-    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
-  command_log_embed_title_formats:
-    - ":information_source: COMMAND LOGGER"
-
-  #----------------------------------------------------------------
   # Log Command Configuration
   #----------------------------------------------------------------
   logsCommand_requireAdminRole: true
@@ -87,7 +75,12 @@ suggestion:
 # Factions Top Announcer
 #----------------------------------------------------------------
 announcer:
+  enabled: false
   webhookUrl: "your-webhook-here"
+  sendEvery: 15
+  title: "Factions Top Announcement"
+  username: "FactionsBot"
+  footer: "Factions Top Logger"
   messages:
     - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
     - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
@@ -101,11 +94,6 @@ announcer:
     - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
     - ""
     - "Join our server to compete!"
-  sendEvery: 15
-  enabled: false
-  title: "Factions Top Announcement"
-  username: "FactionsBot"
-  footer: "Factions Top Logger"
   thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
   avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
   debuggerEnabled: false #Only enabled if debugging is required
@@ -155,16 +143,19 @@ leaveMessage:
 # Command Logger Configuration
 #----------------------------------------------------------------
 commandlogger:
+  # Message format for the message.
+  message_formats:
+    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
+  # Title Format for the message.
+  title_formats:
+    - ":information_source: COMMAND LOGGER"
+  author_message: "%player%"
   # If enabled it will send as an embed message!
-  useEmbed: true
+  logAsEmbed: true
+  # Channel ID for the logging channel
+  channel_id: "CHANNEL_ID_HERE"
   # Gets the Server Name for the %server% placeholder
-  server_name: "ONEBLOCK NATION"
-  # Commands the plugin will ingore
-  ignored_commands:
-    - "/pin"
-    - "/register"
-    - "/login"
-    - "/password"
+  server_name: "Example Server"
 
   #----------------------------------------------------------------
   # Command Logger Whitelist Mode Configuration
@@ -174,24 +165,16 @@ commandlogger:
   whitelist_mode_enabled: false
   # Commands the will be logged if set to true (ignored_commands wont ever be logged)
   whitelisted_commands:
-    - "/kick"
     - "/ipmute"
     - "/ipban"
-    - "/ban"
-    - "/tempban"
-    - "/mute"
-    - "/tempmute"
-    - "/warn"
-    - "/clearchat"
-    - "/gmc"
-    - "/gmsp"
-    - "/co i"
-    - "/co rollback"
-    - "/co"
-    - "/irp restore"
-    - "/irp"
-    - "/invsee"
     - "/kill"
+
+  # Commands the command logger will never log
+  ignored_commands:
+    - "/pin"
+    - "/register"
+    - "/login"
+    - "/password"
 
 #----------------------------------------------------------------
 # Messages Config

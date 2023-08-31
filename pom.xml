@@ -148,6 +148,12 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>1.5.30</version>
         </dependency>
+        <dependency>
+            <groupId>com.yworks</groupId>
+            <artifactId>yguard</artifactId>
+            <version>4.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <profiles>

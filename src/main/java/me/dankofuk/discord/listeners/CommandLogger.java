@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -21,20 +22,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CommandLogger extends ListenerAdapter {
-    private List<String> ignoredCommands;
-    private List<String> messageFormats;
-    private String serverName;
-    private List<String> embedTitleFormats;
+public class CommandLogger extends ListenerAdapter implements Listener {
+    public List<String> ignoredCommands;
+    public List<String> messageFormats;
+    public String serverName;
+    public List<String> embedTitleFormats;
     public boolean logAsEmbed;
     public String logChannelId;
     public DiscordBot discordBot;
     private static CommandLogger instance;
-    private boolean whitelistMode;
-    private List<String> whitelistCommands;
+    public boolean whitelistMode;
+    public List<String> whitelistCommands;
     public FileConfiguration config;
 
-    public CommandLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId, List<String> ignoredCommands) {
+    public CommandLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId, List<String> ignoredCommands, boolean whitelistMode, List<String> whitelistCommands) {
             this.discordBot = discordBot;
             this.messageFormats = messageFormat;
             this.serverName = serverName;
@@ -42,43 +43,12 @@ public class CommandLogger extends ListenerAdapter {
             this.logAsEmbed = logAsEmbed;
             this.logChannelId = logChannelId;
             this.ignoredCommands = ignoredCommands;
+            this.whitelistMode = whitelistMode;
+            this.whitelistCommands = whitelistCommands;
             instance = this;
     }
     public static CommandLogger getInstance() {
         return instance;
-    }
-
-    @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (!event.getPlayer().hasPermission("commandlogger.log") || event.getPlayer().hasPermission("commandlogger.bypass"))
-            return;
-        String[] args = event.getMessage().split(" ");
-        String command = args[0];
-        if (isIgnoredCommand(command))
-            return;
-        if (config.getBoolean("commandlogger.whitelist_mode_enabled")) {
-            List<String> whitelistedCommands = config.getStringList("commandlogger.whitelisted_commands");
-            if (!isWhitelistedCommand(command, whitelistedCommands))
-                return;
-        }
-        String playerName = event.getPlayer().getName();
-        this.logCommand(event.getMessage(), playerName);
-    }
-
-    private boolean isIgnoredCommand(String command) {
-        for (String ignored : ignoredCommands) {
-            if (ignored.equalsIgnoreCase(command))
-                return true;
-        }
-        return false;
-    }
-
-    private boolean isWhitelistedCommand(String command, List<String> whitelistedCommands) {
-        for (String whitelisted : whitelistedCommands) {
-            if (whitelisted.trim().equalsIgnoreCase(command))
-                return true;
-        }
-        return false;
     }
 
     public void logCommand(String command, String playerName) {

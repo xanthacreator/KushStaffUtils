@@ -20,7 +20,9 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,7 +37,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin implements Listener {
-    private CommandLogger DLogger;
+    private CommandLogger commandLogger;
     private List<String> ignoredCommands;
     public String joinWebhookUrl;
     private ReportCommand reportCommand;
@@ -103,25 +105,30 @@ public class Main extends JavaPlugin implements Listener {
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActivity = getConfig().getString("bot.discord_activity");;
         String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
-        String logChannelId = getConfig().getString("bot.command_log_channel_id");
         String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
         String titleFormat = config.getString("bot.listplayers_title_format");
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
-        boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
         boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
-        List<String> ignoredCommands = config.getStringList("commandlogger.ignored_commands");
-        List<String> whitelistCommands = config.getStringList("commandlogger.whitelisted_commands");
-        boolean whitelistMode = config.getBoolean("commandlogger.whitelist_mode_enabled");
-        String serverName = getConfig().getString("commandlogger.server_name");
+        // Command Logger
+        boolean logAsEmbed = config.getBoolean("commandlogger.logAsEmbed");
+        String logChannelId = config.getString("commandlogger.channel_id");
+        List<String> ignoredCommands = config.getStringList("ignored_commands");
+        List<String> whitelistCommands = config.getStringList("whitelisted_commands");
+        boolean whitelistMode = config.getBoolean("whitelist_mode_enabled");
+        String serverName = config.getString("commandlogger.server_name");
+        List<String> messageFormats = config.getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = config.getStringList("commandlogger.title_formats");
+        commandLogger = new CommandLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId, ignoredCommands, whitelistMode, whitelistCommands);
+        Bukkit.getServer().getPluginManager().registerEvents(commandLogger, this);
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
 
-            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, ignoredCommands, plugin);
+            discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, ServerStatusChannelID, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, ignoredCommands, whitelistCommands, whitelistMode, serverName, messageFormats, embedTitleFormats, logChannelId, logAsEmbed, plugin);
             try {
                 discordBot.start();
                 Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
@@ -178,8 +185,6 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(reportCommand, this);
         getCommand("report").setExecutor(reportCommand);
         // JoinLeave - Command Logger Webhook
-        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
-        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         this.joinWebhookUrl = getConfig().getString("joinWebhookUrl");
         this.leaveWebhookUrl = getConfig().getString("leaveWebhookUrl");
         this.joinMessage = (ArrayList<String>) getConfig().getStringList("joinMessage");
@@ -187,7 +192,6 @@ public class Main extends JavaPlugin implements Listener {
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.JoinLeaveLogger = new JoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
-        DLogger = new CommandLogger(discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId, ignoredCommands);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.JoinLeaveLogger, this);
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
@@ -208,7 +212,7 @@ public class Main extends JavaPlugin implements Listener {
     }
 
 
-
+    // reload command
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("stafflogger")) {
             if (!sender.hasPermission("commandlogger.reload")) {
@@ -221,6 +225,40 @@ public class Main extends JavaPlugin implements Listener {
                 return true;
             }
             return false;
+        }
+        return false;
+    }
+
+    // Command Logger Methods
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        if (!event.getPlayer().hasPermission("commandlogger.log") || event.getPlayer().hasPermission("commandlogger.bypass"))
+            return;
+        String[] args = event.getMessage().split(" ");
+        String command = args[0];
+        if (isIgnoredCommand(command))
+            return;
+        if (getConfig().getBoolean("whitelist_mode_enabled")) {
+            List<String> whitelistedCommands = getConfig().getStringList("whitelisted_commands");
+            if (!isWhitelistedCommand(command, whitelistedCommands))
+                return;
+        }
+        String playerName = event.getPlayer().getName();
+        this.commandLogger.logCommand(event.getMessage(), playerName);
+    }
+
+    private boolean isIgnoredCommand(String command) {
+        for (String ignored : getConfig().getStringList("ignored_commands")) {
+            if (ignored.equalsIgnoreCase(command))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isWhitelistedCommand(String command, List<String> whitelistedCommands) {
+        for (String whitelisted : whitelistedCommands) {
+            if (whitelisted.trim().equalsIgnoreCase(command))
+                return true;
         }
         return false;
     }
@@ -255,11 +293,11 @@ public class Main extends JavaPlugin implements Listener {
         List<String> embedTitleFormats = getConfig().getStringList("embed_title_formats");
         boolean logAsEmbed = getConfig().getBoolean("logAsEmbed");
         String logChannelId = getConfig().getString("bot.command_log_channel_id");
-        this.DLogger.reloadLogAsEmbed(logAsEmbed);
-        this.DLogger.reloadMessageFormats(messageFormats);
-        this.DLogger.reloadEmbedTitleFormats(embedTitleFormats);
-        this.DLogger.setServerName(serverName);
-        this.DLogger.reloadLogChannelID(logChannelId);
+        this.commandLogger.reloadLogAsEmbed(logAsEmbed);
+        this.commandLogger.reloadMessageFormats(messageFormats);
+        this.commandLogger.reloadEmbedTitleFormats(embedTitleFormats);
+        this.commandLogger.setServerName(serverName);
+        this.commandLogger.reloadLogChannelID(logChannelId);
         this.useEmbed = getConfig().getBoolean("useEmbed", false);
         this.isEnabled = getConfig().getBoolean("isEnabled", false);
         // Join Leave Logger
