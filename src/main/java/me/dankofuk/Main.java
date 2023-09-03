@@ -1,14 +1,5 @@
 package me.dankofuk;
 
-import java.awt.Color;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import me.clip.placeholderapi.metrics.bukkit.Metrics;
 import me.dankofuk.commands.BugCommand;
 import me.dankofuk.commands.CommandLogViewer;
 import me.dankofuk.commands.ReportCommand;
@@ -23,10 +14,10 @@ import me.dankofuk.listeners.FileCommandLogger;
 import me.dankofuk.listeners.JoinLeaveLogger;
 import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
@@ -35,6 +26,15 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin implements Listener {
     private CommandLogger commandLogger;
@@ -73,15 +73,15 @@ public class Main extends JavaPlugin implements Listener {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         FileConfiguration config = getConfig();
-        int pluginId = 18185;
-        Metrics metrics = new Metrics(this, pluginId);
         PluginManager pluginManager = Bukkit.getPluginManager();
         Plugin placeholderAPI = pluginManager.getPlugin("PlaceholderAPI");
-        if (placeholderAPI == null || !placeholderAPI.isEnabled())
+        if (placeholderAPI == null)
             getLogger().warning("PlaceholderAPI is not installed or enabled. Some placeholders may not work.");
         Plugin vault = pluginManager.getPlugin("Vault");
-        if (vault == null || !vault.isEnabled())
+        if (vault == null)
             getLogger().warning("Vault is not installed or enabled. Some functionality may be limited.");
+        int pluginId = 18185;
+        Metrics metrics = new Metrics(this, pluginId);
         String noPermissionMessage = config.getString("no-permission-message");
         String logsFolder = (new File(getDataFolder(), "logs")).getPath();
         this.fileCommandLogger = new FileCommandLogger(logsFolder);
