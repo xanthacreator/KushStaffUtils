@@ -42,22 +42,21 @@ public class FactionStrike implements Listener, CommandExecutor {
     private FileConfiguration config;
     private Main main;
 
-    public FactionStrike(Main main, String strikeWebhookUrl, String strikeUsername, String strikeAvatarUrl,
-                         boolean isStrikeEnabled, String strikeMessage, String strikeNoPermissionMessage,
-                         String strikeUsageMessage, List<String> strikeCommand, String strikeEmbedTitle,
-                         String strikeThumbnail, FileConfiguration config) {
-
-        this.strikeWebhookUrl = strikeWebhookUrl;
-        this.strikeUsername = strikeUsername;
-        this.strikeAvatarUrl = strikeAvatarUrl;
-        this.isStrikeEnabled = isStrikeEnabled;
-        this.strikeMessage = strikeMessage;
-        this.strikeNoPermissionMessage = strikeNoPermissionMessage;
-        this.strikeUsageMessage = strikeUsageMessage;
-        this.strikeCommand = strikeCommand;
-        this.strikeEmbedTitle = strikeEmbedTitle;
-        this.strikeThumbnail = strikeThumbnail;
+    public FactionStrike(FileConfiguration config) {
         this.config = config;
+    }
+
+    public void accessConfig() {
+        String strikeWebhookUrl = Main.getInstance().getConfig().getString("strike.webhookUrl");
+        String strikeUsername = Main.getInstance().getConfig().getString("strike.username");
+        String strikeAvatarUrl = Main.getInstance().getConfig().getString("strike.avatarUrl");
+        boolean isStrikeEnabled = Main.getInstance().getConfig().getBoolean("strike.enabled");
+        String strikeMessage = Main.getInstance().getConfig().getString("strike.message");
+        String strikeNoPermissionMessage = Main.getInstance().getConfig().getString("strike.noPermissionMessage");
+        String strikeUserMessage = Main.getInstance().getConfig().getString("strike.usageMessage");
+        List<String> strikeCommand = Main.getInstance().getConfig().getStringList("strike.sendCommand");
+        String strikeEmbedTitle = Main.getInstance().getConfig().getString("strike.embedTitle");
+        String strikeThumbnail = Main.getInstance().getConfig().getString("strike.thumbnail");
     }
 
     @Override
@@ -68,23 +67,23 @@ public class FactionStrike implements Listener, CommandExecutor {
 
         Player player = (Player) sender;
         if (!player.hasPermission("commandlogger.strike.use")) {
-            player.sendMessage(ColorUtils.translateColorCodes(strikeNoPermissionMessage));
+            player.sendMessage(ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.noPermissionMessage")));
             return true;
         }
 
-        if (!isStrikeEnabled) {
+        if (!Main.getInstance().getConfig().getBoolean("strike.enabled")) {
             player.sendMessage(ColorUtils.translateColorCodes("&cStrikes are currently disabled."));
             return true;
         }
         if (args.length < 3 || !isInteger(args[1])) {
-            player.sendMessage(ColorUtils.translateColorCodes(this.strikeUsageMessage));
+            player.sendMessage(ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.usageMessage")));
             return true;
         }
         String groupName = args[0];
         int strikeAmount = Integer.parseInt(args[1]);
         String strikeReason = String.join(" ", Arrays.<CharSequence>copyOfRange(args, 2, args.length));
         if (strikeAmount <= 0) {
-            player.sendMessage(ColorUtils.translateColorCodes(this.strikeUsageMessage));
+            player.sendMessage(ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.usageMessage")));
             return true;
 
         }
@@ -94,7 +93,7 @@ public class FactionStrike implements Listener, CommandExecutor {
             this.strikes.put(groupName, strikeAmount);
         }
 
-        for (String cmd : this.strikeCommand) {
+        for (String cmd : Main.getInstance().getConfig().getStringList("strike.sendCommand")) {
             cmd = cmd.replace("%group%", groupName)
                     .replace("%amount%", Integer.toString(strikeAmount))
                     .replace("%reason%", strikeReason)
@@ -115,26 +114,26 @@ public class FactionStrike implements Listener, CommandExecutor {
     private void sendWebhook(Player player, String groupName, int strikeAmount, String strikeReason) {
         CompletableFuture.runAsync(() -> {
             try {
-                URL url = new URL(this.strikeWebhookUrl);
+                URL url = new URL(Main.getInstance().getConfig().getString("strike.webhookUrl"));
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestProperty("User-Agent", "StrikeWebhook");
                 connection.setDoOutput(true);
-                String description = ColorUtils.translateColorCodes(this.strikeMessage
+                String description = ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.message")
                         .replace("%group%", groupName)
                         .replace("%amount%", Integer.toString(strikeAmount))
                         .replace("%reason%", strikeReason)
                         .replace("%staff%", player.getName()));
                 JsonObject json = new JsonObject();
-                json.addProperty("username", this.strikeUsername);
-                json.addProperty("avatar_url", this.strikeAvatarUrl);
+                json.addProperty("username", Main.getInstance().getConfig().getString("strike.username"));
+                json.addProperty("avatar_url", Main.getInstance().getConfig().getString("strike.avatarUrl"));
                 JsonObject embed = new JsonObject();
                 embed.addProperty("description", description);
                 embed.addProperty("color", getColorCode("#FF0000"));
-                embed.addProperty("title", this.strikeEmbedTitle);
+                embed.addProperty("title", Main.getInstance().getConfig().getString("strike.embedTitle"));
                 JsonObject thumbnail = new JsonObject();
-                thumbnail.addProperty("url", this.strikeThumbnail);
+                thumbnail.addProperty("url", Main.getInstance().getConfig().getString("strike.thumbnail"));
                 embed.add("thumbnail", thumbnail);
                 JsonArray embeds = new JsonArray();
                 embeds.add(embed);
@@ -147,10 +146,10 @@ public class FactionStrike implements Listener, CommandExecutor {
                 int responseCode = connection.getResponseCode();
                 String str1 = connection.getResponseMessage();
             } catch (MalformedURLException e) {
-                Bukkit.getLogger().warning("[StrikeWebhook] Invalid webhook URL specified: " + this.strikeWebhookUrl);
+                Bukkit.getLogger().warning("[StrikeWebhook] Invalid webhook URL specified: " + Main.getInstance().getConfig().getString("strike.webhookUrl"));
                 e.printStackTrace();
             } catch (ProtocolException e) {
-                Bukkit.getLogger().warning("[StrikeWebhook] Invalid protocol specified in webhook URL: " + this.strikeWebhookUrl);
+                Bukkit.getLogger().warning("[StrikeWebhook] Invalid protocol specified in webhook URL: " + Main.getInstance().getConfig().getString("strike.webhookUrl"));
                 e.printStackTrace();
             } catch (IOException e) {
                 Bukkit.getLogger().warning("[StrikeWebhook] Error sending message to Discord webhook.");
