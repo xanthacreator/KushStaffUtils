@@ -28,17 +28,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class FactionStrike implements Listener, CommandExecutor {
 
-    private String strikeWebhookUrl;
-    private String strikeUsername;
-    private String strikeAvatarUrl;
-    private boolean isStrikeEnabled;
-    private String strikeMessage;
     private final Map<String, Integer> strikes = new HashMap<>();
-    private String strikeNoPermissionMessage;
-    private String strikeUsageMessage;
-    private List<String> strikeCommand;
-    private String strikeEmbedTitle;
-    private String strikeThumbnail;
     private FileConfiguration config;
     private Main main;
 
@@ -46,7 +36,7 @@ public class FactionStrike implements Listener, CommandExecutor {
         this.config = config;
     }
 
-    public void accessConfig() {
+    public void accessConfigs() {
         String strikeWebhookUrl = Main.getInstance().getConfig().getString("strike.webhookUrl");
         String strikeUsername = Main.getInstance().getConfig().getString("strike.username");
         String strikeAvatarUrl = Main.getInstance().getConfig().getString("strike.avatarUrl");
@@ -170,23 +160,5 @@ public class FactionStrike implements Listener, CommandExecutor {
         } catch (NumberFormatException ex) {
             return false;
         }
-    }
-
-    public void reloadConfigOptions(String strikeWebhookUrl, String strikeUsername, String strikeAvatarUrl,
-                                    boolean isStrikeEnabled, String strikeMessage, String strikeNoPermissionMessage,
-                                    String strikeUsageMessage, List<String> strikeCommand, String strikeEmbedTitle,
-                                    String strikeThumbnail, FileConfiguration config) {
-
-        this.strikeWebhookUrl = strikeWebhookUrl;
-        this.strikeUsername = strikeUsername;
-        this.strikeAvatarUrl = strikeAvatarUrl;
-        this.isStrikeEnabled = isStrikeEnabled;
-        this.strikeMessage = strikeMessage;
-        this.strikeNoPermissionMessage = strikeNoPermissionMessage;
-        this.strikeUsageMessage = strikeUsageMessage;
-        this.strikeCommand = strikeCommand;
-        this.strikeEmbedTitle = strikeEmbedTitle;
-        this.strikeThumbnail = strikeThumbnail;
-        this.config = config;
     }
 }
