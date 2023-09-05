@@ -57,21 +57,6 @@ per-user-logging:
   enabled: true # this logs in KushStaffLogger/logs
 
 #----------------------------------------------------------------
-# Suggestion Command Configuration
-#----------------------------------------------------------------
-suggestion:
-  title: "New Suggestion from %player%"
-  description: "%suggestion%"
-  color: "#94157f"
-  footer: "Submitted by %player% (%player_uuid%)"
-  thumbnail_url: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=4096"
-  channel_id: "1096952523585245195"
-  thread_id: "1096952523585245195" #Coming Soon
-  usage_message: "&cUsage: /suggest <suggestion>"
-  sent_message: "&aYour suggestion (%suggestion%) has been sent!"
-  cooldown: 60
-
-#----------------------------------------------------------------
 # Factions Top Announcer
 #----------------------------------------------------------------
 announcer:
@@ -98,46 +83,6 @@ announcer:
   avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
   debuggerEnabled: false #Only enabled if debugging is required
 
-
-#----------------------------------------------------------------
-# Player Reporting Configuration
-#----------------------------------------------------------------
-report:
-  enabled: false # If disabled it will not work
-  # Chat Reporting Webhook Lang
-  webhookUrl: "your-webhook-here"
-  username: "OBN"
-  avatarUrl: "https://example.com/avatar.png"
-  message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%"
-  # Chat Reporting Lang
-  cooldown: 600 # seconds
-  sent-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour report has been sent!\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fThank you for helping us make the server safer!"
-  no-permission-message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
-  command-usage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/report <player> <reason>\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fPlease use &cImgur&f or &cYoutube&f for proof."
-
-
-#----------------------------------------------------------------
-# Join - Leave Message Logger Configuration
-#----------------------------------------------------------------
-isEnabled: false
-joinWebhookUrl: "your-webhook-here"
-leaveWebhookUrl: "your-webhook-here"
-# Join and leave messages (THESE ARE SEND WHEN A PLAYER JOINS OR LEAVES THE SERVER)
-joinMessage:
-  - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
-  - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
-  - ""
-  - "> :satellite: Server IP > play.servername.net"
-  - "> :computer: Website > www.servername.net"
-  - "> :department_store: Store > store.servername.net"
-leaveMessage:
-  - "> <:dot:1071609577122041856> `%player%` has *left* the server!"
-  - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
-  - ""
-  - "> :satellite: Server IP > play.servername.net"
-  - "> :computer: Website > www.servername.net"
-  - "> :department_store: Store > store.servername.net"
-# If enabled it will send as a embed message!
 
 #----------------------------------------------------------------
 # Command Logger Configuration
@@ -199,106 +144,91 @@ chatwebhook:
 # Strike Command Configuration
 #----------------------------------------------------------------
 strike:
-  enabled: false
-  webhookUrl: "your-webhook-here"
+  enabled: true
+  webhookUrl: "https://discord.com/api/webhooks/1146845972815695902/Z-PyVSYmCMkA6if2u1cVJwLOuZC0EvouL8Oo5PlMBg2b9u5UvJfMKxZy-4pkrdEOlTgJ"
   username: "FactionStrikeBot"
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   embedTitle: ":book: `Faction Strike`"
   message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%\n \n:man_beard: `Striked by:`\n> %staff%"
   thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
-  staffMessage: "&aYou have given &c%group% %amount% &aof strikes for &c%reason%"
+  staffMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYou have given &c%group% %amount% &aof strikes for &c%reason%"
   sendCommand:
     - "me test"
-    - "me test2"
-    - "me test3"
-    - "me test4"
-  noPermissionMessage: "&cYou do not have permission to use this command."
-  usageMessage: "&cUsage: /strike <group> <amount> <reason>"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /strike <group> <amount> <reason>"
 
 #----------------------------------------------------------------
-# Bug Command Configuration
+# Bug Report Command Configuration
 #----------------------------------------------------------------
 bug_report:
-  enabled: false
-  webhookUrl: "https://example.com/your-webhook-url"
+  enabled: true # Set this to true to enable the /strike command
+  webhookUrl: "https://discord.com/api/webhooks/1146845972815695902/Z-PyVSYmCMkA6if2u1cVJwLOuZC0EvouL8Oo5PlMBg2b9u5UvJfMKxZy-4pkrdEOlTgJ"
   thumbnailUrl: "https://example.com/your-thumbnail-url"
   cooldown: 60 # Cooldown time in seconds
   username: "YourBotUsername"
   avatarUrl: "https://example.com/your-avatar-url"
   message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**"
-  noPermissionMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
-  usageMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/bug <report>"
-  responseMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been logged.\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fOverview: &c%reason%"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYou do not have permission to use this command."
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &c/bug <report>"
+  responseMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYour bug report has been logged.\n&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fOverview: &c%reason%"
 
+#----------------------------------------------------------------
+# Player Reporting Command Configuration
+#----------------------------------------------------------------
+report:
+  enabled: true  # Set this to true to enable the /report command
+  webhookUrl: "YOUR_WEBHOOK_URL_HERE"
+  username: "ReportBot"
+  avatarUrl: "YOUR_AVATAR_URL_HERE"
+  message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%"
+  cooldown: 60  # Cooldown in seconds
+  sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour report has been sent!"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /report <player> <reason>"
+
+#----------------------------------------------------------------
+# Player Join/Leave Logger Configuration
+#----------------------------------------------------------------
+player_leave_join_logger:
+  enabled: false  # Set this to true to enable player join/leave logging
+  #----------------------------
+  # Join Message Configuration
+  #----------------------------
+  joinWebhookUrl: "YOUR_JOIN_WEBHOOK_URL_HERE"
+    joinMessage:
+      - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
+      - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
+      - ""
+      - "> :satellite: Server IP > play.servername.net"
+      - "> :computer: Website > www.servername.net"
+      - "> :department_store: Store > store.servername.net"
+  #-----------------------------
+  # Leave Message Configuration
+  #-----------------------------
+  leaveWebhookUrl: "YOUR_LEAVE_WEBHOOK_URL_HERE"
+  leaveMessage:
+    - "> <:dot:1071609577122041856> `%player%` has *left* the server!"
+    - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
+    - ""
+    - "> :satellite: Server IP > play.servername.net"
+    - "> :computer: Website > www.servername.net"
+    - "> :department_store: Store > store.servername.net"
   #----------------------------------------------------------------
-  # Bug Command GUI Configuration
+  # Message Embed Configuration - true = embeded message, false = normal message
   #----------------------------------------------------------------
-  guis:
-  # Main Menu
-    main:
-      title: "Report Menu"
-      filler: "BEDROCK"
-      items:
-        "1":
-          material: "DIRT"
-          title: "New Reports"
-          lore: "Lore here"
-        "2":
-          material: "DIAMOND_BLOCK"
-          title: "User Reports"
-          lore: "Lore here"
-        "3":
-          material: "SIGN"
-          title: "Search Reports"
-          lore: "Lore here"
-    # New Reports Menu
-    new_reports:
-      title: "Report Menu"
-      filler: "BEDROCK"
-      items:
-        "1":
-          material: "DIRT"
-          title: "New Reports"
-          lore: "Lore here"
-        "2":
-          material: "DIAMOND_BLOCK"
-          title: "User Reports"
-          lore: "Lore here"
-        "3":
-          material: "SIGN"
-          title: "Search Reports"
-          lore: "Lore here"
-    # User reports menu
-    user_reports:
-      title: "Report Menu"
-      filler: "BEDROCK"
-      items:
-        "1":
-          material: "DIRT"
-          title: "New Reports"
-          lore: "Lore here"
-        "2":
-          material: "DIAMOND_BLOCK"
-          title: "User Reports"
-          lore: "Lore here"
-        "3":
-          material: "SIGN"
-          title: "Search Reports"
-          lore: "Lore here"
-    # Search Reports Menu
-    search_menu:
-      title: "Report Menu"
-      filler: "BEDROCK"
-      items:
-        "1":
-          material: "DIRT"
-          title: "New Reports"
-          lore: "Lore here"
-        "2":
-          material: "DIAMOND_BLOCK"
-          title: "User Reports"
-          lore: "Lore here"
-        "3":
-          material: "SIGN"
-          title: "Search Reports"
-          lore: "Lore here"
+  useEmbed: true  # Set this to true to use Discord embeds
+
+#----------------------------------------------------------------
+# Suggestion Command Configuration
+#----------------------------------------------------------------
+suggestion:
+  cooldown: 60
+  title: "New Suggestion from %player%"
+  description: "%suggestion%"
+  color: "#94157f"
+  footer: "Submitted by %player% (%player_uuid%)"
+  thumbnailUrl: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=4096"
+  channelId: "1146844174524612638"
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /suggest <suggestion>"
+  sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour suggestion (%suggestion%) has been sent!"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
