@@ -27,9 +27,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -37,37 +35,25 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class Main extends JavaPlugin implements Listener {
-    private CommandLogger commandLogger;
+    private static String logsFolder;
+    private static Main instance;
+    private JDA jda;
+    private Plugin plugin;
+
     private List<String> ignoredCommands;
-    public String joinWebhookUrl;
-    public String leaveWebhookUrl;
-    public ArrayList<String> joinMessage;
-    public ArrayList<String> leaveMessage;
-    public boolean useEmbed;
-    public boolean isEnabled;
-    public boolean isReportEnabled;
+    public FileConfiguration config;
+
+    private CommandLogger commandLogger;
     public JoinLeaveLogger joinLeaveLogger;
     public FileCommandLogger fileCommandLogger;
     public ReportCommand reportCommand;
-    public String reportMessage;
-    public String ReportWebhookUrl;
-    public String username;
-    public String avatarUrl;
-    public int cooldownSeconds;
-    public String UsageMessage;
-    public FileConfiguration FileConfiguration;
     public String reportSentMessage;
-    public String usageMessage;
-    private static Main instance;
     private BugCommand bugCommand;
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
     private StartStopLogger serverStatus;
     private FactionStrike factionStrike;
     private FactionsTopAnnouncer factionsTopAnnouncer;
-    public String logsFolder;
-    private JDA jda;
-    private Plugin plugin;
 
     public void onEnable() {
         getConfig().options().copyDefaults(true);
@@ -103,6 +89,8 @@ public class Main extends JavaPlugin implements Listener {
         boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
         boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
+        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
+        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 System.out.println("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
@@ -124,54 +112,64 @@ public class Main extends JavaPlugin implements Listener {
             Bukkit.getServer().getPluginManager().registerEvents(this.fileCommandLogger, this);
         ChatWebhook chatWebhook = new ChatWebhook(config.getString("chatwebhook.url"), config.getString("chatwebhook.username"), config.getString("chatwebhook.avatarUrl"), config.getString("chatwebhook.message"), config.getBoolean("chatwebhook.enabled"), config);
         getServer().getPluginManager().registerEvents(chatWebhook, this);
-        this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"), config.getBoolean("announcer.debuggerEnabled"));
-        this.factionStrike = new FactionStrike(config);
-        getCommand("strike").setExecutor(this.factionStrike);
-        if (!config.getBoolean("is_bug_enabled")) {
-        getLogger().warning("Bug Command - [Not Enabled]");
-            } else {
-                this.bugCommand = new BugCommand(config);
-                getServer().getPluginManager().registerEvents(this.bugCommand, this);
-                getCommand("bug").setExecutor(this.bugCommand);
-                getLogger().warning("Bug Command - [Enabled]");
+
+        //
+        // New Config - Finished Classes
+        //
+
+        // Factions/Skyblock Top Announcer (Webhook)
+        if (!config.getBoolean("announcer.enabled")) {
+            getLogger().warning("Factions Top Announcer - [Not Enabled]");
+        } else {
+            this.factionsTopAnnouncer = new FactionsTopAnnouncer(config);
+            getLogger().warning("Factions Top Announcer - [Enabled]");
         }
-        String suggestionWebhookUrl = config.getString("suggestion.webhook_url");
-        String suggestionThumbnail = config.getString("suggestion.thumbnail");
-        String channelId = config.getString("suggestion.channel_id");
-        String threadId = config.getString("suggestion.thread_id");
-        String suggestionMessage = config.getString("suggestion.message");
-        String suggestionUsageMessage = config.getString("suggestion.usage_message");
-        String responseMessage = config.getString("suggestion.sent_message");
-        long cooldown = config.getLong("suggestion.cooldown");
-        String title = config.getString("suggestion.title");
-        String description = config.getString("suggestion.description");
-        Color color = Color.decode(config.getString("suggestion.color"));
-        String footer = config.getString("suggestion.footer");
-        String thumbnailUrl = config.getString("suggestion.thumbnail_url");
-        this.suggestionCommand = new SuggestionCommand(this.discordBot, channelId, threadId, suggestionMessage, noPermissionMessage, suggestionUsageMessage, responseMessage, cooldown, title, description, footer, color, listThumbnailUrl, config);
-        getCommand("suggest").setExecutor(this.suggestionCommand);
-        getCommand("suggestion").setExecutor(this.suggestionCommand);
-        getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
-        String ReportWebhookUrl = config.getString("webhook-url");
-        String username = config.getString("username");
-        String avatarUrl = config.getString("avatar-url");
-        boolean isReportEnabled = config.getBoolean("enabled");
-        String reportMessage = config.getString("report-message");
-        int cooldownSeconds = config.getInt("cooldown-seconds");
-        String reportSentMessage = config.getString("report-sent-message");
-        String usageMessage = config.getString("usage-message");
-        ReportCommand reportCommand = new ReportCommand(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, this.FileConfiguration);
-        Bukkit.getPluginManager().registerEvents(reportCommand, this);
-        getCommand("report").setExecutor(reportCommand);
+
+        // Player Report Command (Webhook + Command)
+        if (!config.getBoolean("report.enabled")) {
+            getLogger().warning("Player Reporting Command - [Not Enabled]");
+        } else {
+            this.reportCommand = new ReportCommand(config);
+            getCommand("report").setExecutor(this.factionStrike);
+            Bukkit.getPluginManager().registerEvents(reportCommand, this);
+            getLogger().warning("Player Reporting Command - [Enabled]");
+        }
+        // Strike Command (Webhook + Command)
+        if (!config.getBoolean("strike.enabled")) {
+            getLogger().warning("Strike Command - [Not Enabled]");
+                } else {
+                    this.factionStrike = new FactionStrike(config);
+                    getCommand("strike").setExecutor(this.factionStrike);
+                    getLogger().warning("Strike Command - [Enabled]");
+        }
+        // Bug Report Command (Webhook + Command)
+        if (!config.getBoolean("bug_report.enabled")) {
+            getLogger().warning("Bug Command - [Not Enabled]");
+                } else {
+                    this.bugCommand = new BugCommand(config);
+                    getServer().getPluginManager().registerEvents(this.bugCommand, this);
+                    getCommand("bug").setExecutor(this.bugCommand);
+                    getLogger().warning("Bug Command - [Enabled]");
+            }
+        // Join Leave Logger (Webhooks)
+        if (!config.getBoolean("player_join_leave_logger.enabled")) {
+            getLogger().warning("Player Join Leave Logger - [Not Enabled]");
+        } else {
+            this.joinLeaveLogger = new JoinLeaveLogger(config);
+            getLogger().warning("Player Join Leave Logger - [Enabled]");
+        }
+        // Suggestion Command (Discord Bot + Command)
+        if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Suggestion Command - [Not Enabled] - (Requires Discord Bot enabled)");
+        } else {
+            this.suggestionCommand = new SuggestionCommand(this.discordBot, config);
+            getCommand("suggest").setExecutor(this.suggestionCommand);
+            getCommand("suggestion").setExecutor(this.suggestionCommand);
+            getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
+            getLogger().warning("Suggestion Command - [Enabled]");
+        }
+
         this.ignoredCommands = getConfig().getStringList("ignored_commands");
-        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
-        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
-        this.joinWebhookUrl = getConfig().getString("joinWebhookUrl");
-        this.leaveWebhookUrl = getConfig().getString("leaveWebhookUrl");
-        this.joinMessage = (ArrayList<String>)getConfig().getStringList("joinMessage");
-        this.leaveMessage = (ArrayList<String>)getConfig().getStringList("leaveMessage");
-        this.useEmbed = getConfig().getBoolean("useEmbed", false);
-        this.joinLeaveLogger = new JoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
         this.commandLogger = new CommandLogger(this.discordBot, messageFormats, embedTitleFormats, serverName, logAsEmbed, logChannelId);
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
@@ -258,45 +256,19 @@ public class Main extends JavaPlugin implements Listener {
         this.commandLogger.reloadEmbedTitleFormats(embedTitleFormats);
         this.commandLogger.setServerName(serverName);
         this.commandLogger.reloadLogChannelID(logChannelId);
-        this.useEmbed = getConfig().getBoolean("useEmbed", false);
-        this.isEnabled = getConfig().getBoolean("isEnabled", false);
-        this.joinLeaveLogger.reloadJoinLeaveLogger(this.joinWebhookUrl, this.leaveWebhookUrl, this.joinMessage, this.leaveMessage, this.useEmbed, this.isEnabled);
-        String suggestionWebhookUrl = config.getString("suggestion.webhook_url");
-        String suggestionThumbnail = config.getString("suggestion.thumbnail");
-        String channelId = config.getString("suggestion.channel_id");
-        String threadId = config.getString("suggestion.thread_id");
-        String suggestionMessage = config.getString("suggestion.message");
-        String suggestionUsageMessage = config.getString("suggestion.usage_message");
-        String responseMessage = config.getString("suggestion.sent_message");
-        long cooldown = config.getLong("suggestion.cooldown");
-        String title = config.getString("suggestion.title");
-        String description = config.getString("suggestion.description");
-        Color color = Color.decode(config.getString("suggestion.color"));
-        String footer = config.getString("suggestion.footer");
-        String thumbnailUrl = config.getString("suggestion.thumbnail_url");
-        this.suggestionCommand.reloadConfigOptions(this.discordBot, channelId, threadId, suggestionMessage, noPermissionMessage, suggestionUsageMessage, responseMessage, cooldown, title, description, footer, color, thumbnailUrl);
-        String discordToken = getConfig().getString("bot.discord_token");
-        boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
-        String adminRoleID = getConfig().getString("bot.adminRoleID");
-        String discordActivity = getConfig().getString("bot.discord_activity");
-        String ServerStatusChannelID = getConfig().getString("serverstatus.channel_id");
-        String ReportWebhookUrl = config.getString("webhook-url");
-        String username = config.getString("username");
-        String avatarUrl = config.getString("avatar-url");
-        boolean isReportEnabled = config.getBoolean("enabled");
-        String reportMessage = config.getString("report-message");
-        int cooldownSeconds = config.getInt("cooldown-seconds");
-        String reportSentMessage = config.getString("report-sent-message");
-        String usageMessage = config.getString("usage-message");
-        this.reportCommand = new ReportCommand(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, config);
+        // Discord Bot Stuff
+        this.discordBot.accessConfigs();
         // Instance Reloads
-        this.factionStrike.accessConfig();
-        this.bugCommand.accessConfig();
+        this.factionStrike.accessConfigs();
+        this.bugCommand.accessConfigs();
+        this.reportCommand.accessConfigs();
+        this.joinLeaveLogger.accessConfigs();
+        this.suggestionCommand.accessConfigs();
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
 
-    public String getCommandLoggerFolder() {
-        return this.logsFolder;
+    public static String getCommandLoggerFolder() {
+        return logsFolder;
     }
 
     public static Main getInstance() {
