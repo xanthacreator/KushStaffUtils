@@ -59,7 +59,7 @@ public class Main extends JavaPlugin implements Listener {
     public String reportSentMessage;
     public String usageMessage;
     private static Main instance;
-    private BugCommand BugCommand;
+    private BugCommand bugCommand;
     private SuggestionCommand suggestionCommand;
     private DiscordBot discordBot;
     private StartStopLogger serverStatus;
@@ -127,9 +127,14 @@ public class Main extends JavaPlugin implements Listener {
         this.factionsTopAnnouncer = new FactionsTopAnnouncer(config.getString("announcer.webhookUrl"), config.getStringList("announcer.messages"), config.getLong("announcer.sendEvery"), config.getBoolean("announcer.enabled"), config.getString("announcer.title"), config.getString("announcer.username"), config.getString("announcer.thumbnailUrl"), config.getString("announcer.avatarUrl"), config.getString("announcer.footer"), config.getBoolean("announcer.debuggerEnabled"));
         this.factionStrike = new FactionStrike(config);
         getCommand("strike").setExecutor(this.factionStrike);
-        this.BugCommand = new BugCommand(config.getString("bug_webhook_url"), config.getString("bug_username"), config.getString("bug_avatar_url"), config.getBoolean("is_bug_enabled"), config.getString("bug_message"), config.getString("no_bug_permission_message"), config.getString("bug_usage_message"), config.getString("bug_thumbnail"), config.getLong("bug_cooldown"), config.getString("bug_sent_message"), config);
-        getServer().getPluginManager().registerEvents(this.BugCommand, this);
-        getCommand("bug").setExecutor(this.BugCommand);
+        if (!config.getBoolean("is_bug_enabled")) {
+        getLogger().warning("Bug Command - [Not Enabled]");
+            } else {
+                this.bugCommand = new BugCommand(config);
+                getServer().getPluginManager().registerEvents(this.bugCommand, this);
+                getCommand("bug").setExecutor(this.bugCommand);
+                getLogger().warning("Bug Command - [Enabled]");
+        }
         String suggestionWebhookUrl = config.getString("suggestion.webhook_url");
         String suggestionThumbnail = config.getString("suggestion.thumbnail");
         String channelId = config.getString("suggestion.channel_id");
@@ -240,7 +245,6 @@ public class Main extends JavaPlugin implements Listener {
         FileConfiguration config = getConfig();
         String noPermissionMessage = config.getString("no-permission-message");
         ChatWebhook chatWebhook = new ChatWebhook(config.getString("chatwebhook.url"), config.getString("chatwebhook.username"), config.getString("chatwebhook.avatarUrl"), config.getString("chatwebhook.message"), config.getBoolean("chatwebhook.enabled"), config);
-        this.factionStrike.accessConfig();
         boolean logCommands = getConfig().getBoolean("log_commands");
         this.fileCommandLogger.reloadLogCommands(logCommands);
         String serverName = getConfig().getString("server_name");
@@ -271,17 +275,6 @@ public class Main extends JavaPlugin implements Listener {
         String footer = config.getString("suggestion.footer");
         String thumbnailUrl = config.getString("suggestion.thumbnail_url");
         this.suggestionCommand.reloadConfigOptions(this.discordBot, channelId, threadId, suggestionMessage, noPermissionMessage, suggestionUsageMessage, responseMessage, cooldown, title, description, footer, color, thumbnailUrl);
-        String bugWebhookUrl = config.getString("bug_webhook_url");
-        String bugThumbnail = config.getString("bug_thumbnail");
-        long bugCooldown = config.getLong("bug_cooldown");
-        String bugUsername = config.getString("bug_username");
-        String bugAvatarUrl = config.getString("bug_avatar_url");
-        boolean isBugEnabled = config.getBoolean("is_bug_enabled");
-        String bugMessage = config.getString("bug_message");
-        String bugResponse = config.getString("bug_sent_message");
-        String noBugPermissionMessage = config.getString("no_bug_permission_message");
-        String bugUsageMessage = config.getString("bug_usage_message");
-        this.BugCommand.reloadConfigOptions(bugWebhookUrl, bugUsername, bugAvatarUrl, isBugEnabled, bugMessage, noBugPermissionMessage, bugUsageMessage, bugThumbnail, bugCooldown, bugResponse, config);
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         String adminRoleID = getConfig().getString("bot.adminRoleID");
@@ -296,6 +289,9 @@ public class Main extends JavaPlugin implements Listener {
         String reportSentMessage = config.getString("report-sent-message");
         String usageMessage = config.getString("usage-message");
         this.reportCommand = new ReportCommand(ReportWebhookUrl, username, avatarUrl, isReportEnabled, reportMessage, cooldownSeconds, reportSentMessage, noPermissionMessage, usageMessage, config);
+        // Instance Reloads
+        this.factionStrike.accessConfig();
+        this.bugCommand.accessConfig();
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
 
