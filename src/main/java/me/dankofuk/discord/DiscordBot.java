@@ -110,7 +110,7 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, logCommands, this.config));
         this.jda.addEventListener(new CommandLogger(this, messageFormats, embedTitleFormats, this.serverName, this.logAsEmbed, this.logChannelId));
         this.jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
-        this.jda.addEventListener(new ReloadCommand(this, config, botTask));
+        this.jda.addEventListener(new ReloadCommand(config));
     }
 
     public void onGuildReady(@NotNull GuildReadyEvent event) {
