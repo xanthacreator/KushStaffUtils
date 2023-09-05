@@ -218,13 +218,87 @@ strike:
 #----------------------------------------------------------------
 # Bug Command Configuration
 #----------------------------------------------------------------
-bug_webhook_url: "your-webhook-here"
-bug_username: "BUG REPORT"
-bug_thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
-bug_avatar_url: "https://example.com/bug-avatar.png"
-is_bug_enabled: false
-bug_cooldown: 30
-bug_message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**"
-no_bug_permission_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
-bug_usage_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/bug <report>"
-bug_sent_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been logged.\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fOverview: &c%reason%"
+bug_report:
+  enabled: false
+  webhookUrl: "https://example.com/your-webhook-url"
+  thumbnailUrl: "https://example.com/your-thumbnail-url"
+  cooldown: 60 # Cooldown time in seconds
+  username: "YourBotUsername"
+  avatarUrl: "https://example.com/your-avatar-url"
+  message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**"
+  noPermissionMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to use this command."
+  usageMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &c/bug <report>"
+  responseMessage: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYour bug report has been logged.\n&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fOverview: &c%reason%"
+
+  #----------------------------------------------------------------
+  # Bug Command GUI Configuration
+  #----------------------------------------------------------------
+  guis:
+  # Main Menu
+    main:
+      title: "Report Menu"
+      filler: "BEDROCK"
+      items:
+        "1":
+          material: "DIRT"
+          title: "New Reports"
+          lore: "Lore here"
+        "2":
+          material: "DIAMOND_BLOCK"
+          title: "User Reports"
+          lore: "Lore here"
+        "3":
+          material: "SIGN"
+          title: "Search Reports"
+          lore: "Lore here"
+    # New Reports Menu
+    new_reports:
+      title: "Report Menu"
+      filler: "BEDROCK"
+      items:
+        "1":
+          material: "DIRT"
+          title: "New Reports"
+          lore: "Lore here"
+        "2":
+          material: "DIAMOND_BLOCK"
+          title: "User Reports"
+          lore: "Lore here"
+        "3":
+          material: "SIGN"
+          title: "Search Reports"
+          lore: "Lore here"
+    # User reports menu
+    user_reports:
+      title: "Report Menu"
+      filler: "BEDROCK"
+      items:
+        "1":
+          material: "DIRT"
+          title: "New Reports"
+          lore: "Lore here"
+        "2":
+          material: "DIAMOND_BLOCK"
+          title: "User Reports"
+          lore: "Lore here"
+        "3":
+          material: "SIGN"
+          title: "Search Reports"
+          lore: "Lore here"
+    # Search Reports Menu
+    search_menu:
+      title: "Report Menu"
+      filler: "BEDROCK"
+      items:
+        "1":
+          material: "DIRT"
+          title: "New Reports"
+          lore: "Lore here"
+        "2":
+          material: "DIAMOND_BLOCK"
+          title: "User Reports"
+          lore: "Lore here"
+        "3":
+          material: "SIGN"
+          title: "Search Reports"
+          lore: "Lore here"
