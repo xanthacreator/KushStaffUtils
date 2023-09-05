@@ -38,10 +38,7 @@ public class SuggestionCommand extends ListenerAdapter implements CommandExecuto
     }
 
     public void accessConfigs() {
-        String suggestionWebhookUrl = Main.getInstance().getConfig().getString("suggestion.webhookUrl");
-        String suggestionThumbnail = Main.getInstance().getConfig().getString("suggestion.thumbnail");
         String channelId = Main.getInstance().getConfig().getString("suggestion.channelId");
-        String suggestionMessage = Main.getInstance().getConfig().getString("suggestion.message");
         String suggestionUsageMessage = Main.getInstance().getConfig().getString("suggestion.usageMessage");
         String responseMessage = Main.getInstance().getConfig().getString("suggestion.sentMessage");
         long cooldown = Main.getInstance().getConfig().getLong("suggestion.cooldown");
