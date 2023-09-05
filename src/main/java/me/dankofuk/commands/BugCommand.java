@@ -33,7 +33,7 @@ public class BugCommand implements Listener, CommandExecutor {
         this.config = config;
     }
 
-    public void accessConfig() {
+    public void accessConfigs() {
         String bugWebhookUrl = Main.getInstance().getConfig().getString("bug_report.webhookUrl");
         String bugThumbnail = Main.getInstance().getConfig().getString("bug_report.thumbnailUrl");
         long bugCooldown = Main.getInstance().getConfig().getLong("bug_report.cooldown");;
