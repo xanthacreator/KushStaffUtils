@@ -34,12 +34,11 @@ public class CommandLogger extends ListenerAdapter {
     }
 
     public void accessConfigs() {
-        String serverName = Main.getInstance().getConfig().getString("server_name");
-        List<String> ignoredCommands = Main.getInstance().getConfig().getStringList("ignored_commands");
-        List<String> messageFormats = Main.getInstance().getConfig().getStringList("message_formats");
-        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("embed_title_formats");
-        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("bot.command_log_logAsEmbed");
-        String logChannelId = Main.getInstance().getConfig().getString("bot.command_log_channel_id");
+        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
     }
 
     public static CommandLogger getInstance() {
@@ -53,16 +52,16 @@ public class CommandLogger extends ListenerAdapter {
             List<String> messages = new ArrayList<>();
             List<String> embedTitles = new ArrayList<>();
             long time = System.currentTimeMillis() / 1000L;
-            for (String messageFormat : Main.getInstance().getConfig().getStringList("message_formats")) {
+            for (String messageFormat : Main.getInstance().getConfig().getStringList("commandlogger.message_formats")) {
                 String message = messageFormat.replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>").replace("%server%", Main.getInstance().getConfig().getString("server_name")).replace("%command%", command);
                 messages.add(message);
             }
-            for (String embedTitleFormat : Main.getInstance().getConfig().getStringList("embed_title_formats")) {
+            for (String embedTitleFormat : Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats")) {
                 String embedTitle = embedTitleFormat.replace("%player%", playerName).replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())).replace("%server%", Main.getInstance().getConfig().getString("server_name")).replace("%command%", command);
                 embedTitles.add(embedTitle);
             }
             String playerHeadUrl = getPlayerHeadUrl(playerName);
-            sendToDiscord(messages, embedTitles, playerHeadUrl, this.discordBot, Main.getInstance().getConfig().getString("bot.command_log_channel_id"));
+            sendToDiscord(messages, embedTitles, playerHeadUrl, this.discordBot, Main.getInstance().getConfig().getString("commandlogger.channel_id"));
         });
     }
 
@@ -85,21 +84,21 @@ public class CommandLogger extends ListenerAdapter {
 
     private void sendToDiscord(List<String> messages, List<String> embedTitles, String playerHeadUrl, DiscordBot jda, String logChannelId) {
         CompletableFuture.runAsync(() -> {
-            if (logChannelId == null || logChannelId.isEmpty()) {
+            if (Main.getInstance().getConfig().getString("commandlogger.channel_id") == null || Main.getInstance().getConfig().getString("commandlogger.channel_id").isEmpty()) {
                 Bukkit.getLogger().warning("[DiscordLogger] No log channel specified.");
                 return;
             }
             try {
-                TextChannel channel = this.discordBot.getJda().getTextChannelById(logChannelId);
+                TextChannel channel = this.discordBot.getJda().getTextChannelById(Main.getInstance().getConfig().getString("commandlogger.channel_id"));
                 if (channel == null) {
-                    Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + logChannelId);
+                    Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + Main.getInstance().getConfig().getString("commandlogger.channel_id"));
                     return;
                 }
                 for (int i = 0; i < messages.size(); i++) {
                     String message = messages.get(i);
                     String embedTitle = embedTitles.get(i);
                     if (!isJavaPlayer(playerHeadUrl)) {
-                        if (Main.getInstance().getConfig().getBoolean("bot.command_log_logAsEmbed")) {
+                        if (Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
                             EmbedBuilder embedBuilder = new EmbedBuilder();
                             embedBuilder.setTitle(embedTitle);
                             embedBuilder.setDescription(message);
@@ -107,7 +106,7 @@ public class CommandLogger extends ListenerAdapter {
                         } else {
                             channel.sendMessage(message).queue();
                         }
-                    } else if (Main.getInstance().getConfig().getBoolean("bot.command_log_logAsEmbed")) {
+                    } else if (Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
                         EmbedBuilder embedBuilder = new EmbedBuilder();
                         embedBuilder.setTitle(embedTitle);
                         embedBuilder.setDescription(message);
@@ -118,7 +117,7 @@ public class CommandLogger extends ListenerAdapter {
                     }
                 }
             } catch (NumberFormatException e) {
-                Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + logChannelId);
+                Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + Main.getInstance().getConfig().getString("commandlogger.channel_id"));
                 e.printStackTrace();
             } catch (Exception e) {
                 Bukkit.getLogger().warning("[DiscordLogger] Error sending message to Discord.");
