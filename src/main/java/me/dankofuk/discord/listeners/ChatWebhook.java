@@ -2,6 +2,7 @@ package me.dankofuk.discord.listeners;
 
 import com.google.gson.JsonObject;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.dankofuk.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,26 +15,27 @@ import org.json.simple.JSONObject;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 public class ChatWebhook implements Listener {
+    private Main main;
+    public FileConfiguration config;
 
-    private String chatWebhookUrl;
-    private String chatUsername;
-    private String chatAvatarUrl;
-    private String chatMessageFormat;
-    private boolean enabled;
+    public ChatWebhook(FileConfiguration config) {
+        this.config = config;
+    }
 
-    public ChatWebhook(String chatWebhookUrl, String chatUsername, String chatAvatarUrl, String chatMessageFormat, boolean enabled, FileConfiguration config) {
-        this.chatWebhookUrl = chatWebhookUrl;
-        this.chatUsername = chatUsername;
-        this.chatAvatarUrl = chatAvatarUrl;
-        this.chatMessageFormat = chatMessageFormat;
-        this.enabled = enabled;
+    public void accessConfigs() {
+        String chatWebhookUrl = Main.getInstance().getConfig().getString("chatwebhook.webhookUrl");
+        String chatUsername = Main.getInstance().getConfig().getString("chatwebhook.username");
+        String chatAvatarUrl = Main.getInstance().getConfig().getString("chatwebhook.avatarUrl");
+        String chatMessageFormat = Main.getInstance().getConfig().getString("chatwebhook.message");
+        boolean enabled = Main.getInstance().getConfig().getBoolean("chatwebhook.enabled");
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (!enabled) {
+        if (!Main.getInstance().getConfig().getBoolean("chatwebhook.enabled")) {
             return;
         }
 
@@ -46,7 +48,7 @@ public class ChatWebhook implements Listener {
             message = PlaceholderAPI.setPlaceholders(player, message);
         }
 
-        String webhookMessage = PlaceholderAPI.setPlaceholders(event.getPlayer(), chatMessageFormat);
+        String webhookMessage = PlaceholderAPI.setPlaceholders(event.getPlayer(), Objects.requireNonNull(Main.getInstance().getConfig().getString("chatwebhook.message")));
         webhookMessage = webhookMessage
                 .replace("%player%", playerName)
                 .replace("%message%", message);
@@ -61,7 +63,7 @@ public class ChatWebhook implements Listener {
             webhookMessage = ChatColor.stripColor(webhookMessage);
 
             // Create URL object with your Discord webhook URL
-            URL url = new URL(chatWebhookUrl);
+            URL url = new URL(Objects.requireNonNull(Main.getInstance().getConfig().getString("chatwebhook.webhookUrl")));
 
             // Open a connection to the URL
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -71,22 +73,19 @@ public class ChatWebhook implements Listener {
             connection.setRequestProperty("User-Agent", "ChatLoggerWebhook");
             JSONObject payload = new JSONObject();
             payload.put("content", webhookMessage);
-            payload.put("username", chatUsername);
-            payload.put("avatar_url", chatAvatarUrl);
+            payload.put("username", Main.getInstance().getConfig().getString("chatwebhook.username"));
+            payload.put("avatar_url", Main.getInstance().getConfig().getString("chatwebhook.avatarUrl"));
 
             String payloadString = payload.toString();
 
-            // Write payload string to connection output stream
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(payloadString.getBytes());
                 outputStream.flush();
             }
 
-            // Get response code and message from connection
             int responseCode = connection.getResponseCode();
             String responseMessage = connection.getResponseMessage();
 
-            // Disconnect the connection
             connection.disconnect();
         } catch (Exception e) {
             e.printStackTrace();
