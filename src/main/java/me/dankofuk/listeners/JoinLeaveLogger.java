@@ -55,7 +55,19 @@ public class JoinLeaveLogger implements Listener {
                     connection.setRequestProperty("Content-Type", "application/json");
                     connection.setRequestProperty("User-Agent", "PlayerJoinLeaveWebhook");
                     connection.setDoOutput(true);
-                    String message = Main.getInstance().getConfig().getStringList("player_leave_join_logger.joinMessage").stream().map(line -> PlaceholderAPI.setPlaceholders(player, line)).collect(Collectors.joining("\\n")).replace("%player%", playerName);
+                    String messageKey = "player_leave_join_logger.joinMessage";
+                    String message;
+
+                    if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                        message = Main.getInstance().getConfig().getStringList(messageKey).stream()
+                                .map(line -> PlaceholderAPI.setPlaceholders(player, line))
+                                .collect(Collectors.joining("\\n"));
+                    } else {
+                        message = Main.getInstance().getConfig().getStringList(messageKey).stream()
+                                .collect(Collectors.joining("\\n"));
+                    }
+
+                    message = message.replace("%player%", playerName);
 
                     if (Main.getInstance().getConfig().getBoolean("player_leave_join_logger.useEmbed")) {
                         message = "{\"username\":\"" + playerName + "\",\"embeds\":[{\"description\":\"" + message.replace("\n", "\\n") + "\",\"thumbnail\":{\"url\":\"" + playerHeadUrl + "\"}}]}";
