@@ -17,16 +17,17 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ReloadCommand extends ListenerAdapter {
-    private static DiscordBot discordBot;
-    private static Plugin botTask;
+    private DiscordBot discordBot;
+    private Plugin botTask;
     public FileConfiguration config;
 
     public DiscordBot getDiscordBot() {
         return discordBot;
     }
 
-    public ReloadCommand (FileConfiguration config) {
+    public ReloadCommand (DiscordBot discordBot, FileConfiguration config) {
         this.config = config;
+        this.discordBot = discordBot;
     }
 
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -38,36 +39,34 @@ public class ReloadCommand extends ListenerAdapter {
                 } catch (IOException|org.bukkit.configuration.InvalidConfigurationException e) {
                     e.printStackTrace();
                 }
+
                 Server minecraftServer = Bukkit.getServer();
                 Bukkit.getScheduler().getPendingTasks().stream()
                         .filter(task -> (task.getOwner() == botTask))
                         .forEach(task -> task.cancel());
-                discordBot.accessConfigs();
-                discordBot.stop();
+                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Stopping Discord Bot...");
+
                 EmbedBuilder stoppedEmbed = new EmbedBuilder();
                 stoppedEmbed.setColor(Color.RED);
                 stoppedEmbed.setTitle("Bot stopped!");
                 stoppedEmbed.setDescription(">  `Reloading configuration....`");
                 stoppedEmbed.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
                 event.replyEmbeds(stoppedEmbed.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).queue();
-                try {
-                    discordBot.start();
-                    System.out.println("[KushStaffUtils - Discord Bot] Reloading Discord Bot...");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+                this.discordBot.reloadBot();
+
                 EmbedBuilder startedEmbed = new EmbedBuilder();
                 startedEmbed.setColor(Color.GREEN);
                 startedEmbed.setTitle("Bot started!");
                 startedEmbed.setDescription(">  `Reload Complete!`");
                 startedEmbed.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
-                event.replyEmbeds(startedEmbed.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).queue();
+                event.getChannel().sendMessageEmbeds(startedEmbed.build()).queue();
             } else {
                 EmbedBuilder noPerms = new EmbedBuilder();
                 noPerms.setColor(Color.RED);
                 noPerms.setTitle("Error #NotDankEnough");
                 noPerms.setDescription(">  `You lack the required permissions for this command!`");
-                event.replyEmbeds(noPerms.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).queue();
+                event.getChannel().sendMessageEmbeds(noPerms.build()).queue();
             }
     }
 }
