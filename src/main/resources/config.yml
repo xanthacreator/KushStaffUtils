@@ -60,15 +60,14 @@ serverstatus:
 per-user-logging:
   enabled: true # this logs in KushStaffLogger/logs
 
-server_name: "ONEBLOCK NATION"
-
-# Reload Config Config
-#
-# Change the no permission message!
+#----------------------------------------------------------------
+# Random Messages
+#----------------------------------------------------------------
 no_permission: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to &d/stafflogger&f!"
 
 # Change the no permission message!
 reload_message: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &dThe config files have been reloaded!"
+
 
 # Commands the plugin will ingore
 ignored_commands:
@@ -110,6 +109,17 @@ chatwebhook:
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   message: "[%vault_groups% %player_name%]: %message%"
 
+#----------------------------------------------------------------
+# Command Logger Configuration - Discord Bot Required
+#----------------------------------------------------------------
+commandlogger:
+  server_name: "KushStaffUtils"
+  logAsEmbed: true
+  channel_id: ""
+  message_formats:
+    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
+  title_formats:
+    - ":information_source: COMMAND LOGGER"
 
 #----------------------------------------------------------------
 # Strike Command Configuration
