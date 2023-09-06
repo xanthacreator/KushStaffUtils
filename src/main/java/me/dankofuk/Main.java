@@ -55,6 +55,7 @@ public class Main extends JavaPlugin implements Listener {
     public StartStopLogger serverStatus;
     public FactionStrike factionStrike;
     public FactionsTopAnnouncer factionsTopAnnouncer;
+    public ChatWebhook chatWebhook;
 
     public void onEnable() {
         getConfig().options().copyDefaults(true);
@@ -109,16 +110,22 @@ public class Main extends JavaPlugin implements Listener {
         }
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
-        if (logCommands)
-            Bukkit.getServer().getPluginManager().registerEvents(this.fileCommandLogger, this);
-        ChatWebhook chatWebhook = new ChatWebhook(config.getString("chatwebhook.url"), config.getString("chatwebhook.username"), config.getString("chatwebhook.avatarUrl"), config.getString("chatwebhook.message"), config.getBoolean("chatwebhook.enabled"), config);
-        getServer().getPluginManager().registerEvents(chatWebhook, this);
+        Bukkit.getServer().getPluginManager().registerEvents(this.fileCommandLogger, this);
 
         //
         // New Config - Finished Classes
         //
 
-        // Start/Stop Logger
+        // Chat Webhook (Webhook)
+        if (!config.getBoolean("chatwebhook.enabled")) {
+            getLogger().warning("Chat Logger - [Not Enabled]");
+        } else {
+            this.chatWebhook = new ChatWebhook(config);
+            getServer().getPluginManager().registerEvents(chatWebhook, this);
+            getLogger().warning("Chat Logger - [Enabled]");
+        }
+
+        // Start/Stop Logger (Discord Bot Feature)
         if (!config.getBoolean("serverstatus.enabled")) {
             getLogger().warning("Start/Stop Logger - [Not Enabled]");
         } else {
@@ -262,7 +269,6 @@ public class Main extends JavaPlugin implements Listener {
         reloadConfig();
         FileConfiguration config = getConfig();
         String noPermissionMessage = config.getString("no-permission-message");
-        ChatWebhook chatWebhook = new ChatWebhook(config.getString("chatwebhook.url"), config.getString("chatwebhook.username"), config.getString("chatwebhook.avatarUrl"), config.getString("chatwebhook.message"), config.getBoolean("chatwebhook.enabled"), config);
         boolean logCommands = getConfig().getBoolean("log_commands");
         this.fileCommandLogger.reloadLogCommands(logCommands);
         // Discord Bot Stuff
@@ -288,6 +294,9 @@ public class Main extends JavaPlugin implements Listener {
         }
         if (Main.getInstance().getConfig().getBoolean("announcer.enabled")) {
             factionsTopAnnouncer.reloadAnnouncer();
+        }
+        if (Main.getInstance().getConfig().getBoolean("chatwebhook.enabled")) {
+            chatWebhook.accessConfigs();
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
