@@ -1,5 +1,6 @@
 package me.dankofuk.discord.listeners;
 
+import me.dankofuk.Main;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -22,50 +23,45 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class CommandLogger extends ListenerAdapter implements Listener {
-    public List<String> ignoredCommands;
-    public List<String> messageFormats;
-    public String serverName;
-    public List<String> embedTitleFormats;
-    public boolean logAsEmbed;
-    public String logChannelId;
+public class CommandLogger extends ListenerAdapter {
+    private FileConfiguration config;
     public DiscordBot discordBot;
     private static CommandLogger instance;
-    public boolean whitelistMode;
-    public List<String> whitelistCommands;
-    public FileConfiguration config;
 
-    public CommandLogger(DiscordBot discordBot, List<String> messageFormat, List<String> embedTitleFormat, String serverName, boolean logAsEmbed, String logChannelId, List<String> ignoredCommands, boolean whitelistMode, List<String> whitelistCommands) {
-            this.discordBot = discordBot;
-            this.messageFormats = messageFormat;
-            this.serverName = serverName;
-            this.embedTitleFormats = embedTitleFormat;
-            this.logAsEmbed = logAsEmbed;
-            this.logChannelId = logChannelId;
-            this.ignoredCommands = ignoredCommands;
-            this.whitelistMode = whitelistMode;
-            this.whitelistCommands = whitelistCommands;
-            instance = this;
+    public CommandLogger(DiscordBot discordBot, FileConfiguration config) {
+        this.discordBot = discordBot;
+        this.config = config;
     }
+
+    public void accessConfigs() {
+        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
+    }
+
     public static CommandLogger getInstance() {
         return instance;
     }
+
+
 
     public void logCommand(String command, String playerName) {
         CompletableFuture.runAsync(() -> {
             List<String> messages = new ArrayList<>();
             List<String> embedTitles = new ArrayList<>();
             long time = System.currentTimeMillis() / 1000L;
-            for (String messageFormat : this.messageFormats) {
-                String message = messageFormat.replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>").replace("%server%", serverName).replace("%command%", command);
+            for (String messageFormat : Main.getInstance().getConfig().getStringList("commandlogger.message_formats")) {
+                String message = messageFormat.replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>").replace("%server%", Main.getInstance().getConfig().getString("server_name")).replace("%command%", command);
                 messages.add(message);
             }
-            for (String embedTitleFormat : this.embedTitleFormats) {
-                String embedTitle = embedTitleFormat.replace("%player%", playerName).replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())).replace("%server%", serverName).replace("%command%", command);
+            for (String embedTitleFormat : Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats")) {
+                String embedTitle = embedTitleFormat.replace("%player%", playerName).replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())).replace("%server%", Main.getInstance().getConfig().getString("server_name")).replace("%command%", command);
                 embedTitles.add(embedTitle);
             }
             String playerHeadUrl = getPlayerHeadUrl(playerName);
-            sendToDiscord(messages, embedTitles, playerHeadUrl, discordBot, logChannelId);
+            sendToDiscord(messages, embedTitles, playerHeadUrl, this.discordBot, Main.getInstance().getConfig().getString("commandlogger.channel_id"));
         });
     }
 
@@ -80,58 +76,48 @@ public class CommandLogger extends ListenerAdapter implements Listener {
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject)parser.parse(new InputStreamReader(connection.getInputStream()));
             String playerUuid = json.get("id").toString();
-
-            // Check if the player UUID length matches the format used for Java Edition players
-            if (playerUuid.length() == 32) {
+            if (playerUuid.length() == 32)
                 playerHeadUrl = "https://crafatar.com/avatars/" + playerUuid + "?overlay=head";
-            }
-        } catch (IOException|org.json.simple.parser.ParseException e) {
-            // Handle the exception
-        }
+        } catch (IOException|org.json.simple.parser.ParseException iOException) {}
         return playerHeadUrl;
     }
 
     private void sendToDiscord(List<String> messages, List<String> embedTitles, String playerHeadUrl, DiscordBot jda, String logChannelId) {
         CompletableFuture.runAsync(() -> {
-            if (logChannelId == null || logChannelId.isEmpty()) {
+            if (Main.getInstance().getConfig().getString("commandlogger.channel_id") == null || Main.getInstance().getConfig().getString("commandlogger.channel_id").isEmpty()) {
                 Bukkit.getLogger().warning("[DiscordLogger] No log channel specified.");
                 return;
             }
             try {
-                TextChannel channel = discordBot.getJda().getTextChannelById(logChannelId);
+                TextChannel channel = this.discordBot.getJda().getTextChannelById(Main.getInstance().getConfig().getString("commandlogger.channel_id"));
                 if (channel == null) {
-                    Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + logChannelId);
+                    Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + Main.getInstance().getConfig().getString("commandlogger.channel_id"));
                     return;
                 }
                 for (int i = 0; i < messages.size(); i++) {
                     String message = messages.get(i);
                     String embedTitle = embedTitles.get(i);
-
                     if (!isJavaPlayer(playerHeadUrl)) {
-                        // If it's a Bedrock player, remove the thumbnail
-                        if (logAsEmbed) {
+                        if (Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
                             EmbedBuilder embedBuilder = new EmbedBuilder();
                             embedBuilder.setTitle(embedTitle);
                             embedBuilder.setDescription(message);
-                            channel.sendMessageEmbeds(embedBuilder.build()).queue();
+                            channel.sendMessageEmbeds(embedBuilder.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).queue();
                         } else {
                             channel.sendMessage(message).queue();
                         }
+                    } else if (Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
+                        EmbedBuilder embedBuilder = new EmbedBuilder();
+                        embedBuilder.setTitle(embedTitle);
+                        embedBuilder.setDescription(message);
+                        embedBuilder.setThumbnail(playerHeadUrl);
+                        channel.sendMessageEmbeds(embedBuilder.build(), new net.dv8tion.jda.api.entities.MessageEmbed[0]).queue();
                     } else {
-                        // For Java players, add the thumbnail
-                        if (logAsEmbed) {
-                            EmbedBuilder embedBuilder = new EmbedBuilder();
-                            embedBuilder.setTitle(embedTitle);
-                            embedBuilder.setDescription(message);
-                            embedBuilder.setThumbnail(playerHeadUrl);
-                            channel.sendMessageEmbeds(embedBuilder.build()).queue();
-                        } else {
-                            channel.sendMessage(message).queue();
-                        }
+                        channel.sendMessage(message).queue();
                     }
                 }
             } catch (NumberFormatException e) {
-                Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + logChannelId);
+                Bukkit.getLogger().warning("[DiscordLogger] Invalid log channel ID specified: " + Main.getInstance().getConfig().getString("commandlogger.channel_id"));
                 e.printStackTrace();
             } catch (Exception e) {
                 Bukkit.getLogger().warning("[DiscordLogger] Error sending message to Discord.");
@@ -141,32 +127,11 @@ public class CommandLogger extends ListenerAdapter implements Listener {
     }
 
     private boolean isJavaPlayer(String playerHeadUrl) {
-        // Check if the playerHeadUrl contains the Java Edition player UUID format
         return playerHeadUrl.contains("crafatar.com/avatars/");
-    }
-
-
-    public void reloadMessageFormats(List<String> messageFormats) {
-        this.messageFormats = messageFormats;
-    }
-
-    public void reloadEmbedTitleFormats(List<String> embedTitleFormats) {
-        this.embedTitleFormats = embedTitleFormats;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
-    public void reloadLogChannelID(String logChannelId) {
-        this.logChannelId = logChannelId;
-    }
-
-    public void reloadLogAsEmbed(boolean logAsEmbed) {
-        this.logAsEmbed = logAsEmbed;
     }
 
     public void DLoggerInstance() {
         instance = this;
     }
 }
+

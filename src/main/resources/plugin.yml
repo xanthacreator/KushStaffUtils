@@ -3,8 +3,8 @@ version: '${project.version}'
 main: me.dankofuk.Main
 author: DankOfUK
 description: Made by Exotic Development
-load-after: [InteractiveChat]
-softdepend: [PlaceholderAPI, Vault]
+load-after: [InteractiveChat, AntiCheatReplay]
+softdepend: [PlaceholderAPI, Vault, AntiCheatReplay]
 commands:
   stafflogger:
     description: reloads the config.
@@ -21,5 +21,4 @@ commands:
     aliases: [strikes]
   suggestion:
     description: Make a suggestion
-  suggest:
-    description: make a suggestion
+    aliases: [suggest]
