@@ -48,7 +48,15 @@ public class ChatWebhook implements Listener {
             message = PlaceholderAPI.setPlaceholders(player, message);
         }
 
-        String webhookMessage = PlaceholderAPI.setPlaceholders(event.getPlayer(), Objects.requireNonNull(Main.getInstance().getConfig().getString("chatwebhook.message")));
+        String messageKey = "chatwebhook.message";
+        String webhookMessage;
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            webhookMessage = PlaceholderAPI.setPlaceholders(event.getPlayer(), Main.getInstance().getConfig().getString(messageKey));
+        } else {
+            webhookMessage = Main.getInstance().getConfig().getString(messageKey);
+        }
+
         webhookMessage = webhookMessage
                 .replace("%player%", playerName)
                 .replace("%message%", message);
