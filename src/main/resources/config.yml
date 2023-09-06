@@ -102,7 +102,7 @@ whitelisted_commands:
 
 
 #----------------------------------------------------------------
-# Chat Logger
+# Chat Logger Configuration
 #----------------------------------------------------------------
 chatwebhook:
   enabled: false
