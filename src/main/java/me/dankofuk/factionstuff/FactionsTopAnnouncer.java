@@ -6,9 +6,9 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import me.dankofuk.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,13 +17,14 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class FactionsTopAnnouncer implements Listener {
 
         private Main main;
         private FileConfiguration config;
+        private BukkitTask announcementTask;
 
         public FactionsTopAnnouncer(FileConfiguration config) {
                 this.config = config;
@@ -41,29 +42,41 @@ public class FactionsTopAnnouncer implements Listener {
                 String thumbnailUrl = Main.getInstance().getConfig().getString("announcer.thumbnailUrl");
                 String avatarUrl = Main.getInstance().getConfig().getString("announcer.avatarUrl");
                 String webhookUrl = Main.getInstance().getConfig().getString("announcer.webhookUrl");
-                List<String> messages = Main.getInstance().getConfig().getStringList("announcer.message");
+                List<String> messages = Main.getInstance().getConfig().getStringList("announcer.messages");
                 long announcementInterval = Main.getInstance().getConfig().getLong("announcer.sendInterval") * 20;
                 boolean isEnabled = Main.getInstance().getConfig().getBoolean("announcer.enabled");
         }
 
         private void scheduleAnnouncements() {
-                new BukkitRunnable() {
+                announcementTask = new BukkitRunnable() {
                         @Override
                         public void run() {
                                 if (Main.getInstance().getConfig().getBoolean("announcer.enabled")) {
                                         sendAnnouncement();
                                 }
                         }
-                }.runTaskTimer(Bukkit.getPluginManager().getPlugin("KushStaffUtils"), Main.getInstance().getConfig().getLong("announcer.sendInterval"), Main.getInstance().getConfig().getLong("announcer.sendInterval"));
+                }.runTaskTimer(Bukkit.getPluginManager().getPlugin("KushStaffUtils"), 0L, Main.getInstance().getConfig().getLong("announcer.sendInterval") * 20L); // Delay = 0, Period = sendInterval * 20 ticks
+        }
+
+        public void cancelAnnouncements() {
+                if (announcementTask != null) {
+                        announcementTask.cancel();
+                }
+        }
+
+        public void reloadAnnouncer() {
+                accessConfigs();
+                cancelAnnouncements();
+                scheduleAnnouncements();
         }
 
         private void sendAnnouncement() {
-                if (Main.getInstance().getConfig().getString("announcer.webhookUrl") == null || Main.getInstance().getConfig().getString("announcer.webhookUrl").isEmpty()) {
+                if (Main.getInstance().getConfig().getString("announcer.webhookUrl") == null || Objects.requireNonNull(Main.getInstance().getConfig().getString("announcer.webhookUrl")).isEmpty()) {
                         return; // No webhook URL, nothing to send
                 }
 
                 try {
-                        URL url = new URL(Main.getInstance().getConfig().getString("announcer.webhookUrl"));
+                        URL url = new URL(Objects.requireNonNull(Main.getInstance().getConfig().getString("announcer.webhookUrl")));
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("POST");
                         connection.setRequestProperty("Content-Type", "application/json");
@@ -71,8 +84,14 @@ public class FactionsTopAnnouncer implements Listener {
 
                         connection.setDoOutput(true);
 
-                        String message = Main.getInstance().getConfig().getStringList("announcer.message").stream()
-                                .map(line -> PlaceholderAPI.setPlaceholders(null, line)) // Replace 'player' with the appropriate Player instance
+                        String message = Main.getInstance().getConfig().getStringList("announcer.messages").stream()
+                                .map(line -> {
+                                        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                                                return PlaceholderAPI.setPlaceholders(null, line);
+                                        } else {
+                                                return line;
+                                        }
+                                })
                                 .collect(Collectors.joining("\n"));
 
                         JsonObject json = new JsonObject();
