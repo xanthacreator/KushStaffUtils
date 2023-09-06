@@ -34,7 +34,6 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin botTask;
     public FileConfiguration config;
     public String logChannelId;
-    public CommandLogger commandLogger;
     public boolean logAsEmbed;
     public String titleFormat;
     public String footerFormat;
@@ -111,7 +110,7 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new ConsoleCommand(this));
         this.jda.addEventListener(new HelpCommand(this));
         this.jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, logCommands, this.config));
-        this.jda.addEventListener(new CommandLogger(this, config));
+        this.jda.addEventListener(new CommandLogger(this));
         this.jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
         this.jda.addEventListener(new ReloadCommand(this, config));
     }
