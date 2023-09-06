@@ -164,19 +164,19 @@ public class Main extends JavaPlugin implements Listener {
         // Strike Command (Webhook + Command)
         if (!config.getBoolean("strike.enabled")) {
             getLogger().warning("Strike Command - [Not Enabled]");
-                } else {
-                    this.factionStrike = new FactionStrike(config);
-                    getCommand("strike").setExecutor(this.factionStrike);
-                    getLogger().warning("Strike Command - [Enabled]");
+        } else {
+            this.factionStrike = new FactionStrike(config);
+            getCommand("strike").setExecutor(this.factionStrike);
+            getLogger().warning("Strike Command - [Enabled]");
         }
         // Bug Report Command (Webhook + Command)
         if (!config.getBoolean("bug_report.enabled")) {
             getLogger().warning("Bug Command - [Not Enabled]");
-                } else {
-                    this.bugCommand = new BugCommand(config);
-                    getServer().getPluginManager().registerEvents(this.bugCommand, this);
-                    getCommand("bug").setExecutor(this.bugCommand);
-                    getLogger().warning("Bug Command - [Enabled]");
+        } else {
+            this.bugCommand = new BugCommand(config);
+            getServer().getPluginManager().registerEvents(this.bugCommand, this);
+            getCommand("bug").setExecutor(this.bugCommand);
+            getLogger().warning("Bug Command - [Enabled]");
             }
         // Join Leave Logger (Webhooks)
         if (!config.getBoolean("player_leave_join_logger.enabled")) {
