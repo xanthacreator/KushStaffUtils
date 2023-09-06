@@ -30,7 +30,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -198,11 +197,17 @@ public class Main extends JavaPlugin implements Listener {
             getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
             getLogger().warning("Suggestion Command - [Enabled]");
         }
+        // Command Logger (Discord Feature)
+        if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Command Logger - [Not Enabled] - (Requires Discord Bot enabled)");
+        } else {
+            this.commandLogger = new CommandLogger(this.discordBot);
+            getServer().getPluginManager().registerEvents(this, this);
+            getLogger().warning("Command Logger - [Enabled]");
+        }
 
         this.ignoredCommands = getConfig().getStringList("ignored_commands");
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
-        this.commandLogger = new CommandLogger(this.discordBot, config);
-        Bukkit.getServer().getPluginManager().registerEvents(this, this);
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
     }
 

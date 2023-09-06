@@ -3,6 +3,7 @@ package me.dankofuk.discord;
 import me.dankofuk.Main;
 import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
+import me.dankofuk.discord.listeners.CommandLogger2;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import net.dv8tion.jda.api.JDA;
@@ -34,7 +35,7 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin botTask;
     public FileConfiguration config;
     public String logChannelId;
-    public CommandLogger commandLogger;
+    public CommandLogger2 commandLogger;
     public boolean logAsEmbed;
     public String titleFormat;
     public String footerFormat;
@@ -111,7 +112,7 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new ConsoleCommand(this));
         this.jda.addEventListener(new HelpCommand(this));
         this.jda.addEventListener(new LogsCommand(this, logsCommandRequiresAdminRole, logCommands, this.config));
-        this.jda.addEventListener(new CommandLogger(this, config));
+        this.jda.addEventListener(new CommandLogger(this));
         this.jda.addEventListener(new DiscordChat2Game(enabled, channelId, format, roleIdRequired, roleId));
         this.jda.addEventListener(new ReloadCommand(this, config));
     }
