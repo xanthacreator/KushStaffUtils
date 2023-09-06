@@ -21,9 +21,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -202,11 +200,10 @@ public class Main extends JavaPlugin implements Listener {
             getLogger().warning("Command Logger - [Not Enabled] - (Requires Discord Bot enabled)");
         } else {
             this.commandLogger = new CommandLogger(this.discordBot);
-            getServer().getPluginManager().registerEvents(this, this);
+            getServer().getPluginManager().registerEvents(this.commandLogger, this);
             getLogger().warning("Command Logger - [Enabled]");
         }
 
-        this.ignoredCommands = getConfig().getStringList("ignored_commands");
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
     }
@@ -233,38 +230,6 @@ public class Main extends JavaPlugin implements Listener {
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been disabled!");
     }
 
-    @EventHandler
-    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (!event.getPlayer().hasPermission("commandlogger.log") || event.getPlayer().hasPermission("commandlogger.bypass"))
-            return;
-        String[] args = event.getMessage().split(" ");
-        String command = args[0];
-        if (isIgnoredCommand(command))
-            return;
-        if (getConfig().getBoolean("whitelist_enabled")) {
-            List<String> whitelistedCommands = getConfig().getStringList("whitelisted_commands");
-            if (!isWhitelistedCommand(command, whitelistedCommands))
-                return;
-        }
-        String playerName = event.getPlayer().getName();
-        this.commandLogger.logCommand(event.getMessage(), playerName);
-    }
-
-    private boolean isIgnoredCommand(String command) {
-        for (String ignored : this.ignoredCommands) {
-            if (ignored.equalsIgnoreCase(command))
-                return true;
-        }
-        return false;
-    }
-
-    private boolean isWhitelistedCommand(String command, List<String> whitelistedCommands) {
-        for (String whitelisted : whitelistedCommands) {
-            if (whitelisted.trim().equalsIgnoreCase(command))
-                return true;
-        }
-        return false;
-    }
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("stafflogger")) {
@@ -286,7 +251,7 @@ public class Main extends JavaPlugin implements Listener {
         reloadConfig();
         FileConfiguration config = getConfig();
         loadMessagesConfig();
-        boolean logCommands = getConfig().getBoolean("log_commands");
+        boolean logCommands = getConfig().getBoolean("per-user-logging.enabled");
         this.fileCommandLogger.reloadLogCommands(logCommands);
         // Discord Bot Stuff
         if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
