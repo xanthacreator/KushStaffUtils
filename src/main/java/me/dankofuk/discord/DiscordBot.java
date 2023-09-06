@@ -178,17 +178,17 @@ public class DiscordBot extends ListenerAdapter {
         accessConfigs();
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
-                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
+                Bukkit.getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
             try {
                 start();
-                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
+                Bukkit.getLogger().warning("[Discord Bot] Starting Discord Bot...");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } else {
-            Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
+            Bukkit.getLogger().warning("[Discord Bot] Bot is disabled. Skipping initialization...");
         }
     }
 
