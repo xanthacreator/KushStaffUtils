@@ -94,8 +94,11 @@ public class DiscordBot extends ListenerAdapter {
         boolean discordBotEnabled = Main.getInstance().getConfig().getBoolean("bot.enabled");
         String discordActivity = Main.getInstance().getConfig().getString("bot.discord_activity");
         String ServerStatusChannelID = Main.getInstance().getConfig().getString("serverstatus.channelId");
-        String logChannelId = Main.getInstance().getConfig().getString("bot.command_log_channel_id");
-        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("bot.command_log_logAsEmbed");
+        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
         String titleFormat = Main.getInstance().getConfig().getString("bot.listplayers_title_format");
         String footerFormat = Main.getInstance().getConfig().getString("bot.listplayers_footer_format");
         String listThumbnailUrl = Main.getInstance().getConfig().getString("bot.listplayers_thumbnail_url");
@@ -152,8 +155,11 @@ public class DiscordBot extends ListenerAdapter {
         boolean discordBotEnabled = Main.getInstance().getConfig().getBoolean("bot.enabled");
         String discordActivity = Main.getInstance().getConfig().getString("bot.discord_activity");
         String ServerStatusChannelID = Main.getInstance().getConfig().getString("serverstatus.channelId");
-        String logChannelId = Main.getInstance().getConfig().getString("bot.command_log_channel_id");
-        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("bot.command_log_logAsEmbed");
+        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
         String titleFormat = Main.getInstance().getConfig().getString("bot.listplayers_title_format");
         String footerFormat = Main.getInstance().getConfig().getString("bot.listplayers_footer_format");
         String listThumbnailUrl = Main.getInstance().getConfig().getString("bot.listplayers_thumbnail_url");
