@@ -45,44 +45,17 @@ bot:
   listplayers_thumbnail_url: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=1024"
 
 #----------------------------------------------------------------
-# Server Shutdown/Startup Logger Configuration - WOIP
+# Server Start/StopLogger Configuration - Requires Discord Bot
 #----------------------------------------------------------------
 serverstatus:
-  channel_id: "1096952523585245195"
+  enabled: false
+  channelId: "channel-id-here"
 
 #----------------------------------------------------------------
 # Enable this if you want it to log commands to a file per use! (STORED VIA UUIDS)
 #----------------------------------------------------------------
 per-user-logging:
   enabled: true # this logs in KushStaffLogger/logs
-
-#----------------------------------------------------------------
-# Factions Top Announcer
-#----------------------------------------------------------------
-announcer:
-  enabled: false
-  webhookUrl: "your-webhook-here"
-  sendEvery: 15
-  title: "Factions Top Announcement"
-  username: "FactionsBot"
-  footer: "Factions Top Logger"
-  messages:
-    - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
-    - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
-    - "Factions Top #3: %factionstop_ftop3% - `$%factionstop_ftop3-totalworth%`"
-    - "Factions Top #4: %factionstop_ftop4% - `$%factionstop_ftop4-totalworth%`"
-    - "Factions Top #5: %factionstop_ftop5% - `$%factionstop_ftop5-totalworth%`"
-    - "Factions Top #6: %factionstop_ftop6% - `$%factionstop_ftop6-totalworth%`"
-    - "Factions Top #7: %factionstop_ftop7% - `$%factionstop_ftop7-totalworth%`"
-    - "Factions Top #8: %factionstop_ftop8% - `$%factionstop_ftop8-totalworth%`"
-    - "Factions Top #9: %factionstop_ftop9% - `$%factionstop_ftop9-totalworth%`"
-    - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
-    - ""
-    - "Join our server to compete!"
-  thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
-  avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
-  debuggerEnabled: false #Only enabled if debugging is required
-
 
 #----------------------------------------------------------------
 # Command Logger Configuration
@@ -195,13 +168,13 @@ player_leave_join_logger:
   # Join Message Configuration
   #----------------------------
   joinWebhookUrl: "YOUR_JOIN_WEBHOOK_URL_HERE"
-    joinMessage:
-      - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
-      - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
-      - ""
-      - "> :satellite: Server IP > play.servername.net"
-      - "> :computer: Website > www.servername.net"
-      - "> :department_store: Store > store.servername.net"
+  joinMessage:
+    - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
+    - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
+    - ""
+    - "> :satellite: Server IP > play.servername.net"
+    - "> :computer: Website > www.servername.net"
+    - "> :department_store: Store > store.servername.net"
   #-----------------------------
   # Leave Message Configuration
   #-----------------------------
@@ -232,3 +205,29 @@ suggestion:
   usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /suggest <suggestion>"
   sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour suggestion (%suggestion%) has been sent!"
   noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
+
+#----------------------------------------------------------------
+# Factions Top Announcer
+#----------------------------------------------------------------
+announcer:
+  enabled: true
+  webhookUrl: "your-webhook-url"
+  messages:
+    - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
+    - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
+    - "Factions Top #3: %factionstop_ftop3% - `$%factionstop_ftop3-totalworth%`"
+    - "Factions Top #4: %factionstop_ftop4% - `$%factionstop_ftop4-totalworth%`"
+    - "Factions Top #5: %factionstop_ftop5% - `$%factionstop_ftop5-totalworth%`"
+    - "Factions Top #6: %factionstop_ftop6% - `$%factionstop_ftop6-totalworth%`"
+    - "Factions Top #7: %factionstop_ftop7% - `$%factionstop_ftop7-totalworth%`"
+    - "Factions Top #8: %factionstop_ftop8% - `$%factionstop_ftop8-totalworth%`"
+    - "Factions Top #9: %factionstop_ftop9% - `$%factionstop_ftop9-totalworth%`"
+    - "Factions Top #10: %factionstop_ftop10% - `$%factionstop_ftop10-totalworth%`"
+    - ""
+    - "Join our server to compete!"
+  sendInterval: 60
+  title: "Factions Top Announcement - testerrr"
+  username: "FactionsBot"
+  footer: "Factions Top Logger"
+  thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
