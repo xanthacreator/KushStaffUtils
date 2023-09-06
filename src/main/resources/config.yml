@@ -101,10 +101,12 @@ whitelisted_commands:
   - "/kill"
 
 
-# Chat Webhook - BETA (LOGS GAME CHAT TO DISCORD)
+#----------------------------------------------------------------
+# Chat Logger
+#----------------------------------------------------------------
 chatwebhook:
   enabled: false
-  url: "your-webhook-here"
+  webhookUrl: "your-webhook-here"
   username: "My Bot Username"
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   message: "[%vault_groups% %player_name%]: %message%"
