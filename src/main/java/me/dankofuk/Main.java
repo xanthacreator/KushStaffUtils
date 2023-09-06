@@ -20,6 +20,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -42,6 +43,7 @@ public class Main extends JavaPlugin implements Listener {
 
     private List<String> ignoredCommands;
     public FileConfiguration config;
+    public FileConfiguration messagesConfig;
 
     public StartStopLogger startStopLogger;
     public CommandLogger commandLogger;
@@ -58,10 +60,17 @@ public class Main extends JavaPlugin implements Listener {
     public ChatWebhook chatWebhook;
 
     public void onEnable() {
+        // Loading configuration
+        FileConfiguration config = getConfig();
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
-        FileConfiguration config = getConfig();
+        messagesConfig = loadMessagesConfig();
+        setDefaultMessages();
+
+        // Instance
         instance = this;
+
+        // PAPI/Vault Checker
         PluginManager pluginManager = Bukkit.getPluginManager();
         Plugin placeholderAPI = pluginManager.getPlugin("PlaceholderAPI");
         if (placeholderAPI == null)
@@ -69,9 +78,12 @@ public class Main extends JavaPlugin implements Listener {
         Plugin vault = pluginManager.getPlugin("Vault");
         if (vault == null)
             getLogger().warning("Vault is not installed or enabled. Some functionality may be limited.");
+
+        // bStats
         int pluginId = 18185;
         Metrics metrics = new Metrics(this, pluginId);
-        String noPermissionMessage = config.getString("no-permission-message");
+
+        // Features
         String logsFolder = (new File(getDataFolder(), "logs")).getPath();
         this.fileCommandLogger = new FileCommandLogger(logsFolder);
         boolean logCommands = getConfig().getBoolean("per-user-logging.enabled", true);
@@ -252,12 +264,12 @@ public class Main extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (cmd.getName().equalsIgnoreCase("stafflogger")) {
             if (!sender.hasPermission("commandlogger.reload")) {
-                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(getConfig().getString("no_permission"))));
+                sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("noPermissionMessage")));
                 return true;
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 reloadConfigOptions();
-                sender.sendMessage(ColorUtils.translateColorCodes(getConfig().getString("reload_message")));
+                sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("reloadMessage")));
                 return true;
             }
             return false;
@@ -272,7 +284,9 @@ public class Main extends JavaPlugin implements Listener {
         boolean logCommands = getConfig().getBoolean("log_commands");
         this.fileCommandLogger.reloadLogCommands(logCommands);
         // Discord Bot Stuff
-        discordBot.reloadBot();
+        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
+            discordBot.reloadBot();
+        }
         // Instance Reloads
         if (Main.getInstance().getConfig().getBoolean("strike.enabled")) {
             factionStrike.accessConfigs();
@@ -299,6 +313,28 @@ public class Main extends JavaPlugin implements Listener {
             chatWebhook.accessConfigs();
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
+    }
+
+    private FileConfiguration loadMessagesConfig() {
+        saveResource("messages.yml", false);
+
+        return YamlConfiguration.loadConfiguration(new File(getDataFolder(), "messages.yml"));
+    }
+
+    private void setDefaultMessages() {
+        messagesConfig.addDefault("reloadMessage", "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &dThe config files have been reloaded!");
+        messagesConfig.addDefault("noPermissionMessage", "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to &d/stafflogger&f!");
+
+        messagesConfig.options().copyDefaults(true);
+        saveMessagesConfig();
+    }
+
+    private void saveMessagesConfig() {
+        try {
+            messagesConfig.save(new File(getDataFolder(), "messages.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getCommandLoggerFolder() {
