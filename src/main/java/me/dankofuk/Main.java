@@ -75,23 +75,23 @@ public class Main extends JavaPlugin implements Listener {
         this.fileCommandLogger = new FileCommandLogger(logsFolder);
         boolean logCommands = getConfig().getBoolean("per-user-logging.enabled", true);
         this.fileCommandLogger.reloadLogCommands(logCommands);
-        String serverName = getConfig().getString("server_name");
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         Server minecraftServer = getServer();
         String adminRoleID = getConfig().getString("bot.adminRoleID");
         String discordActivity = getConfig().getString("bot.discord_activity");
         String ServerStatusChannelID = getConfig().getString("serverstatus.channelId");
-        String logChannelId = getConfig().getString("bot.command_log_channel_id");
         String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
         String titleFormat = config.getString("bot.listplayers_title_format");
         String footerFormat = config.getString("bot.listplayers_footer_format");
         String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
-        boolean logAsEmbed = getConfig().getBoolean("bot.command_log_logAsEmbed");
         boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
         boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
-        List<String> messageFormats = config.getStringList("bot.command_log_message_formats");
-        List<String> embedTitleFormats = config.getStringList("bot.command_log_embed_title_formats");
+        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
                 getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
@@ -175,7 +175,6 @@ public class Main extends JavaPlugin implements Listener {
             getLogger().warning("Suggestion Command - [Not Enabled] - (Requires Discord Bot enabled)");
         } else {
             this.suggestionCommand = new SuggestionCommand(this.discordBot, config);
-            getCommand("suggest").setExecutor(this.suggestionCommand);
             getCommand("suggestion").setExecutor(this.suggestionCommand);
             getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
             getLogger().warning("Suggestion Command - [Enabled]");
@@ -269,13 +268,27 @@ public class Main extends JavaPlugin implements Listener {
         // Discord Bot Stuff
         discordBot.reloadBot();
         // Instance Reloads
-        factionStrike.accessConfigs();
-        bugCommand.accessConfigs();
-        reportCommand.accessConfigs();
-        joinLeaveLogger.accessConfigs();
-        suggestionCommand.accessConfigs();
-        commandLogger.accessConfigs();
-        factionsTopAnnouncer.reloadAnnouncer();
+        if (Main.getInstance().getConfig().getBoolean("strike.enabled")) {
+            factionStrike.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("bug_report.enabled")) {
+            bugCommand.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("report.enabled")) {
+            reportCommand.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("player_leave_join_logger.enabled")) {
+            joinLeaveLogger.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
+            suggestionCommand.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
+            commandLogger.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("announcer.enabled")) {
+            factionsTopAnnouncer.reloadAnnouncer();
+        }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
 
