@@ -1,24 +1,29 @@
 package me.dankofuk.discord.listeners;
 
+import me.dankofuk.Main;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.awt.*;
 
 public class StartStopLogger extends ListenerAdapter {
 
-    private final DiscordBot discordBot;
-    private final String ServerStatusChannelID;
+    private DiscordBot discordBot;
+    public Main main;
+    public FileConfiguration config;
     public boolean discordBotEnabled;
 
-    public StartStopLogger(DiscordBot discordBot, String ServerStatusChannelID) {
+    public StartStopLogger(DiscordBot discordBot, FileConfiguration config) {
         this.discordBot = discordBot;
-        this.ServerStatusChannelID = ServerStatusChannelID;
-
     }
 
+    public void accessConfigs() {
+        String serverStatusChannelId = Main.getInstance().getConfig().getString("serverstatus.channelId");
+        boolean enabled = Main.getInstance().getConfig().getBoolean("serverstatus.enabled");
+    }
 
     public void sendStatusUpdateMessage(boolean serverStarted) {
             EmbedBuilder embed = new EmbedBuilder();
@@ -26,7 +31,7 @@ public class StartStopLogger extends ListenerAdapter {
             embed.setTitle(serverStarted ? "\uD83D\uDFE2 Server Started" : "\uD83D\uDED1 Server Shutdown");
             embed.setFooter(serverStarted ? "Server Log" : "Server Log");
 
-            TextChannel channel = discordBot.getJda().getTextChannelById(ServerStatusChannelID);
+            TextChannel channel = discordBot.getJda().getTextChannelById(Main.getInstance().getConfig().getString("serverstatus.channelId"));
             if (channel != null) {
                 channel.sendMessageEmbeds(embed.build()).queue();
             }
