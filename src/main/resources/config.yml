@@ -1,7 +1,4 @@
-# Placeholders
-#----------------------------------------------------------------
-#
-# Placeholders for [Command Logger]
+# Placeholders for Staff Logger Webhook
 # %player% - Player Name
 # %command% - Command it will log
 # %server% - pulls from the config option "server_name"
@@ -12,44 +9,50 @@
 
 
 #----------------------------------------------------------------
-# Discord Bot Settings
+# Discord Bot Configuration
 #----------------------------------------------------------------
 bot:
-  # Main Bot Configuration
-  enabled: true # Enable if you want to use the [Command Logger, List Players, Discord Bot and more]
-  discord_token: "" # Discord Bot Token
-  adminRoleID: "1057520326373801995" # Role ID for admin commands
+  #----------------------------------------------------------------
+  # Discord Bot Settings
+  #----------------------------------------------------------------
+  enabled: false
+  discord_token: "bot-token-here"
+  adminRoleID: "ADMIN_ROLE_ID"
   discord_activity: "with KushStaffUtils"
 
-  #----------------------------------------------------------------
-  # Log Command Configuration
-  #----------------------------------------------------------------
+  # Command Logger Configuration
+  command_log_channel_id: "CHANNEL_ID_HERE"
+  command_log_logAsEmbed: true
+  #command_log_message_formats: (Config Example with thats not an embed or multiple lines)
+  #  - "[%time%] [`%server%`] __**%player%:**__ `%command%`"
+  command_log_message_formats:
+    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
+  command_log_embed_title_formats:
+    - ":information_source: COMMAND LOGGER"
+
+  # Log Commands Configuration
   logsCommand_requireAdminRole: true
 
-  #----------------------------------------------------------------
   # Discord Chat 2 Game Chat Configuration
-  #----------------------------------------------------------------
   discord_to_game_enabled: true
   discord_to_game_roleIdRequired: false
-  discord_to_game_roleId: "967958848369487943" #This is if roleIdRequired is true
-  discord_to_game_channel_id: "1067570285999570984"
+  discord_to_game_roleId: "ROLE_ID_HERE" #This is if roleIdRequired is true
+  discord_to_game_channel_id: "CHANNEL_ID_HERE"
   discord_to_game_format: "&9[Discord] &c%author%: &7%message%"
 
-  #----------------------------------------------------------------
   # List Players Configuration
-  #----------------------------------------------------------------
   listplayers_requireAdminRole: false
-  listplayers_no_players_online_title: "`Online Players`"
+  listplayers_no_players_online_title: "`Online Players - Test`"
   listplayers_title_format: "Players Online `(%online%)` - %time%"
   listplayers_footer_format: "Server IP: play.example.com - Test"
   listplayers_thumbnail_url: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=1024"
 
 #----------------------------------------------------------------
-# Server Start/StopLogger Configuration - Requires Discord Bot
+# Server Shutdown/Startup Logger Configuration - WOIP
 #----------------------------------------------------------------
 serverstatus:
-  enabled: false
-  channelId: "channel-id-here"
+  enabled: true
+  channelId: "1146844174524612638"
 
 #----------------------------------------------------------------
 # Enable this if you want it to log commands to a file per use! (STORED VIA UUIDS)
@@ -57,55 +60,49 @@ serverstatus:
 per-user-logging:
   enabled: true # this logs in KushStaffLogger/logs
 
-#----------------------------------------------------------------
-# Command Logger Configuration
-#----------------------------------------------------------------
-commandlogger:
-  # Message format for the message.
-  message_formats:
-    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
-  # Title Format for the message.
-  title_formats:
-    - ":information_source: COMMAND LOGGER"
-  author_message: "%player%"
-  # If enabled it will send as an embed message!
-  logAsEmbed: true
-  # Channel ID for the logging channel
-  channel_id: "CHANNEL_ID_HERE"
-  # Gets the Server Name for the %server% placeholder
-  server_name: "Example Server"
+server_name: "ONEBLOCK NATION"
 
-  #----------------------------------------------------------------
-  # Command Logger Whitelist Mode Configuration
-  #----------------------------------------------------------------
-  # If false it will log all commands (ignored_commands wont ever be logged)
-  # If true it will only log the command in the whitelist_commands (ignored_commands wont ever be logged)
-  whitelist_mode_enabled: false
-  # Commands the will be logged if set to true (ignored_commands wont ever be logged)
-  whitelisted_commands:
-    - "/ipmute"
-    - "/ipban"
-    - "/kill"
-
-  # Commands the command logger will never log
-  ignored_commands:
-    - "/pin"
-    - "/register"
-    - "/login"
-    - "/password"
-
-#----------------------------------------------------------------
-# Messages Config
-#----------------------------------------------------------------
+# Reload Config Config
+#
 # Change the no permission message!
-no_permission: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fYou do not have permission to &c/stafflogger&f!"
+no_permission: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to &d/stafflogger&f!"
 
 # Change the no permission message!
-reload_message: "&c[&c&lsᴜᴘᴘᴏʀᴛ&c] &8» &fThe config files have been reloaded!"
+reload_message: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &dThe config files have been reloaded!"
 
-#----------------------------------------------------------------
-# Chat Webhook Configuration
-#----------------------------------------------------------------
+# Commands the plugin will ingore
+ignored_commands:
+  - "/pin"
+  - "/register"
+  - "/login"
+  - "/password"
+
+# If false it will log all commands (ignored_commands wont ever be logged)
+# If true it will only log the command in the whitelist_commands (ignored_commands wont ever be logged)
+whitelist_enabled: false
+# Commands the will be logged if set to true (ignored_commands wont ever be logged)
+whitelisted_commands:
+  - "/kick"
+  - "/ipmute"
+  - "/ipban"
+  - "/ban"
+  - "/tempban"
+  - "/mute"
+  - "/tempmute"
+  - "/warn"
+  - "/clearchat"
+  - "/gmc"
+  - "/gmsp"
+  - "/co i"
+  - "/co rollback"
+  - "/co"
+  - "/irp restore"
+  - "/irp"
+  - "/invsee"
+  - "/kill"
+
+
+# Chat Webhook - BETA (LOGS GAME CHAT TO DISCORD)
 chatwebhook:
   enabled: false
   url: "your-webhook-here"
@@ -113,12 +110,13 @@ chatwebhook:
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   message: "[%vault_groups% %player_name%]: %message%"
 
+
 #----------------------------------------------------------------
 # Strike Command Configuration
 #----------------------------------------------------------------
 strike:
-  enabled: true
-  webhookUrl: "https://discord.com/api/webhooks/1146845972815695902/Z-PyVSYmCMkA6if2u1cVJwLOuZC0EvouL8Oo5PlMBg2b9u5UvJfMKxZy-4pkrdEOlTgJ"
+  enabled: false
+  webhookUrl: "YOUR_WEBHOOK_URL"
   username: "FactionStrikeBot"
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   embedTitle: ":book: `Faction Strike`"
@@ -134,8 +132,8 @@ strike:
 # Bug Report Command Configuration
 #----------------------------------------------------------------
 bug_report:
-  enabled: true # Set this to true to enable the /strike command
-  webhookUrl: "https://discord.com/api/webhooks/1146845972815695902/Z-PyVSYmCMkA6if2u1cVJwLOuZC0EvouL8Oo5PlMBg2b9u5UvJfMKxZy-4pkrdEOlTgJ"
+  enabled: false # Set this to true to enable the /strike command
+  webhookUrl: "YOUR_WEBHOOK_URL"
   thumbnailUrl: "https://example.com/your-thumbnail-url"
   cooldown: 60 # Cooldown time in seconds
   username: "YourBotUsername"
@@ -149,7 +147,7 @@ bug_report:
 # Player Reporting Command Configuration
 #----------------------------------------------------------------
 report:
-  enabled: true  # Set this to true to enable the /report command
+  enabled: false  # Set this to true to enable the /report command
   webhookUrl: "YOUR_WEBHOOK_URL_HERE"
   username: "ReportBot"
   avatarUrl: "YOUR_AVATAR_URL_HERE"
@@ -167,7 +165,7 @@ player_leave_join_logger:
   #----------------------------
   # Join Message Configuration
   #----------------------------
-  joinWebhookUrl: "YOUR_JOIN_WEBHOOK_URL_HERE"
+  joinWebhookUrl: "YOUR_WEBHOOK_URL"
   joinMessage:
     - "> <:dot:1071609577122041856> `%player%` has *joined* the server!"
     - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
@@ -178,7 +176,7 @@ player_leave_join_logger:
   #-----------------------------
   # Leave Message Configuration
   #-----------------------------
-  leaveWebhookUrl: "YOUR_LEAVE_WEBHOOK_URL_HERE"
+  leaveWebhookUrl: "YOUR_WEBHOOK_URL"
   leaveMessage:
     - "> <:dot:1071609577122041856> `%player%` has *left* the server!"
     - "> <:dot:1071609577122041856> There are now `%server_online%` players online."
@@ -196,7 +194,7 @@ player_leave_join_logger:
 #----------------------------------------------------------------
 suggestion:
   cooldown: 60
-  title: "New Suggestion from %player%"
+  title: "New Suggestion from %player% adwawd"
   description: "%suggestion%"
   color: "#94157f"
   footer: "Submitted by %player% (%player_uuid%)"
@@ -210,9 +208,10 @@ suggestion:
 # Factions Top Announcer
 #----------------------------------------------------------------
 announcer:
-  enabled: true
-  webhookUrl: "your-webhook-url"
+  enabled: false
+  webhookUrl: "YOUR_WEBHOOK_URL"
   messages:
+    - "awdawdawd"
     - "Factions Top #1: %factionstop_ftop1% - `$%factionstop_ftop1-totalworth%`"
     - "Factions Top #2: %factionstop_ftop2% - `$%factionstop_ftop2-totalworth%`"
     - "Factions Top #3: %factionstop_ftop3% - `$%factionstop_ftop3-totalworth%`"
