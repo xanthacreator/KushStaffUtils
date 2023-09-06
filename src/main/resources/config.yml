@@ -20,16 +20,6 @@ bot:
   adminRoleID: "ADMIN_ROLE_ID"
   discord_activity: "with KushStaffUtils"
 
-  # Command Logger Configuration
-  command_log_channel_id: "CHANNEL_ID_HERE"
-  command_log_logAsEmbed: true
-  #command_log_message_formats: (Config Example with thats not an embed or multiple lines)
-  #  - "[%time%] [`%server%`] __**%player%:**__ `%command%`"
-  command_log_message_formats:
-    - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
-  command_log_embed_title_formats:
-    - ":information_source: COMMAND LOGGER"
-
   # Log Commands Configuration
   logsCommand_requireAdminRole: true
 
@@ -61,47 +51,6 @@ per-user-logging:
   enabled: true # this logs in KushStaffLogger/logs
 
 #----------------------------------------------------------------
-# Random Messages
-#----------------------------------------------------------------
-no_permission: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to &d/stafflogger&f!"
-
-# Change the no permission message!
-reload_message: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &dThe config files have been reloaded!"
-
-
-# Commands the plugin will ingore
-ignored_commands:
-  - "/pin"
-  - "/register"
-  - "/login"
-  - "/password"
-
-# If false it will log all commands (ignored_commands wont ever be logged)
-# If true it will only log the command in the whitelist_commands (ignored_commands wont ever be logged)
-whitelist_enabled: false
-# Commands the will be logged if set to true (ignored_commands wont ever be logged)
-whitelisted_commands:
-  - "/kick"
-  - "/ipmute"
-  - "/ipban"
-  - "/ban"
-  - "/tempban"
-  - "/mute"
-  - "/tempmute"
-  - "/warn"
-  - "/clearchat"
-  - "/gmc"
-  - "/gmsp"
-  - "/co i"
-  - "/co rollback"
-  - "/co"
-  - "/irp restore"
-  - "/irp"
-  - "/invsee"
-  - "/kill"
-
-
-#----------------------------------------------------------------
 # Chat Logger Configuration
 #----------------------------------------------------------------
 chatwebhook:
@@ -117,11 +66,41 @@ chatwebhook:
 commandlogger:
   server_name: "KushStaffUtils"
   logAsEmbed: true
-  channel_id: ""
+  channel_id: "1146844174524612638"
   message_formats:
     - "\n:information_source: __**Player:**__\n> `%player%`\n \n:gear: __**Use Commands:**__\n> `%command%`\n \n:satellite: __**Server:**__\n> `%server%`\n \n:timer: __**Time:**__\n> %time%"
-  title_formats:
+  embed_title_formats:
     - ":information_source: COMMAND LOGGER"
+  # Commands the plugin will ingore
+  ignored_commands:
+    - "/pin"
+    - "/register"
+    - "/login"
+    - "/password"
+
+  # If false it will log all commands (ignored_commands wont ever be logged)
+  # If true it will only log the command in the whitelist_commands (ignored_commands wont ever be logged)
+  whitelist_enabled: true
+  # Commands the will be logged if set to true (ignored_commands wont ever be logged)
+  whitelisted_commands:
+    - "/kick"
+    - "/ipmute"
+    - "/ipban"
+    - "/ban"
+    - "/tempban"
+    - "/mute"
+    - "/tempmute"
+    - "/warn"
+    - "/clearchat"
+    - "/gmc"
+    - "/gmsp"
+    - "/co i"
+    - "/co rollback"
+    - "/co"
+    - "/irp restore"
+    - "/irp"
+    - "/invsee"
+    - "/kill"
 
 #----------------------------------------------------------------
 # Strike Command Configuration

@@ -96,7 +96,10 @@ public class DiscordBot extends ListenerAdapter {
         String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
         List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
         List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        List<String> ignoredCommands = Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
+        List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
         boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        boolean whitelistEnabled = Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
         String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
         String titleFormat = Main.getInstance().getConfig().getString("bot.listplayers_title_format");
         String footerFormat = Main.getInstance().getConfig().getString("bot.listplayers_footer_format");
@@ -157,7 +160,10 @@ public class DiscordBot extends ListenerAdapter {
         String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
         List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
         List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        List<String> ignoredCommands = Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
+        List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
         boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        boolean whitelistEnabled = Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
         String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
         String titleFormat = Main.getInstance().getConfig().getString("bot.listplayers_title_format");
         String footerFormat = Main.getInstance().getConfig().getString("bot.listplayers_footer_format");
@@ -172,17 +178,17 @@ public class DiscordBot extends ListenerAdapter {
         accessConfigs();
         if (config.getBoolean("bot.enabled")) {
             if ("false".equals(discordToken) || discordToken.isEmpty()) {
-                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] No bot token found. Bot initialization skipped.");
+                Bukkit.getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
             try {
                 start();
-                Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Starting Discord Bot...");
+                Bukkit.getLogger().warning("[Discord Bot] Starting Discord Bot...");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } else {
-            Bukkit.getLogger().warning("[KushStaffUtils - Discord Bot] Bot is disabled. Skipping initialization...");
+            Bukkit.getLogger().warning("[Discord Bot] Bot is disabled. Skipping initialization...");
         }
     }
 

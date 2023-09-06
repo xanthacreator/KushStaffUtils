@@ -16,10 +16,13 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class CommandLogger extends ListenerAdapter {
+public class CommandLogger extends ListenerAdapter implements Listener {
     public DiscordBot discordBot;
     private static CommandLogger instance;
 
@@ -32,7 +35,10 @@ public class CommandLogger extends ListenerAdapter {
         String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
         List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
         List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        List<String> ignoredCommands = Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
+        List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
         boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        boolean whitelistEnabled = Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
         String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
     }
 
@@ -118,6 +124,39 @@ public class CommandLogger extends ListenerAdapter {
                 e.printStackTrace();
             }
         });
+    }
+
+    @EventHandler
+    public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        if (!event.getPlayer().hasPermission("commandlogger.log") || event.getPlayer().hasPermission("commandlogger.bypass"))
+            return;
+        String[] args = event.getMessage().split(" ");
+        String command = args[0];
+        if (isIgnoredCommand(command))
+            return;
+        if (Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled")) {
+            List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
+            if (!isWhitelistedCommand(command, whitelistedCommands))
+                return;
+        }
+        String playerName = event.getPlayer().getName();
+        this.logCommand(event.getMessage(), playerName);
+    }
+
+    private boolean isIgnoredCommand(String command) {
+        for (String ignored : Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands")) {
+            if (ignored.equalsIgnoreCase(command))
+                return true;
+        }
+        return false;
+    }
+
+    private boolean isWhitelistedCommand(String command, List<String> whitelistedCommands) {
+        for (String whitelisted : whitelistedCommands) {
+            if (whitelisted.trim().equalsIgnoreCase(command))
+                return true;
+        }
+        return false;
     }
 
     private boolean isJavaPlayer(String playerHeadUrl) {
