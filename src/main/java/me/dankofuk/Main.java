@@ -280,7 +280,7 @@ public class Main extends JavaPlugin implements Listener {
     public void reloadConfigOptions() {
         reloadConfig();
         FileConfiguration config = getConfig();
-        String noPermissionMessage = config.getString("no-permission-message");
+        loadMessagesConfig();
         boolean logCommands = getConfig().getBoolean("log_commands");
         this.fileCommandLogger.reloadLogCommands(logCommands);
         // Discord Bot Stuff
