@@ -3,7 +3,6 @@ package me.dankofuk.discord;
 import me.dankofuk.Main;
 import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
-import me.dankofuk.discord.listeners.CommandLogger2;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import net.dv8tion.jda.api.JDA;
@@ -35,7 +34,6 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin botTask;
     public FileConfiguration config;
     public String logChannelId;
-    public CommandLogger2 commandLogger;
     public boolean logAsEmbed;
     public String titleFormat;
     public String footerFormat;
