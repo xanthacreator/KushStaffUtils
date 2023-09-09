@@ -38,7 +38,6 @@ public class Main extends JavaPlugin implements Listener {
     private JDA jda;
     private Plugin plugin;
 
-    private List<String> ignoredCommands;
     public FileConfiguration config;
     public FileConfiguration messagesConfig;
 
@@ -81,10 +80,7 @@ public class Main extends JavaPlugin implements Listener {
         Metrics metrics = new Metrics(this, pluginId);
 
         // Features
-        String logsFolder = (new File(getDataFolder(), "logs")).getPath();
-        this.fileCommandLogger = new FileCommandLogger(logsFolder);
         boolean logCommands = getConfig().getBoolean("per-user-logging.enabled", true);
-        this.fileCommandLogger.reloadLogCommands(logCommands);
         String discordToken = getConfig().getString("bot.discord_token");
         boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
         Server minecraftServer = getServer();
@@ -119,11 +115,20 @@ public class Main extends JavaPlugin implements Listener {
         }
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
-        Bukkit.getServer().getPluginManager().registerEvents(this.fileCommandLogger, this);
 
         //
         // New Config - Finished Classes
         //
+
+        // FileCommandLogger (Logging Folder)
+        if (!config.getBoolean("per-user-logging.enabled")) {
+            getLogger().warning("Per User Logging - [Not Enabled");
+        } else {
+            String logsFolder = (new File(getDataFolder(), "logs")).getPath();
+            this.fileCommandLogger = new FileCommandLogger(logsFolder);
+            getServer().getPluginManager().registerEvents(fileCommandLogger, this);
+            getLogger().warning("Per User Logging - [Enabled");
+        }
 
         // Chat Webhook (Webhook)
         if (!config.getBoolean("chatwebhook.enabled")) {
@@ -251,8 +256,6 @@ public class Main extends JavaPlugin implements Listener {
         reloadConfig();
         FileConfiguration config = getConfig();
         loadMessagesConfig();
-        boolean logCommands = getConfig().getBoolean("per-user-logging.enabled");
-        this.fileCommandLogger.reloadLogCommands(logCommands);
         // Discord Bot Stuff
         if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
             discordBot.reloadBot();
@@ -281,6 +284,9 @@ public class Main extends JavaPlugin implements Listener {
         }
         if (Main.getInstance().getConfig().getBoolean("chatwebhook.enabled")) {
             chatWebhook.accessConfigs();
+        }
+        if (Main.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
+            fileCommandLogger.accessConfigs();
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
