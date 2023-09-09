@@ -133,7 +133,7 @@ public class WebhookUtils {
                 embedObjects.add(jsonEmbed);
             }
 
-            json.put("embed.creative.", embedObjects.toArray());
+            json.put("embeds", embedObjects.toArray());
         }
 
         URL url = new URL(this.url);
@@ -364,7 +364,7 @@ public class WebhookUtils {
                 } else if (val instanceof Boolean) {
                     builder.append(val);
                 } else if (val instanceof JSONObject) {
-                    builder.append(val.toString());
+                    builder.append(val);
                 } else if (val.getClass().isArray()) {
                     builder.append("[");
                     int len = Array.getLength(val);

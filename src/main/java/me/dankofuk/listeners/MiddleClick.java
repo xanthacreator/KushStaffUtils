@@ -18,14 +18,16 @@ import java.util.logging.Logger;
 
 import static org.bukkit.Bukkit.getLogger;
 
+
+// This class was made by Terrornator - feature suggestion he made
 public class MiddleClick implements Listener {
     @EventHandler
     public void onMiddleClick(InventoryClickEvent e){
         Player p = (Player) e.getWhoClicked();
         Configuration config = Main.getInstance().getConfig();
         Logger log = getLogger();
-        WebhookUtils webhook = new WebhookUtils(config.getString("webhook-url"));
-        if (!p.hasPermission("staffinventory")){
+        WebhookUtils webhook = new WebhookUtils(config.getString("creative-logging.webhook-url"));
+        if (!p.hasPermission("commandlogger.creative-logging.log")){
             return;
         }
         if (!p.getGameMode().equals(GameMode.CREATIVE)){
@@ -41,16 +43,16 @@ public class MiddleClick implements Listener {
             return;
         }
         if (e.getCursor().hasItemMeta()){
-            String displayName = Objects.requireNonNull(e.getCursor().getItemMeta()).getDisplayName().replaceAll("ยง[0-9a-fk-or]", "");
+            String displayName = Objects.requireNonNull(e.getCursor().getItemMeta()).getDisplayName().replaceAll("§[0-9a-fk-or]", "");
             webhook.addEmbed(new WebhookUtils.EmbedObject()
-                    .setTitle(config.getString("embed.creative.title"))
-                    .addField("Player name:", StringUtils.format(config.getString("embed.creative.player"), "%player%", p.getName()),false)
-                    .addField("Item:", StringUtils.format(config.getString("embed.creative.item"), "%item%",e.getCursor().getType().toString()),false)
-                    .addField("Amount:", StringUtils.format(config.getString("embed.creative.amount"),"%amount%", String.valueOf(e.getCursor().getAmount())),false)
-                    .addField("Name of item:", StringUtils.format(config.getString("embed.creative.name"), "%name%", displayName),false)
-                    .addField("Lore:", StringUtils.format(config.getString("embed.creative.lore"), "%lore%", Objects.requireNonNull(e.getCursor().getItemMeta().getLore()).toString().replaceAll("ยง[0-9a-fk-or]", " ")),false)
-                    .addField("Location:", StringUtils.format(config.getString("embed.creative.location"), "%location-x%", String.valueOf(p.getLocation().getX()), "%location-y%", String.valueOf(p.getLocation().getY()), "%location-z%", String.valueOf(p.getLocation().getZ())),false)
-                    .addField("World:", StringUtils.format(config.getString("embed.creative.world"), "%world%", p.getWorld().getName()),false)
+                    .setTitle(config.getString("creative-logging.creative.title"))
+                    .addField("Player name:", StringUtils.format(config.getString("creative-logging.creative.player"), "%player%", p.getName()),false)
+                    .addField("Item:", StringUtils.format(config.getString("creative-logging.creative.item"), "%item%",e.getCursor().getType().toString()),false)
+                    .addField("Amount:", StringUtils.format(config.getString("creative-logging.creative.amount"),"%amount%", String.valueOf(e.getCursor().getAmount())),false)
+                    .addField("Name of item:", StringUtils.format(config.getString("creative-logging.creative.name"), "%name%", displayName),false)
+                    .addField("Lore:", StringUtils.format(config.getString("creative-logging.creative.lore"), "%lore%", Objects.requireNonNull(e.getCursor().getItemMeta().getLore()).toString().replaceAll("ยง[0-9a-fk-or]", " ")),false)
+                    .addField("Location:", StringUtils.format(config.getString("creative-logging.creative.location"), "%location-x%", String.valueOf(p.getLocation().getX()), "%location-y%", String.valueOf(p.getLocation().getY()), "%location-z%", String.valueOf(p.getLocation().getZ())),false)
+                    .addField("World:", StringUtils.format(config.getString("creative-logging.creative.world"), "%world%", p.getWorld().getName()),false)
                     .setThumbnail("https://crafatar.com/avatars/"+p.getUniqueId()+"?overlay=head")
                     .setColor(Color.BLACK));
             try {
@@ -62,12 +64,12 @@ public class MiddleClick implements Listener {
         }
         else{
             webhook.addEmbed(new WebhookUtils.EmbedObject()
-                    .setTitle(config.getString("embed.creative.title"))
-                    .addField("Player name:", StringUtils.format(config.getString("embed.creative.player"), "%player%", p.getName()),false)
-                    .addField("Item:", StringUtils.format(config.getString("embed.creative.item"), "%item%",e.getCursor().getType().toString()),false)
-                    .addField("Amount:", StringUtils.format(config.getString("embed.creative.amount"),"%amount%", String.valueOf(e.getCursor().getAmount())),false)
-                    .addField("Location:", StringUtils.format(config.getString("embed.creative.location"), "%location-x%", String.valueOf(p.getLocation().getX()), "%location-y%", String.valueOf(p.getLocation().getY()), "%location-z%", String.valueOf(p.getLocation().getZ())),false)
-                    .addField("World:", StringUtils.format(config.getString("embed.creative.world"), "%world%", p.getWorld().getName()),false)
+                    .setTitle(config.getString("creative-logging.creative.title"))
+                    .addField("Player name:", StringUtils.format(config.getString("creative-logging.creative.player"), "%player%", p.getName()),false)
+                    .addField("Item:", StringUtils.format(config.getString("creative-logging.creative.item"), "%item%",e.getCursor().getType().toString()),false)
+                    .addField("Amount:", StringUtils.format(config.getString("creative-logging.creative.amount"),"%amount%", String.valueOf(e.getCursor().getAmount())),false)
+                    .addField("Location:", StringUtils.format(config.getString("creative-logging.creative.location"), "%location-x%", String.valueOf(p.getLocation().getX()), "%location-y%", String.valueOf(p.getLocation().getY()), "%location-z%", String.valueOf(p.getLocation().getZ())),false)
+                    .addField("World:", StringUtils.format(config.getString("creative-logging.creative.world"), "%world%", p.getWorld().getName()),false)
                     .setThumbnail("https://crafatar.com/avatars/"+p.getUniqueId()+"?overlay=head")
                     .setColor(Color.BLACK));
             try {

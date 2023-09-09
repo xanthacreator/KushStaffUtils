@@ -196,7 +196,7 @@ suggestion:
   noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
 
 #----------------------------------------------------------------
-# Factions Top Announcer
+# Factions Top Announcer Configuration
 #----------------------------------------------------------------
 announcer:
   enabled: false
@@ -221,3 +221,19 @@ announcer:
   footer: "Factions Top Logger"
   thumbnailUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
   avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+
+#----------------------------------------------------------------
+# Creative Logging Configuration
+#----------------------------------------------------------------
+creative-logging:
+  enabled: true
+  webhook-url: "some link"
+  creative:
+    title: "Creative contorl"
+    player: "%player%"
+    item: "%item%"
+    amount: "%amount%"
+    name: "%name%"
+    lore: "%lore%"
+    world: "%world%"
+    location: "%location-x% %location-y% %location-z%"
