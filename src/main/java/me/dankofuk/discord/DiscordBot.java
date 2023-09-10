@@ -17,7 +17,6 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +43,11 @@ public class DiscordBot extends ListenerAdapter {
         this.jda = JDABuilder.createDefault(Main.getInstance().getConfig().getString("bot.discord_token")).enableIntents(GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS,
                 GatewayIntent.DIRECT_MESSAGE_REACTIONS,
-                GatewayIntent.MESSAGE_CONTENT).addEventListeners(this).setActivity(Activity.playing(Main.getInstance().getConfig().getString("bot.discord_activity"))).build().awaitReady();
+                GatewayIntent.MESSAGE_CONTENT)
+                .addEventListeners(this)
+                .setActivity(Activity.of(Activity.ActivityType.valueOf(Main.getInstance().getConfig().getString("bot.discord_activity_type")), Main.getInstance().getConfig().getString("bot.discord_activity"))) // Set the customizable activity
+                .build()
+                .awaitReady();
 
         // Register Events/Listeners
         this.jda.addEventListener(new OnlinePlayersCommand(this));
