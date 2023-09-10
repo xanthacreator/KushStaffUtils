@@ -100,9 +100,6 @@ public class Main extends JavaPlugin implements Listener {
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
 
-        //
-        // New Config - Finished Classes
-        //
 
         // FileCommandLogger (Logging Folder)
         if (!config.getBoolean("per-user-logging.enabled")) {
