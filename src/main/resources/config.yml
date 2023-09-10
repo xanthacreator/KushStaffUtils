@@ -276,13 +276,23 @@ announcer:
 # %location-x%/%location-y%/%location-z% - Location
 creative-logging:
   enabled: true
-  webhook-url: "some link"
+  webhook-url: "webhook-url-here"
   creative:
-    title: "Creative contorl"
+    title: "Item has been `Middle Clicked/Moved`"
     player: "%player%"
     item: "%item%"
     amount: "%amount%"
     name: "%name%"
     lore: "%lore%"
     world: "%world%"
-    location: "%location-x% %location-y% %location-z%"
+    location: "`X:` %location-x% `Y:` %location-y% `Z:` %location-z%"
+  drop:
+    title: "Item has been `Dropped`"
+    player: "%player%"
+    item: "%item%"
+    amount: "%amount%"
+    name: "%name%"
+    lore: "%lore%"
+    world: "%world%"
+    location: "`X:` %location-x% `Y:` %location-y% `Z:` %location-z%"
+    enchants: "%enchants%"

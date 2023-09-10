@@ -10,14 +10,14 @@ import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import me.dankofuk.factionstuff.FactionStrike;
 import me.dankofuk.factionstuff.FactionsTopAnnouncer;
+import me.dankofuk.listeners.CreativeDropLogger;
 import me.dankofuk.listeners.FileCommandLogger;
 import me.dankofuk.listeners.JoinLeaveLogger;
-import me.dankofuk.listeners.MiddleClick;
+import me.dankofuk.listeners.CreativeMiddleClickLogger;
 import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -28,7 +28,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +54,8 @@ public class Main extends JavaPlugin implements Listener {
     public FactionStrike factionStrike;
     public FactionsTopAnnouncer factionsTopAnnouncer;
     public ChatWebhook chatWebhook;
-    public MiddleClick creativeLogger;
+    public CreativeMiddleClickLogger creativeLogger;
+    public CreativeDropLogger creativeDropLogger;
 
     public void onEnable() {
         // Loading configuration
@@ -191,8 +191,10 @@ public class Main extends JavaPlugin implements Listener {
         if (!config.getBoolean("creative-logging.enabled")) {
             getLogger().warning("Creative Logging - [Not Enabled]");
         } else {
-            this.creativeLogger = new MiddleClick();
+            this.creativeLogger = new CreativeMiddleClickLogger();
+            this.creativeDropLogger = new CreativeDropLogger();
             getServer().getPluginManager().registerEvents(this.creativeLogger, this);
+            getServer().getPluginManager().registerEvents(this.creativeDropLogger, this);
             getLogger().warning("Creative Logging - [Enabled]");
         }
 
