@@ -276,7 +276,7 @@ announcer:
 # %location-x%/%location-y%/%location-z% - Location
 creative-logging:
   enabled: true
-  webhook-url: "https://discord.com/api/webhooks/1146845972815695902/Z-PyVSYmCMkA6if2u1cVJwLOuZC0EvouL8Oo5PlMBg2b9u5UvJfMKxZy-4pkrdEOlTgJ"
+  webhook-url: "webhook-url-here"
   creative:
     title: "Item has been `Middle Clicked/Moved`"
     player: "%player%"
