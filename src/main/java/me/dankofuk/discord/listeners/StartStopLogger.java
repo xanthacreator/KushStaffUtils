@@ -13,10 +13,8 @@ public class StartStopLogger extends ListenerAdapter {
 
     private DiscordBot discordBot;
     public Main main;
-    public FileConfiguration config;
-    public boolean discordBotEnabled;
 
-    public StartStopLogger(DiscordBot discordBot, FileConfiguration config) {
+    public StartStopLogger(DiscordBot discordBot) {
         this.discordBot = discordBot;
     }
 
@@ -28,7 +26,7 @@ public class StartStopLogger extends ListenerAdapter {
     public void sendStatusUpdateMessage(boolean serverStarted) {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setColor(serverStarted ? Color.GREEN : Color.RED);
-            embed.setTitle(serverStarted ? "\uD83D\uDFE2 Server Started" : "\uD83D\uDED1 Server Shutdown");
+            embed.setTitle(serverStarted ? "\uD83D\uDFE2 Server has `started`!" : "\uD83D\uDED1 Server has `shutdown`!");
             embed.setFooter(serverStarted ? "Server Log" : "Server Log");
 
             TextChannel channel = discordBot.getJda().getTextChannelById(Main.getInstance().getConfig().getString("serverstatus.channelId"));
