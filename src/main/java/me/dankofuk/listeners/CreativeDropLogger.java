@@ -57,7 +57,7 @@ public class CreativeDropLogger implements Listener {
             }
     } else {
                 webhook.addEmbed((new WebhookUtils.EmbedObject())
-                        .setTitle(fileConfiguration.getString("embed.drop.title"))
+                        .setTitle(fileConfiguration.getString("creative-logging.drop.title"))
                         .addField("Player name:", StringUtils.format(fileConfiguration.getString("creative-logging.drop.player"), new String[] { "%player%", p.getName() }), false)
                         .addField("Item:", StringUtils.format(fileConfiguration.getString("creative-logging.drop.item"), new String[] { "%item%", e.getItemDrop().getItemStack().getType().toString() }), false)
                         .addField("Enchants:", StringUtils.format(fileConfiguration.getString("creative-logging.drop.enchants"), new String[] { "%enchants%", e.getItemDrop().getItemStack().getItemMeta().getEnchants().toString() }), false)
