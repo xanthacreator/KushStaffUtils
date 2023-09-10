@@ -15,6 +15,9 @@ bot:
   discord_token: "bot-token-here"
   adminRoleID: "ADMIN_ROLE_ID"
   discord_activity: "with KushStaffUtils"
+  # Activity Types
+  # WATCHING, PLAYING, STREAMING, LISTENING, COMPETING
+  discord_activity_type: "STREAMING"
 
 #----------------------------------------------------------------
 # Server Shutdown/Startup Logger Configuration  - Discord Bot Required
