@@ -12,6 +12,7 @@ import me.dankofuk.factionstuff.FactionStrike;
 import me.dankofuk.factionstuff.FactionsTopAnnouncer;
 import me.dankofuk.listeners.FileCommandLogger;
 import me.dankofuk.listeners.JoinLeaveLogger;
+import me.dankofuk.listeners.MiddleClick;
 import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
 import org.bstats.bukkit.Metrics;
@@ -38,7 +39,6 @@ public class Main extends JavaPlugin implements Listener {
     private JDA jda;
     private Plugin plugin;
 
-    private List<String> ignoredCommands;
     public FileConfiguration config;
     public FileConfiguration messagesConfig;
 
@@ -55,6 +55,7 @@ public class Main extends JavaPlugin implements Listener {
     public FactionStrike factionStrike;
     public FactionsTopAnnouncer factionsTopAnnouncer;
     public ChatWebhook chatWebhook;
+    public MiddleClick creativeLogger;
 
     public void onEnable() {
         // Loading configuration
@@ -81,33 +82,12 @@ public class Main extends JavaPlugin implements Listener {
         Metrics metrics = new Metrics(this, pluginId);
 
         // Features
-        String logsFolder = (new File(getDataFolder(), "logs")).getPath();
-        this.fileCommandLogger = new FileCommandLogger(logsFolder);
-        boolean logCommands = getConfig().getBoolean("per-user-logging.enabled", true);
-        this.fileCommandLogger.reloadLogCommands(logCommands);
-        String discordToken = getConfig().getString("bot.discord_token");
-        boolean discordBotEnabled = getConfig().getBoolean("bot.enabled");
-        Server minecraftServer = getServer();
-        String adminRoleID = getConfig().getString("bot.adminRoleID");
-        String discordActivity = getConfig().getString("bot.discord_activity");
-        String ServerStatusChannelID = getConfig().getString("serverstatus.channelId");
-        String noPlayersTitle = config.getString("bot.listplayers_no_players_online_title");
-        String titleFormat = config.getString("bot.listplayers_title_format");
-        String footerFormat = config.getString("bot.listplayers_footer_format");
-        String listThumbnailUrl = config.getString("bot.listplayers_thumbnail_url");
-        boolean requireAdminRole = config.getBoolean("bot.listplayers_requireAdminRole");
-        boolean logsCommandRequiresAdminRole = config.getBoolean("bot.logsCommand_requireAdminRole");
-        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
-        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
-        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
-        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
-        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
         if (config.getBoolean("bot.enabled")) {
-            if ("false".equals(discordToken) || discordToken.isEmpty()) {
+            if ("false".equals(Main.getInstance().getConfig().getString("bot.discord_token")) || Main.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
                 getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
-            this.discordBot = new DiscordBot(discordToken, discordBotEnabled, minecraftServer, adminRoleID, discordActivity, this, config, logChannelId, logAsEmbed, serverName, titleFormat, footerFormat, listThumbnailUrl, noPlayersTitle, requireAdminRole, logsCommandRequiresAdminRole, this.plugin);
+            this.discordBot = new DiscordBot(this);
             try {
                 this.discordBot.start();
                 getLogger().warning("[Discord Bot] Starting Discord Bot...");
@@ -119,12 +99,17 @@ public class Main extends JavaPlugin implements Listener {
         }
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
         getCommand("viewlogs").setExecutor(commandLogViewer);
-        Bukkit.getServer().getPluginManager().registerEvents(this.fileCommandLogger, this);
 
-        //
-        // New Config - Finished Classes
-        //
 
+        // FileCommandLogger (Logging Folder)
+        if (!config.getBoolean("per-user-logging.enabled")) {
+            getLogger().warning("Per User Logging - [Not Enabled]");
+        } else {
+            String logsFolder = (new File(getDataFolder(), "logs")).getPath();
+            this.fileCommandLogger = new FileCommandLogger(logsFolder);
+            getServer().getPluginManager().registerEvents(fileCommandLogger, this);
+            getLogger().warning("Per User Logging - [Enabled]");
+        }
         // Chat Webhook (Webhook)
         if (!config.getBoolean("chatwebhook.enabled")) {
             getLogger().warning("Chat Logger - [Not Enabled]");
@@ -133,16 +118,15 @@ public class Main extends JavaPlugin implements Listener {
             getServer().getPluginManager().registerEvents(chatWebhook, this);
             getLogger().warning("Chat Logger - [Enabled]");
         }
-
         // Start/Stop Logger (Discord Bot Feature)
-        if (!config.getBoolean("serverstatus.enabled")) {
-            getLogger().warning("Start/Stop Logger - [Not Enabled]");
-        } else {
-            StartStopLogger startStopLogger = new StartStopLogger(discordBot, config);
+        if (!config.getBoolean("bot.enabled")) {
+            } else if (!config.getBoolean("serverstatus.enabled")) {
+                getLogger().warning("Start/Stop Logger - [Not Enabled]");
+            } else {
+            StartStopLogger startStopLogger = new StartStopLogger(discordBot);
             startStopLogger.sendStatusUpdateMessage(true);
             getLogger().warning("Start/Stop Logger - [Enabled]");
         }
-
         // Factions/Skyblock Top Announcer (Webhook)
         if (!config.getBoolean("announcer.enabled")) {
             getLogger().warning("Factions Top Announcer - [Not Enabled]");
@@ -151,7 +135,6 @@ public class Main extends JavaPlugin implements Listener {
             Bukkit.getPluginManager().registerEvents(factionsTopAnnouncer, this);
             getLogger().warning("Factions Top Announcer - [Enabled]");
         }
-
         // Player Report Command (Webhook + Command)
         if (!config.getBoolean("report.enabled")) {
             getLogger().warning("Player Reporting Command - [Not Enabled]");
@@ -204,11 +187,18 @@ public class Main extends JavaPlugin implements Listener {
             getLogger().warning("Command Logger - [Enabled]");
         }
 
+        // Creative Logging (Webhooks)
+        if (!config.getBoolean("creative-logging.enabled")) {
+            getLogger().warning("Creative Logging - [Not Enabled]");
+        } else {
+            this.creativeLogger = new MiddleClick();
+            getServer().getPluginManager().registerEvents(this.creativeLogger, this);
+            getLogger().warning("Creative Logging - [Enabled]");
+        }
+
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
     }
-
-    public void onShutdown() {}
 
     public void onDisable() {
         FileConfiguration config = getConfig();
@@ -223,9 +213,11 @@ public class Main extends JavaPlugin implements Listener {
         if (factionsTopAnnouncer) {
             this.factionsTopAnnouncer.cancelAnnouncements();
         }
-        if (config.getBoolean("serverstatus.enabled")) {
-            StartStopLogger startStopLogger = new StartStopLogger(discordBot, config);
-            startStopLogger.sendStatusUpdateMessage(false);
+        if (discordBotEnabled) {
+            if (config.getBoolean("serverstatus.enabled")) {
+                StartStopLogger startStopLogger = new StartStopLogger(discordBot);
+                startStopLogger.sendStatusUpdateMessage(false);
+            }
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been disabled!");
     }
@@ -251,36 +243,78 @@ public class Main extends JavaPlugin implements Listener {
         reloadConfig();
         FileConfiguration config = getConfig();
         loadMessagesConfig();
-        boolean logCommands = getConfig().getBoolean("per-user-logging.enabled");
-        this.fileCommandLogger.reloadLogCommands(logCommands);
         // Discord Bot Stuff
         if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
             discordBot.reloadBot();
         }
         // Instance Reloads
-        if (Main.getInstance().getConfig().getBoolean("strike.enabled")) {
-            factionStrike.accessConfigs();
+        instance = this;
+
+        // FileCommandLogger (Logging Folder)
+        if (!config.getBoolean("per-user-logging.enabled")) {
+            getLogger().warning("Per User Logging - [Not Enabled]");
+        } else {
+            getLogger().warning("Per User Logging - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("bug_report.enabled")) {
-            bugCommand.accessConfigs();
+        // Chat Webhook (Webhook)
+        if (!config.getBoolean("chatwebhook.enabled")) {
+            getLogger().warning("Chat Logger - [Not Enabled]");
+        } else {
+            getLogger().warning("Chat Logger - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("report.enabled")) {
-            reportCommand.accessConfigs();
+        // Start/Stop Logger (Discord Bot Feature)
+        if (!config.getBoolean("serverstatus.enabled")) {
+            getLogger().warning("Start/Stop Logger - [Not Enabled]");
+        } else {
+            getLogger().warning("Start/Stop Logger - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("player_leave_join_logger.enabled")) {
-            joinLeaveLogger.accessConfigs();
+        // Factions/Skyblock Top Announcer (Webhook)
+        if (!config.getBoolean("announcer.enabled")) {
+            getLogger().warning("Factions Top Announcer - [Not Enabled]");
+        } else {
+            getLogger().warning("Factions Top Announcer - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
-            suggestionCommand.accessConfigs();
+        // Player Report Command (Webhook + Command)
+        if (!config.getBoolean("report.enabled")) {
+            getLogger().warning("Player Reporting Command - [Not Enabled]");
+        } else {
+            getLogger().warning("Player Reporting Command - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
-            commandLogger.accessConfigs();
+        // Strike Command (Webhook + Command)
+        if (!config.getBoolean("strike.enabled")) {
+            getLogger().warning("Strike Command - [Not Enabled]");
+        } else {
+            getLogger().warning("Strike Command - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("announcer.enabled")) {
-            factionsTopAnnouncer.reloadAnnouncer();
+        // Bug Report Command (Webhook + Command)
+        if (!config.getBoolean("bug_report.enabled")) {
+            getLogger().warning("Bug Command - [Not Enabled]");
+        } else {
+            getLogger().warning("Bug Command - [Enabled]");
         }
-        if (Main.getInstance().getConfig().getBoolean("chatwebhook.enabled")) {
-            chatWebhook.accessConfigs();
+        // Join Leave Logger (Webhooks)
+        if (!config.getBoolean("player_leave_join_logger.enabled")) {
+            getLogger().warning("Player Join Leave Logger - [Not Enabled]");
+        } else {
+            getLogger().warning("Player Join Leave Logger - [Enabled]");
+        }
+        // Suggestion Command (Discord Bot + Command)
+        if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Suggestion Command - [Not Enabled] - (Requires Discord Bot enabled)");
+        } else {
+            getLogger().warning("Suggestion Command - [Enabled]");
+        }
+        // Command Logger (Discord Feature)
+        if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Command Logger - [Not Enabled] - (Requires Discord Bot enabled)");
+        } else {
+            getLogger().warning("Command Logger - [Enabled]");
+        }
+        // Creative Logging (Webhooks)
+        if (!config.getBoolean("creative-logging.enabled")) {
+            getLogger().warning("Creative Logging - [Not Enabled]");
+        } else {
+            getLogger().warning("Creative Logging - [Enabled]");
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }

@@ -1,5 +1,6 @@
 package me.dankofuk.discord.commands;
 
+import me.dankofuk.Main;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.managers.UUIDFetcher;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -18,15 +19,10 @@ import java.util.UUID;
 public class LogsCommand extends ListenerAdapter {
 
     private DiscordBot discordBot;
-    private boolean requireAdminRole;
-    private FileConfiguration config;
-    private boolean logCommands;
+    private Main main;
 
-    public LogsCommand(DiscordBot discordBot, boolean requireAdminRole, boolean logCommands, FileConfiguration config) {
+    public LogsCommand(DiscordBot discordBot) {
         this.discordBot = discordBot;
-        this.requireAdminRole = requireAdminRole;
-        this.config = config;
-        this.logCommands = logCommands;
     }
 
     @Override
@@ -48,7 +44,7 @@ public class LogsCommand extends ListenerAdapter {
                 return;
             }
 
-            if (!config.getBoolean("per-user-logging.enabled")) {
+            if (!Main.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
                 EmbedBuilder e = new EmbedBuilder();
                 e.setColor(Color.RED);
                 e.setTitle("Error 404");

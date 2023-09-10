@@ -1,5 +1,6 @@
 package me.dankofuk.discord.listeners;
 
+import me.dankofuk.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,48 +13,32 @@ import java.util.concurrent.TimeUnit;
 
 public class DiscordChat2Game extends ListenerAdapter {
 
-    private boolean enabled;
-    private String channelId;
-    private String format;
-    private boolean roleIdRequired;
-    private String roleId;
+    private Main main;
 
-    public DiscordChat2Game(boolean enabled, String channelId, String format, boolean roleIdRequired, String roleId) {
-        this.enabled = enabled;
-        this.channelId = channelId;
-        this.format = format;
-        this.roleIdRequired = roleIdRequired;
-        this.roleId = roleId;
+    public DiscordChat2Game() {
     }
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        // Check if the feature is enabled
-        if (!enabled) {
+        if (!Main.getInstance().getConfig().getBoolean("discord2game.enabled")) {
             return;
         }
 
-        // Check if the message was sent in the specified channel
-        if (!event.getChannel().getId().equals(channelId)) {
+        if (!event.getChannel().getId().equals(Main.getInstance().getConfig().getString("discord2game.channelId"))) {
             return;
         }
 
-        // Check if the message was sent by a user and not a bot
         if (!event.getAuthor().isBot()) {
             String messageContent = event.getMessage().getContentDisplay();
-            // Format the message using the configured format
-            String formattedMessage = format.replace("%author%", event.getAuthor().getName())
+            String formattedMessage = Main.getInstance().getConfig().getString("discord2game.message").replace("%author%", event.getAuthor().getName())
                     .replace("%message%", messageContent);
-            // Translate color codes in the formatted message
             formattedMessage = ChatColor.translateAlternateColorCodes('&', formattedMessage);
 
-            // Check if the role ID is required and the user has the required role
-            if (roleIdRequired && (roleId == null || roleId.isEmpty() || !userHasRequiredRole(event))) {
+            if (Main.getInstance().getConfig().getBoolean("discord2game.roleIdRequired") && (Main.getInstance().getConfig().getString("discord2game.roleId") == null || Main.getInstance().getConfig().getString("discord2game.roleId").isEmpty() || !userHasRequiredRole(event))) {
                 sendNoPermissionEmbed(event);
                 return;
             }
 
-            // Broadcast the formatted message to all online players
             for (Player player : Bukkit.getOnlinePlayers()) {
                 player.sendMessage(formattedMessage);
             }
@@ -64,7 +49,7 @@ public class DiscordChat2Game extends ListenerAdapter {
         String userId = event.getAuthor().getId();
         return event.getGuild().getMemberById(userId)
                 .getRoles().stream()
-                .anyMatch(role -> role.getId().equals(roleId));
+                .anyMatch(role -> role.getId().equals(Main.getInstance().getConfig().getString("discord2game.roleId")));
     }
 
     private void sendNoPermissionEmbed(MessageReceivedEvent event) {
@@ -75,7 +60,6 @@ public class DiscordChat2Game extends ListenerAdapter {
         embedBuilder.setDescription(">  `You lack the required permissions to type in game chat from discord!`");
 
         event.getMessage().replyEmbeds(embedBuilder.build()).queue(reply -> {
-            // Delete the reply after a certain duration (e.g., 10 seconds)
             reply.delete().queueAfter(6, TimeUnit.SECONDS);
         });
     }

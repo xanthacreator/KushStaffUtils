@@ -1,12 +1,11 @@
 package me.dankofuk.listeners;
 
+import me.dankofuk.Main;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,10 +38,14 @@ public class FileCommandLogger implements Listener {
         this.writerMap = new ConcurrentHashMap<>();
     }
 
+    public void accessConfigs() {
+        boolean logCommands = Main.getInstance().getConfig().getBoolean("per-user-logging.enabled");
+    }
+
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (!logCommands) {
+        if (!Main.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
             return;
         }
 
@@ -146,10 +149,5 @@ public class FileCommandLogger implements Listener {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    public void reloadLogCommands(boolean logCommands) {
-        this.logCommands = logCommands;
     }
 }
