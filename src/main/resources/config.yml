@@ -1,44 +1,23 @@
-# Placeholders for Staff Logger Webhook
-# %player% - Player Name
-# %command% - Command it will log
-# %server% - pulls from the config option "server_name"
-# %time% - Place holder for how many Seconds/Mins/Hours/Days command was ago
-#
 # Plugin Created by DankOfUK with help from ChatGPT
 # Discord for Support: http://discord.gg/2xYgHUfubM
 
+#
+#----------------------------------------------------------------
+# Part 1 - Discord Related
+#----------------------------------------------------------------
+#
 
 #----------------------------------------------------------------
 # Discord Bot Configuration
 #----------------------------------------------------------------
 bot:
-  #----------------------------------------------------------------
-  # Discord Bot Settings
-  #----------------------------------------------------------------
   enabled: false
   discord_token: "bot-token-here"
   adminRoleID: "ADMIN_ROLE_ID"
   discord_activity: "with KushStaffUtils"
 
-  # Log Commands Configuration
-  logsCommand_requireAdminRole: true
-
-  # Discord Chat 2 Game Chat Configuration
-  discord_to_game_enabled: true
-  discord_to_game_roleIdRequired: false
-  discord_to_game_roleId: "ROLE_ID_HERE" #This is if roleIdRequired is true
-  discord_to_game_channel_id: "CHANNEL_ID_HERE"
-  discord_to_game_format: "&9[Discord] &c%author%: &7%message%"
-
-  # List Players Configuration
-  listplayers_requireAdminRole: false
-  listplayers_no_players_online_title: "`Online Players - Test`"
-  listplayers_title_format: "Players Online `(%online%)` - %time%"
-  listplayers_footer_format: "Server IP: play.example.com - Test"
-  listplayers_thumbnail_url: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=1024"
-
 #----------------------------------------------------------------
-# Server Shutdown/Startup Logger Configuration - WOIP
+# Server Shutdown/Startup Logger Configuration  - Discord Bot Required
 #----------------------------------------------------------------
 serverstatus:
   enabled: true
@@ -51,18 +30,13 @@ per-user-logging:
   enabled: true # this logs in KushStaffLogger/logs
 
 #----------------------------------------------------------------
-# Chat Logger Configuration
-#----------------------------------------------------------------
-chatwebhook:
-  enabled: false
-  webhookUrl: "your-webhook-here"
-  username: "My Bot Username"
-  avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
-  message: "[%vault_groups% %player_name%]: %message%"
-
-#----------------------------------------------------------------
 # Command Logger Configuration - Discord Bot Required
 #----------------------------------------------------------------
+# Placeholders for Command Logger
+# %player% - Player Name
+# %command% - Command it will log
+# %server% - pulls from the config option "server_name"
+# %time% - Place holder for how many Seconds/Mins/Hours/Days command was ago
 commandlogger:
   server_name: "KushStaffUtils"
   logAsEmbed: true
@@ -103,8 +77,77 @@ commandlogger:
     - "/kill"
 
 #----------------------------------------------------------------
-# Strike Command Configuration
+# Suggestion Command Configuration - Discord Bot Required
 #----------------------------------------------------------------
+# Placeholders for Suggestions Command
+# %player% - %player_uuid% - Player Name/Player UUID
+# %suggestion% - Suggestion raw text
+suggestion:
+  cooldown: 60
+  title: "New Suggestion from %player% adwawd"
+  description: "%suggestion%"
+  color: "#94157f"
+  footer: "Submitted by %player% (%player_uuid%)"
+  thumbnailUrl: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=4096"
+  channelId: "1146844174524612638"
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /suggest <suggestion>"
+  sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour suggestion (%suggestion%) has been sent!"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
+
+#----------------------------------------------------------------
+# Discord Chat 2 Game Chat Configuration - Discord Bot Required
+#----------------------------------------------------------------
+# Placeholders for Discord Chat 2 Game Chat
+# %author% - Discord User Name
+# %message% - Message from discord
+discord2game:
+  enabled: true
+  roleIdRequired: false #If true will require the roleId to use
+  roleId: "ROLE_ID_HERE" #This is if roleIdRequired is true
+  channelId: "CHANNEL_ID_HERE"
+  message: "&9[Discord] &c%author%: &7%message%"
+
+#----------------------------------------------------------------
+# Online Players Configuration - Discord Bot Required
+#----------------------------------------------------------------
+# Placeholders for Online Players Command
+# %time% - %player_uuid% - Time when command was used
+# %online% - %player_uuid% - List the online players
+online_players:
+  requireAdminRole: false
+  noPlayersTitle: "`Online Players"
+  title: "Players Online `(%online%)` - %time%"
+  footer: "Server IP: play.example.com"
+  thumbnailUrl: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=1024"
+
+#
+#----------------------------------------------------------------
+# Part 2 - Not Discord Related
+#----------------------------------------------------------------
+#
+
+#----------------------------------------------------------------
+# Chat Logger Configuration - Discord Bot Not Required
+#----------------------------------------------------------------
+# Placeholders for Chat Logger
+# PlaceholderAPI placeholders work also! (must have the plugin installed)
+# %player% - Player Name
+# %message% - Message from in-game
+chatwebhook:
+  enabled: false
+  webhookUrl: "your-webhook-here"
+  username: "My Bot Username"
+  avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
+  message: "[%player%]: %message%"
+
+#----------------------------------------------------------------
+# Strike Command Configuration - Discord Bot Not Required
+#----------------------------------------------------------------
+# Placeholders for Strike Command
+# %group% - The faction/island name
+# %amount% - Amount of strikes
+# %reason% - Reason for strikes
+# %staff% - Staff/User who gave the strike
 strike:
   enabled: false
   webhookUrl: "YOUR_WEBHOOK_URL"
@@ -114,14 +157,17 @@ strike:
   message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%\n \n:man_beard: `Striked by:`\n> %staff%"
   thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   staffMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYou have given &c%group% %amount% &aof strikes for &c%reason%"
-  sendCommand:
-    - "me test"
+  sendCommand: #Here is where you can add "f strikes add %group% %amount%" can also add %reason% if your plugin allows a reason
+    - "f strikes add %group% %amount%"
   noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
   usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /strike <group> <amount> <reason>"
 
 #----------------------------------------------------------------
-# Bug Report Command Configuration
+# Bug Report Command Configuration - Discord Bot Not Required
 #----------------------------------------------------------------
+# Placeholders for Bug Report Command
+# %player% - Player Name
+# %bug% - Bug message
 bug_report:
   enabled: false # Set this to true to enable the /strike command
   webhookUrl: "YOUR_WEBHOOK_URL"
@@ -135,8 +181,12 @@ bug_report:
   responseMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYour bug report has been logged.\n&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fOverview: &c%reason%"
 
 #----------------------------------------------------------------
-# Player Reporting Command Configuration
+# Player Reporting Command Configuration - Discord Bot Not Required
 #----------------------------------------------------------------
+# Placeholders for Strike Command
+# %player% - Player Name
+# %reported_player% - Player who was reported
+# %reason% - Reason they reported
 report:
   enabled: false  # Set this to true to enable the /report command
   webhookUrl: "YOUR_WEBHOOK_URL_HERE"
@@ -149,8 +199,11 @@ report:
   usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /report <player> <reason>"
 
 #----------------------------------------------------------------
-# Player Join/Leave Logger Configuration
+# Player Join/Leave Logger Configuration - Discord Bot Not Required
 #----------------------------------------------------------------
+# Placeholders for Join/Leave Logger
+# PlaceholderAPI placeholders work also! (must have the plugin installed)
+# %player% - Player Name
 player_leave_join_logger:
   enabled: false  # Set this to true to enable player join/leave logging
   #----------------------------
@@ -181,23 +234,11 @@ player_leave_join_logger:
   useEmbed: true  # Set this to true to use Discord embeds
 
 #----------------------------------------------------------------
-# Suggestion Command Configuration
+# Factions Top Announcer Configuration - Discord Bot Not Required
 #----------------------------------------------------------------
-suggestion:
-  cooldown: 60
-  title: "New Suggestion from %player% adwawd"
-  description: "%suggestion%"
-  color: "#94157f"
-  footer: "Submitted by %player% (%player_uuid%)"
-  thumbnailUrl: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=4096"
-  channelId: "1146844174524612638"
-  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /suggest <suggestion>"
-  sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour suggestion (%suggestion%) has been sent!"
-  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
-
-#----------------------------------------------------------------
-# Factions Top Announcer Configuration
-#----------------------------------------------------------------
+# Placeholders for Factions Top Announcer
+# PlaceholderAPI placeholders work also! (must have the plugin installed)
+# This has no default placeholders, use PlaceholderAPI for placeholders.
 announcer:
   enabled: false
   webhookUrl: "YOUR_WEBHOOK_URL"
@@ -223,8 +264,16 @@ announcer:
   avatarUrl: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
 
 #----------------------------------------------------------------
-# Creative Logging Configuration
+# Creative Logging Configuration - Discord Bot Not Required
 #----------------------------------------------------------------
+# Placeholders for Factions Top Announcer
+# %player% - Player Name
+# %item% - Item ID/Name
+# %name% - Item Name (Custom Name)
+# %amount% - Item Amount
+# %lore% - Item Lore (If they have one)
+# %world% - World Name
+# %location-x%/%location-y%/%location-z% - Location
 creative-logging:
   enabled: true
   webhook-url: "some link"
