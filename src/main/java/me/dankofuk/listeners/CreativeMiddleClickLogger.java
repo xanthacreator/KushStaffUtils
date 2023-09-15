@@ -1,6 +1,6 @@
 package me.dankofuk.listeners;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.utils.WebhookUtils;
 import me.dankofuk.utils.StringUtils;
 import org.bukkit.GameMode;
@@ -15,7 +15,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.Objects;
 import java.util.logging.Logger;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -24,7 +23,7 @@ public class CreativeMiddleClickLogger implements Listener {
     @EventHandler
     public void onMiddleClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        Configuration config = Main.getInstance().getConfig();
+        Configuration config = KushStaffUtils.getInstance().getConfig();
         Logger log = getLogger();
         WebhookUtils webhook = new WebhookUtils(config.getString("creative-logging.webhook-url"));
 
