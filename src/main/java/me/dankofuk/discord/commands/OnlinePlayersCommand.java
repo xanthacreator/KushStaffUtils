@@ -1,6 +1,6 @@
 package me.dankofuk.discord.commands;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OnlinePlayersCommand extends ListenerAdapter {
-    private Main main;
+    private KushStaffUtils main;
     private DiscordBot discordBot;
 
     public OnlinePlayersCommand(DiscordBot discordBot) {
@@ -22,7 +22,7 @@ public class OnlinePlayersCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (event.getName().equals("online")) {
-            if (!Main.getInstance().getConfig().getBoolean("online_players.requireAdminRole") || (event.getMember() != null && event.getMember().getRoles().stream()
+            if (!KushStaffUtils.getInstance().getConfig().getBoolean("online_players.requireAdminRole") || (event.getMember() != null && event.getMember().getRoles().stream()
                     .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID())))) {
 
                 List<String> playerNames = discordBot.getMinecraftServer().getOnlinePlayers().stream()
@@ -31,9 +31,9 @@ public class OnlinePlayersCommand extends ListenerAdapter {
 
                 if (playerNames.isEmpty()) {
                     EmbedBuilder embed = new EmbedBuilder();
-                    embed.setTitle(Main.getInstance().getConfig().getString("online_players.noPlayersTitle"));
+                    embed.setTitle(KushStaffUtils.getInstance().getConfig().getString("online_players.noPlayersTitle"));
                     embed.setDescription(":negative_squared_cross_mark: `There are no players online currently!`");
-                    embed.setThumbnail(Main.getInstance().getConfig().getString("online_players.thumbnailUrl"));
+                    embed.setThumbnail(KushStaffUtils.getInstance().getConfig().getString("online_players.thumbnailUrl"));
                     event.replyEmbeds(embed.build()).queue();
                     return;
                 }
@@ -41,16 +41,16 @@ public class OnlinePlayersCommand extends ListenerAdapter {
                 Instant currentTime = Instant.now();
                 String unixTimestamp = String.valueOf(currentTime.getEpochSecond());
 
-                String titleWithPlaceholders = Main.getInstance().getConfig().getString("online_players.title").replaceAll("%online%", String.valueOf(playerNames.size()))
+                String titleWithPlaceholders = KushStaffUtils.getInstance().getConfig().getString("online_players.title").replaceAll("%online%", String.valueOf(playerNames.size()))
                         .replaceAll("%time%", "<t:" + unixTimestamp + ":R>");
 
-                String footerWithPlaceholders = Main.getInstance().getConfig().getString("online_players.footer").replaceAll("%online%", String.valueOf(playerNames.size()));
+                String footerWithPlaceholders = KushStaffUtils.getInstance().getConfig().getString("online_players.footer").replaceAll("%online%", String.valueOf(playerNames.size()));
 
                 EmbedBuilder embed = new EmbedBuilder();
                 embed.setTitle(titleWithPlaceholders);
                 embed.setDescription(String.join("\n", playerNames));
                 embed.setFooter(footerWithPlaceholders);
-                embed.setThumbnail(Main.getInstance().getConfig().getString("online_players.thumbnailUrl"));
+                embed.setThumbnail(KushStaffUtils.getInstance().getConfig().getString("online_players.thumbnailUrl"));
                 event.replyEmbeds(embed.build()).queue();
             } else {
                 event.reply(":no_entry_sign: You don't have permission to use this command.").queue();
