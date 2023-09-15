@@ -1,6 +1,6 @@
 package me.dankofuk.discord;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,11 +27,13 @@ import java.util.List;
 public class DiscordBot extends ListenerAdapter {
     public JDA jda;
     public Plugin botTask;
-    public Main main;
+    public KushStaffUtils main;
+    public FileConfiguration config;
 
 
-    public DiscordBot(Plugin botTask) {
+    public DiscordBot(Plugin botTask, FileConfiguration config) {
         this.botTask = botTask;
+        this.config = config;
     }
 
     public JDA getJda() {
@@ -38,16 +41,17 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     public void start() throws InterruptedException {
-        if (!Main.getInstance().getConfig().getBoolean("bot.enabled"))
+        if (!KushStaffUtils.getInstance().getConfig().getBoolean("bot.enabled"))
             return;
-        this.jda = JDABuilder.createDefault(Main.getInstance().getConfig().getString("bot.discord_token")).enableIntents(GatewayIntent.GUILD_MESSAGES,
+        this.jda = JDABuilder.createDefault(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")).enableIntents(GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS,
                 GatewayIntent.DIRECT_MESSAGE_REACTIONS,
                 GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(this)
-                .setActivity(Activity.of(Activity.ActivityType.valueOf(Main.getInstance().getConfig().getString("bot.discord_activity_type")), Main.getInstance().getConfig().getString("bot.discord_activity"))) // Set the customizable activity
+                .setActivity(Activity.of(Activity.ActivityType.valueOf(KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity_type")), KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity"))) // Set the customizable activity
                 .build()
                 .awaitReady();
+
 
         // Register Events/Listeners
         this.jda.addEventListener(new OnlinePlayersCommand(this));
@@ -56,8 +60,10 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new HelpCommand(this));
         this.jda.addEventListener(new LogsCommand(this));
         this.jda.addEventListener(new CommandLogger(this));
-        this.jda.addEventListener(new DiscordChat2Game());
+        this.jda.addEventListener(new DiscordChat2Game(main, config));
         this.jda.addEventListener(new ReloadCommand(this));
+        this.jda.addEventListener(new AvatarCommand());
+        //this.jda.addEventListener(new ChatWebhook(this));
     }
 
     public void onGuildReady(@NotNull GuildReadyEvent event) {
@@ -66,6 +72,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("online", "Lists Online Players."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
+        commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.STRING, "user", "The user that the avatar for."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -76,6 +83,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("online", "Lists Online Players."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
+        commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.STRING, "user", "The user that the avatar for."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -90,41 +98,41 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     public void accessConfigs() {
-        String discordToken = Main.getInstance().getConfig().getString("bot.discord_token");
-        boolean discordBotEnabled = Main.getInstance().getConfig().getBoolean("bot.enabled");
-        String discordActivity = Main.getInstance().getConfig().getString("bot.discord_activity");
-        String adminRoleId = Main.getInstance().getConfig().getString("bot.adminRoleID");
+        String discordToken = KushStaffUtils.getInstance().getConfig().getString("bot.discord_token");
+        boolean discordBotEnabled = KushStaffUtils.getInstance().getConfig().getBoolean("bot.enabled");
+        String discordActivity = KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity");
+        String adminRoleId = KushStaffUtils.getInstance().getConfig().getString("bot.adminRoleID");
         // Discord Chat 2 Game Chat
-        boolean enabled = Main.getInstance().getConfig().getBoolean("discord2game.enabled");
-        String channelId = Main.getInstance().getConfig().getString("discord2game.channelId");
-        String roleId = Main.getInstance().getConfig().getString("discord2game.roleId");
-        boolean roleIdRequired = Main.getInstance().getConfig().getBoolean("discord2game.roleIdRequired");
-        String format = Main.getInstance().getConfig().getString("discord2game.message");
+        boolean enabled = KushStaffUtils.getInstance().getConfig().getBoolean("discord2game.enabled");
+        String channelId = KushStaffUtils.getInstance().getConfig().getString("discord2game.channelId");
+        String roleId = KushStaffUtils.getInstance().getConfig().getString("discord2game.roleId");
+        boolean roleIdRequired = KushStaffUtils.getInstance().getConfig().getBoolean("discord2game.roleIdRequired");
+        String format = KushStaffUtils.getInstance().getConfig().getString("discord2game.message");
         // Start/Stop Logger
-        String ServerStatusChannelID = Main.getInstance().getConfig().getString("serverstatus.channelId");
+        String ServerStatusChannelID = KushStaffUtils.getInstance().getConfig().getString("serverstatus.channelId");
         // Command Logger
-        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
-        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
-        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
-        List<String> ignoredCommands = Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
-        List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
-        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
-        boolean whitelistEnabled = Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
-        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
+        String serverName = KushStaffUtils.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        List<String> ignoredCommands = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
+        List<String> whitelistedCommands = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
+        boolean logAsEmbed = KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        boolean whitelistEnabled = KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
+        String logChannelId = KushStaffUtils.getInstance().getConfig().getString("commandlogger.channel_id");
         // Online Players
-        String titleFormat = Main.getInstance().getConfig().getString("online_players.title");
-        String footerFormat = Main.getInstance().getConfig().getString("online_players.footer");
-        String listThumbnailUrl = Main.getInstance().getConfig().getString("online_players.thumbnailUrl");
-        String noPlayersTitle = Main.getInstance().getConfig().getString("online_players.noPlayersTitle");
-        boolean requireAdminRole = Main.getInstance().getConfig().getBoolean("online_players.requireAdminRole");
+        String titleFormat = KushStaffUtils.getInstance().getConfig().getString("online_players.title");
+        String footerFormat = KushStaffUtils.getInstance().getConfig().getString("online_players.footer");
+        String listThumbnailUrl = KushStaffUtils.getInstance().getConfig().getString("online_players.thumbnailUrl");
+        String noPlayersTitle = KushStaffUtils.getInstance().getConfig().getString("online_players.noPlayersTitle");
+        boolean requireAdminRole = KushStaffUtils.getInstance().getConfig().getBoolean("online_players.requireAdminRole");
 
     }
 
     public void reloadBot() {
         stop();
         accessConfigs();
-        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
-            if ("false".equals(Main.getInstance().getConfig().getString("bot.discord_token")) || Main.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
+        if (KushStaffUtils.getInstance().getConfig().getBoolean("bot.enabled")) {
+            if ("false".equals(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")) || KushStaffUtils.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
                 Bukkit.getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
@@ -144,7 +152,7 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     public String getAdminRoleID() {
-        String adminRoleId = Main.getInstance().getConfig().getString("bot.adminRoleID");
+        String adminRoleId = KushStaffUtils.getInstance().getConfig().getString("bot.adminRoleID");
         return adminRoleId;
     }
 }
