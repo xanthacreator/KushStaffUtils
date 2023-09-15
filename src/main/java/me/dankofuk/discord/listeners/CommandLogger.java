@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -32,14 +32,14 @@ public class CommandLogger extends ListenerAdapter implements Listener {
     }
 
     public void accessConfigs() {
-        String serverName = Main.getInstance().getConfig().getString("commandlogger.server_name");
-        List<String> messageFormats = Main.getInstance().getConfig().getStringList("commandlogger.message_formats");
-        List<String> embedTitleFormats = Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
-        List<String> ignoredCommands = Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
-        List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
-        boolean logAsEmbed = Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
-        boolean whitelistEnabled = Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
-        String logChannelId = Main.getInstance().getConfig().getString("commandlogger.channel_id");
+        String serverName = KushStaffUtils.getInstance().getConfig().getString("commandlogger.server_name");
+        List<String> messageFormats = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.message_formats");
+        List<String> embedTitleFormats = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.embed_title_formats");
+        List<String> ignoredCommands = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.ignored_commands");
+        List<String> whitelistedCommands = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
+        boolean logAsEmbed = KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed");
+        boolean whitelistEnabled = KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled");
+        String logChannelId = KushStaffUtils.getInstance().getConfig().getString("commandlogger.channel_id");
     }
 
 
@@ -52,16 +52,16 @@ public class CommandLogger extends ListenerAdapter implements Listener {
             List<String> messages = new ArrayList<>();
             List<String> embedTitles = new ArrayList<>();
             long time = System.currentTimeMillis() / 1000L;
-            for (String messageFormat : Main.getInstance().getConfig().getStringList("commandlogger.message_formats")) {
-                String message = messageFormat.replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>").replace("%server%", Main.getInstance().getConfig().getString("commandlogger.server_name")).replace("%command%", command);
+            for (String messageFormat : KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.message_formats")) {
+                String message = messageFormat.replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>").replace("%server%", KushStaffUtils.getInstance().getConfig().getString("commandlogger.server_name")).replace("%command%", command);
                 messages.add(message);
             }
-            for (String embedTitleFormat : Main.getInstance().getConfig().getStringList("commandlogger.embed_title_formats")) {
-                String embedTitle = embedTitleFormat.replace("%player%", playerName).replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())).replace("%server%", Main.getInstance().getConfig().getString("commandlogger.server_name")).replace("%command%", command);
+            for (String embedTitleFormat : KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.embed_title_formats")) {
+                String embedTitle = embedTitleFormat.replace("%player%", playerName).replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())).replace("%server%", KushStaffUtils.getInstance().getConfig().getString("commandlogger.server_name")).replace("%command%", command);
                 embedTitles.add(embedTitle);
             }
             String playerHeadUrl = getPlayerHeadUrl(playerName);
-            sendToDiscord(messages, embedTitles, playerHeadUrl, this.discordBot, Main.getInstance().getConfig().getString("commandlogger.channel_id"));
+            sendToDiscord(messages, embedTitles, playerHeadUrl, this.discordBot, KushStaffUtils.getInstance().getConfig().getString("commandlogger.channel_id"));
         });
     }
 
@@ -98,7 +98,7 @@ public class CommandLogger extends ListenerAdapter implements Listener {
                     String message = messages.get(i);
                     String embedTitle = embedTitles.get(i);
                     if (!isJavaPlayer(playerHeadUrl)) {
-                        if (Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
+                        if (KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
                             EmbedBuilder embedBuilder = new EmbedBuilder();
                             embedBuilder.setTitle(embedTitle);
                             embedBuilder.setDescription(message);
@@ -106,7 +106,7 @@ public class CommandLogger extends ListenerAdapter implements Listener {
                         } else {
                             channel.sendMessage(message).queue();
                         }
-                    } else if (Main.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
+                    } else if (KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.logAsEmbed")) {
                         EmbedBuilder embedBuilder = new EmbedBuilder();
                         embedBuilder.setTitle(embedTitle);
                         embedBuilder.setDescription(message);
@@ -134,8 +134,8 @@ public class CommandLogger extends ListenerAdapter implements Listener {
         String command = args[0];
         if (isIgnoredCommand(command))
             return;
-        if (Main.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled")) {
-            List<String> whitelistedCommands = Main.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
+        if (KushStaffUtils.getInstance().getConfig().getBoolean("commandlogger.whitelist_enabled")) {
+            List<String> whitelistedCommands = KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.whitelisted_commands");
             if (!isWhitelistedCommand(command, whitelistedCommands))
                 return;
         }
@@ -144,7 +144,7 @@ public class CommandLogger extends ListenerAdapter implements Listener {
     }
 
     private boolean isIgnoredCommand(String command) {
-        for (String ignored : Main.getInstance().getConfig().getStringList("commandlogger.ignored_commands")) {
+        for (String ignored : KushStaffUtils.getInstance().getConfig().getStringList("commandlogger.ignored_commands")) {
             if (ignored.equalsIgnoreCase(command))
                 return true;
         }
