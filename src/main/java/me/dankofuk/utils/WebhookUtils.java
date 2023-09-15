@@ -42,6 +42,10 @@ public class WebhookUtils {
         this.avatarUrl = avatarUrl;
     }
 
+    public void setAvatarUrlWithPlaceholder(String placeholder) {
+        this.avatarUrl = placeholder;
+    }
+
     public void setTts(boolean tts) {
         this.tts = tts;
     }
