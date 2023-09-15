@@ -2,6 +2,7 @@ package me.dankofuk.commands;
 
 import me.dankofuk.KushStaffUtils;
 import me.dankofuk.utils.ColorUtils;
+import me.dankofuk.utils.WebhookUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -11,17 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class ReportCommand implements Listener, CommandExecutor {
     private KushStaffUtils main;
+    private WebhookUtils webhookUtils;
     public final Map<UUID, Long> cooldowns = new HashMap<>();
     public FileConfiguration config;
 
@@ -70,32 +67,31 @@ public class ReportCommand implements Listener, CommandExecutor {
     }
 
     private void sendWebhook(Player player, String reportedPlayerName, String reportReason) {
-        CompletableFuture.runAsync(() -> {
-            try {
-                URL url = new URL(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.webhookUrl")));
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                connection.setRequestMethod("POST");
-                connection.setRequestProperty("Content-Type", "application/json");
-                connection.setRequestProperty("User-Agent", "ReportWebhook");
-                connection.setDoOutput(true);
-                String message = Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.message")).replace("%player%", player.getName()).replace("%reported_player%", reportedPlayerName).replace("%reason%", reportReason).replace("\n", "\\n");
-                message = "{\"username\":\"" + KushStaffUtils.getInstance().getConfig().getString("report.username") + "\",\"avatar_url\":\"" + KushStaffUtils.getInstance().getConfig().getString("report.avatarUrl") + "\",\"embeds\":[{\"description\":\"" + message + "\",\"color\":" + getColorCode("#FF0000") + "}]}";
-                try (OutputStream os = connection.getOutputStream()) {
-                    os.write(message.getBytes());
-                }
-                connection.getResponseCode();
-                connection.getResponseMessage();
-            } catch (MalformedURLException e) {
-                Bukkit.getLogger().warning("[ReportWebhook] Invalid webhook URL specified: " + KushStaffUtils.getInstance().getConfig().getString("report.webhookUrl"));
-                e.printStackTrace();
-            } catch (ProtocolException e) {
-                Bukkit.getLogger().warning("[ReportWebhook] Invalid protocol specified in webhook URL: " + KushStaffUtils.getInstance().getConfig().getString("report.webhookUrl"));
-                e.printStackTrace();
-            } catch (IOException e) {
-                Bukkit.getLogger().warning("[ReportWebhook] Error sending message to Discord webhook.");
-                e.printStackTrace();
-            }
-        });
+        try {
+            this.webhookUtils = new WebhookUtils(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.webhookUrl")));
+            long time = System.currentTimeMillis() / 1000L;
+            WebhookUtils.EmbedObject embedObject = new WebhookUtils.EmbedObject()
+                    .setDescription(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.message"))
+                            .replace("%player%", player.getName())
+                            .replace("%reported_player%", reportedPlayerName)
+                            .replace("%reason%", reportReason)
+                            .replace("\n", "\\n")
+                            .replace("%time%", "<t:" + time + ":R>"))
+                    .setColor(Color.RED);
+
+            webhookUtils.setContent(null); // Set content to null if you don't want any text content
+            webhookUtils.setUsername(KushStaffUtils.getInstance().getConfig().getString("report.username"));
+            webhookUtils.setAvatarUrl(KushStaffUtils.getInstance().getConfig().getString("report.avatarUrl"));
+            webhookUtils.addEmbed(embedObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            webhookUtils.execute();
+        } catch (IOException e) {
+            Bukkit.getLogger().warning("[ReportWebhook] Error sending message to Discord webhook.");
+            e.printStackTrace();
+        }
     }
 
     private int getColorCode(String color) {
