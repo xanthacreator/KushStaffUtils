@@ -134,12 +134,14 @@ online_players:
 #----------------------------------------------------------------
 # Placeholders for Chat Logger
 # PlaceholderAPI placeholders work also! (must have the plugin installed)
-# %player% - Player Name
-# %message% - Message from in-game
+# %player% - Player Name - message option
+# %message% - Message from in-game - message option
+# %player_uuid% - Message from in-game - avatarUrl option
 chatwebhook:
   enabled: false
   webhookUrl: "your-webhook-here"
   username: "My Bot Username"
+  separateAvatar: true # use the %player_uuid% in the link
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   message: "[%player%]: %message%"
 
