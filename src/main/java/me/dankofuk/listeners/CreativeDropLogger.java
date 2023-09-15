@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.utils.StringUtils;
 import me.dankofuk.utils.WebhookUtils;
 import org.bukkit.Bukkit;
@@ -19,7 +19,7 @@ public class CreativeDropLogger implements Listener {
     @EventHandler
     public void onDropItem(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
-        FileConfiguration fileConfiguration = Main.getInstance().getConfig();
+        FileConfiguration fileConfiguration = KushStaffUtils.getInstance().getConfig();
         Logger log = Bukkit.getLogger();
         WebhookUtils webhook = new WebhookUtils(fileConfiguration.getString("creative-logging.webhook-url"));
         if (!p.hasPermission("commandlogger.creative-logging.log"))
