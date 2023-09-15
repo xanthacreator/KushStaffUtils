@@ -40,11 +40,13 @@ public class ChatWebhook implements Listener {
             message = PlaceholderAPI.setPlaceholders(player, message);
             webhookMessage = PlaceholderAPI.setPlaceholders(player, webhookMessage);
         }
+        long time = System.currentTimeMillis() / 1000L;
 
         webhookMessage = webhookMessage
                 .replace("%player%", playerName)
                 .replace("%player_name%", playerName)
-                .replace("%message%", message);
+                .replace("%message%", message)
+                .replace("%time%", "<t:" + time + ":R>");
 
         sendWebhook(webhookMessage, playerName);
     }
