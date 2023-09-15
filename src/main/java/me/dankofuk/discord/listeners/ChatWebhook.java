@@ -1,7 +1,7 @@
 package me.dankofuk.discord.listeners;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.managers.UUIDFetcher;
 import me.dankofuk.utils.WebhookUtils;
 import org.bukkit.Bukkit;
@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class ChatWebhook implements Listener {
-    private Main main;
+    private KushStaffUtils main;
     public FileConfiguration config;
 
     public ChatWebhook(FileConfiguration config) {
@@ -25,14 +25,14 @@ public class ChatWebhook implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (!Main.getInstance().getConfig().getBoolean("chatwebhook.enabled")) {
+        if (!KushStaffUtils.getInstance().getConfig().getBoolean("chatwebhook.enabled")) {
             return;
         }
 
         String playerName = event.getPlayer().getName();
         String message = event.getMessage();
 
-        String webhookMessage = Main.getInstance().getConfig().getString("chatwebhook.message");
+        String webhookMessage = KushStaffUtils.getInstance().getConfig().getString("chatwebhook.message");
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             Player player = event.getPlayer();
@@ -53,11 +53,11 @@ public class ChatWebhook implements Listener {
         try {
             webhookMessage = ChatColor.stripColor(webhookMessage);
 
-            WebhookUtils webhook = new WebhookUtils(Objects.requireNonNull(Main.getInstance().getConfig().getString("chatwebhook.webhookUrl")));
+            WebhookUtils webhook = new WebhookUtils(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("chatwebhook.webhookUrl")));
 
             webhook.setContent(webhookMessage);
 
-            String username = Main.getInstance().getConfig().getString("chatwebhook.username");
+            String username = KushStaffUtils.getInstance().getConfig().getString("chatwebhook.username");
             webhook.setUsername(username.replace("%player%", playerName).replace("%player_name%", playerName));
 
             String crafatarBaseUrl = "https://crafatar.com/avatars/";
