@@ -32,7 +32,7 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <!-- Replace this with your package! -->
-                            <shadedPattern>me.dankofuk.Main</shadedPattern>
+                            <shadedPattern>me.dankofuk.KushStaffUtils</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>

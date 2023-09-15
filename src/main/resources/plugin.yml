@@ -1,6 +1,6 @@
 name: KushStaffUtils
 version: '${project.version}'
-main: me.dankofuk.Main
+main: me.dankofuk.KushStaffUtils
 author: DankOfUK
 description: Made by Exotic Development
 load-after: [InteractiveChat, AntiCheatReplay]
