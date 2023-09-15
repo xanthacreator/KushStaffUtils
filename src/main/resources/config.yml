@@ -137,11 +137,12 @@ online_players:
 # %player% - Player Name - message/username option
 # %message% - Message from in-game - message option
 # %player_name% - Player Name - message/username option
+# %time% - Player Name - message option
 chatwebhook:
   enabled: true
   webhookUrl: "your-webhook-here"
   username: "%player_name% - Chat Log"
-  message: "__**[Chat]**__ `%player_name%`**:** *%message%*"
+  message: "%time% __**[Global Chat]**__ `%player_name%`**:** *%message%*"
 
 #----------------------------------------------------------------
 # Strike Command Configuration - Discord Bot Not Required
