@@ -32,9 +32,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class Main extends JavaPlugin implements Listener {
+public class KushStaffUtils extends JavaPlugin implements Listener {
     private static String logsFolder;
-    private static Main instance;
+    private static KushStaffUtils instance;
     private JDA jda;
     private Plugin plugin;
 
@@ -83,11 +83,11 @@ public class Main extends JavaPlugin implements Listener {
 
         // Features
         if (config.getBoolean("bot.enabled")) {
-            if ("false".equals(Main.getInstance().getConfig().getString("bot.discord_token")) || Main.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
+            if ("false".equals(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")) || KushStaffUtils.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
                 getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
-            this.discordBot = new DiscordBot(this);
+            this.discordBot = new DiscordBot(this, config);
             try {
                 this.discordBot.start();
                 getLogger().warning("[Discord Bot] Starting Discord Bot...");
@@ -246,7 +246,7 @@ public class Main extends JavaPlugin implements Listener {
         FileConfiguration config = getConfig();
         loadMessagesConfig();
         // Discord Bot Stuff
-        if (Main.getInstance().getConfig().getBoolean("bot.enabled")) {
+        if (KushStaffUtils.getInstance().getConfig().getBoolean("bot.enabled")) {
             discordBot.reloadBot();
         }
         // Instance Reloads
@@ -347,7 +347,7 @@ public class Main extends JavaPlugin implements Listener {
         return logsFolder;
     }
 
-    public static Main getInstance() {
+    public static KushStaffUtils getInstance() {
         return instance;
     }
 }
