@@ -86,6 +86,7 @@ commandlogger:
 # %player% - %player_uuid% - Player Name/Player UUID
 # %suggestion% - Suggestion raw text
 suggestion:
+  enabled: true
   cooldown: 60
   title: "New Suggestion from %player% adwawd"
   description: "%suggestion%"
@@ -123,6 +124,23 @@ online_players:
   footer: "Server IP: play.example.com"
   thumbnailUrl: "https://cdn.discordapp.com/avatars/265918857112322052/b047522734170c4d476370f8610b8318.png?size=1024"
 
+#----------------------------------------------------------------
+# Bug Report Command Configuration - Discord Bot Required
+#----------------------------------------------------------------
+# Placeholders for Bug Report Command
+# %player% - Player Name
+# %bug% - Bug message
+# %time% - gets how long ago it was - message option
+bug_report:
+  enabled: true # Set this to true to enable the /strike command
+  cooldown: 60 # Cooldown time in seconds
+  channelId: "1152384665085296681"
+  embed_title: "`A New Bug Report!`"
+  message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**\n \n:alarm_clock: `When:`\n> %time%"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYou do not have permission to use this command."
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &c/bug <report>"
+  responseMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYour bug report has been logged.\n&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fOverview: &c%reason%"
+
 #
 #----------------------------------------------------------------
 # Part 2 - Not Discord Related
@@ -137,7 +155,7 @@ online_players:
 # %player% - Player Name - message/username option
 # %message% - Message from in-game - message option
 # %player_name% - Player Name - message/username option
-# %time% - Player Name - message option
+# %time% - gets how long ago it was - message option
 chatwebhook:
   enabled: true
   webhookUrl: "your-webhook-here"
@@ -167,36 +185,20 @@ strike:
   usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /strike <group> <amount> <reason>"
 
 #----------------------------------------------------------------
-# Bug Report Command Configuration - Discord Bot Not Required
-#----------------------------------------------------------------
-# Placeholders for Bug Report Command
-# %player% - Player Name
-# %bug% - Bug message
-bug_report:
-  enabled: false # Set this to true to enable the /strike command
-  webhookUrl: "YOUR_WEBHOOK_URL"
-  thumbnailUrl: "https://example.com/your-thumbnail-url"
-  cooldown: 60 # Cooldown time in seconds
-  username: "YourBotUsername"
-  avatarUrl: "https://example.com/your-avatar-url"
-  message: ":information_source: `Bug Reporter:`\n> **%player%**\n \n:red_circle: `Bug Info:`\n> **%bug%**"
-  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYou do not have permission to use this command."
-  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &c/bug <report>"
-  responseMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYour bug report has been logged.\n&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fOverview: &c%reason%"
-
-#----------------------------------------------------------------
 # Player Reporting Command Configuration - Discord Bot Not Required
 #----------------------------------------------------------------
 # Placeholders for Strike Command
 # %player% - Player Name
 # %reported_player% - Player who was reported
 # %reason% - Reason they reported
+# %time% - gets how long ago it was - message option
 report:
   enabled: false  # Set this to true to enable the /report command
   webhookUrl: "YOUR_WEBHOOK_URL_HERE"
   username: "ReportBot"
   avatarUrl: "YOUR_AVATAR_URL_HERE"
-  message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%"
+  embed_title: "`A New Player Report!`"
+  message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%\n \n:alarm_clock: `When:`\n> %time%"
   cooldown: 60  # Cooldown in seconds
   sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour report has been sent!"
   noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
