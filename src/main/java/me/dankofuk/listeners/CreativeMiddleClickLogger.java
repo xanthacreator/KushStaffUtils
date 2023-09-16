@@ -20,6 +20,12 @@ import java.util.logging.Logger;
 import static org.bukkit.Bukkit.getLogger;
 
 public class CreativeMiddleClickLogger implements Listener {
+    public KushStaffUtils instance;
+
+    public CreativeMiddleClickLogger(KushStaffUtils instance) {
+        this.instance = instance;
+    }
+
     @EventHandler
     public void onMiddleClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
@@ -77,7 +83,7 @@ public class CreativeMiddleClickLogger implements Listener {
             webhook.addEmbed(new WebhookUtils.EmbedObject()
                     .setTitle(config.getString("creative-logging.creative.title"))
                     .addField(">  Player name:", StringUtils.format(config.getString("creative-logging.creative.player"), "%player%", p.getName()), false)
-                    .addField(">  Item:", StringUtils.format(config.getString("creative-logging.creative.item"), "%item%", e.getCursor().getType().toString()), false)
+                    .addField(">  Item Material:", StringUtils.format(config.getString("creative-logging.creative.item"), "%item%", e.getCursor().getType().toString()), false)
                     .addField(">  Amount:", StringUtils.format(config.getString("creative-logging.creative.amount"), "%amount%", String.valueOf(e.getCursor().getAmount())), false)
                     .addField(">  Name of item:", StringUtils.format(config.getString("creative-logging.creative.name"), "%name%", displayName), false)
                     .addField(">  Lore:", StringUtils.format(config.getString("creative-logging.creative.lore"), "%lore%", loreText), false)
@@ -95,7 +101,7 @@ public class CreativeMiddleClickLogger implements Listener {
             webhook.addEmbed(new WebhookUtils.EmbedObject()
                     .setTitle(config.getString("creative-logging.creative.title"))
                     .addField(">  Player name:", StringUtils.format(config.getString("creative-logging.creative.player"), "%player%", p.getName()), false)
-                    .addField(">  Item:", StringUtils.format(config.getString("creative-logging.creative.item"), "%item%", e.getCursor().getType().toString()), false)
+                    .addField(">  Item Material:", StringUtils.format(config.getString("creative-logging.creative.item"), "%item%", e.getCursor().getType().toString()), false)
                     .addField(">  Amount:", StringUtils.format(config.getString("creative-logging.creative.amount"), "%amount%", String.valueOf(e.getCursor().getAmount())), false)
                     .addField(">  Location:", StringUtils.format(config.getString("creative-logging.creative.location"), "%location-x%", String.valueOf(p.getLocation().getX()), "%location-y%", String.valueOf(p.getLocation().getY()), "%location-z%", String.valueOf(p.getLocation().getZ())), false)
                     .addField(">  World:", StringUtils.format(config.getString("creative-logging.creative.world"), "%world%", p.getWorld().getName()), false)
