@@ -141,6 +141,24 @@ bug_report:
   usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &c/bug <report>"
   responseMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fYour bug report has been logged.\n&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &fOverview: &c%reason%"
 
+#----------------------------------------------------------------
+# Player Reporting Command Configuration - Discord Not Required
+#----------------------------------------------------------------
+# Placeholders for Strike Command
+# %player% - Player Name
+# %reported_player% - Player who was reported
+# %reason% - Reason they reported
+# %time% - gets how long ago it was - message option
+report:
+  enabled: true  # Set this to true to enable the /report command
+  channelId: "1152384665085296681"
+  embed_title: "`A New Player Report!`"
+  message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%\n \n:alarm_clock: `When:`\n> %time%"
+  cooldown: 60  # Cooldown in seconds
+  sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour report has been sent!"
+  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
+  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /report <player> <reason>"
+
 #
 #----------------------------------------------------------------
 # Part 2 - Not Discord Related
@@ -183,26 +201,6 @@ strike:
     - "f strikes add %group% %amount%"
   noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
   usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /strike <group> <amount> <reason>"
-
-#----------------------------------------------------------------
-# Player Reporting Command Configuration - Discord Bot Not Required
-#----------------------------------------------------------------
-# Placeholders for Strike Command
-# %player% - Player Name
-# %reported_player% - Player who was reported
-# %reason% - Reason they reported
-# %time% - gets how long ago it was - message option
-report:
-  enabled: false  # Set this to true to enable the /report command
-  webhookUrl: "YOUR_WEBHOOK_URL_HERE"
-  username: "ReportBot"
-  avatarUrl: "YOUR_AVATAR_URL_HERE"
-  embed_title: "`A New Player Report!`"
-  message: ":information_source: `Player Reporting:`\n> **%player%**\n \n:red_circle: `Player Reported:`\n> **%reported_player%**\n \n:books: `Reason:`\n> %reason%\n \n:alarm_clock: `When:`\n> %time%"
-  cooldown: 60  # Cooldown in seconds
-  sentMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYour report has been sent!"
-  noPermissionMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cYou do not have permission to use this command."
-  usageMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &cUsage: /report <player> <reason>"
 
 #----------------------------------------------------------------
 # Player Join/Leave Logger Configuration - Discord Bot Not Required
