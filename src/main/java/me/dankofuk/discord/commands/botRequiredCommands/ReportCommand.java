@@ -3,26 +3,22 @@ package me.dankofuk.discord.commands.botRequiredCommands;
 import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.utils.ColorUtils;
-import me.dankofuk.utils.WebhookUtils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public class ReportCommand implements Listener, CommandExecutor {
     private final DiscordBot discordBot;
-    private final KushStaffUtils instance;
+    public KushStaffUtils instance;
     public final Map<UUID, Long> cooldowns = new HashMap<>();
 
     public ReportCommand(KushStaffUtils instance, DiscordBot discordBot) {
@@ -61,7 +57,7 @@ public class ReportCommand implements Listener, CommandExecutor {
     private void sendWebhook(Player player, String reportedPlayerName, String reportReason) {
         CompletableFuture.runAsync(() -> {
             try {
-                TextChannel channel = discordBot.getJda().getTextChannelById(KushStaffUtils.getInstance().getConfig().getString("report.channelId"));
+                TextChannel channel = discordBot.getJda().getTextChannelById(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.channelId")));
                 if (channel == null) {
                     Bukkit.getLogger().warning("[Player Report Command] Invalid channel ID specified: " + KushStaffUtils.getInstance().getConfig().getString("report.channelId"));
                     return;
@@ -72,8 +68,8 @@ public class ReportCommand implements Listener, CommandExecutor {
 
                 EmbedBuilder embed = new EmbedBuilder();
                 long time = System.currentTimeMillis() / 1000L;
-                embed.setTitle(KushStaffUtils.getInstance().getConfig().getString("report.embed_title").replace("%reason%", reportReason).replace("%reported_player%", reportedPlayerName).replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>"));
-                embed.setDescription(KushStaffUtils.getInstance().getConfig().getString("report.message").replace("%reason%", reportReason).replace("%reported_player%", reportedPlayerName).replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>"));
+                embed.setTitle(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.embed_title")).replace("%reason%", reportReason).replace("%reported_player%", reportedPlayerName).replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>"));
+                embed.setDescription(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.message")).replace("%reason%", reportReason).replace("%reported_player%", reportedPlayerName).replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>"));
 
                 channel.sendMessageEmbeds(embed.build()).queue();
             } catch (Exception e) {
