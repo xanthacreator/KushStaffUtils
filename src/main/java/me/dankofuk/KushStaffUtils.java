@@ -121,7 +121,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         // Start/Stop Logger (Discord Bot Feature)
         if (!config.getBoolean("bot.enabled")) {
             } else if (!config.getBoolean("serverstatus.enabled")) {
-                getLogger().warning("Start/Stop Logger - [Not Enabled]");
+                getLogger().warning("Start/Stop Logger - [Not Enabled] - (Requires Discord Bot enabled)");
             } else {
             StartStopLogger startStopLogger = new StartStopLogger(discordBot);
             startStopLogger.sendStatusUpdateMessage(true);
@@ -136,10 +136,11 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("Factions Top Announcer - [Enabled]");
         }
         // Player Report Command (Webhook + Command)
-        if (!config.getBoolean("report.enabled")) {
-            getLogger().warning("Player Reporting Command - [Not Enabled]");
+        if (!config.getBoolean("bot.enabled")) {
+        } else if (!config.getBoolean("report.enabled")) {
+            getLogger().warning("Player Reporting Command - [Not Enabled] - (Requires Discord Bot enabled)");
         } else {
-            this.reportCommand = new ReportCommand(config);
+            this.reportCommand = new ReportCommand(this, discordBot);
             getCommand("report").setExecutor(this.reportCommand);
             Bukkit.getPluginManager().registerEvents(reportCommand, this);
             getLogger().warning("Player Reporting Command - [Enabled]");

@@ -23,8 +23,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.event.Listener;
 
 public class SuggestionCommand extends ListenerAdapter implements CommandExecutor, Listener {
-    private DiscordBot discordBot;
-    private Map<UUID, Long> cooldowns = new HashMap<>();
+    private final DiscordBot discordBot;
+    private final Map<UUID, Long> cooldowns = new HashMap<>();
     public FileConfiguration config;
 
 
@@ -88,7 +88,6 @@ public class SuggestionCommand extends ListenerAdapter implements CommandExecuto
         sendSuggestion(player, suggest);
         cooldowns.put(player.getUniqueId(), System.currentTimeMillis());
 
-        // Send a separate message to the player
         player.sendMessage(ColorUtils.translateColorCodes(KushStaffUtils.getInstance().getConfig().getString("suggestion.sentMessage").replace("%suggestion%", suggest)));
 
         return true;

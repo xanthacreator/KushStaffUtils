@@ -10,7 +10,7 @@ import java.awt.*;
 
 public class StartStopLogger extends ListenerAdapter {
 
-    private DiscordBot discordBot;
+    private final DiscordBot discordBot;
     public KushStaffUtils main;
 
     public StartStopLogger(DiscordBot discordBot) {
@@ -26,7 +26,7 @@ public class StartStopLogger extends ListenerAdapter {
             EmbedBuilder embed = new EmbedBuilder();
             embed.setColor(serverStarted ? Color.GREEN : Color.RED);
             embed.setTitle(serverStarted ? "\uD83D\uDFE2 Server has `started`!" : "\uD83D\uDED1 Server has `shutdown`!");
-            embed.setFooter(serverStarted ? "Server Log" : "Server Log");
+            embed.setFooter("Server Log");
 
             TextChannel channel = discordBot.getJda().getTextChannelById(KushStaffUtils.getInstance().getConfig().getString("serverstatus.channelId"));
             if (channel != null) {

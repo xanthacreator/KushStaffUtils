@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class FactionsTopAnnouncer implements Listener {
 
         private KushStaffUtils main;
-        private FileConfiguration config;
+        private final FileConfiguration config;
         private BukkitTask announcementTask;
 
         public FactionsTopAnnouncer(FileConfiguration config) {

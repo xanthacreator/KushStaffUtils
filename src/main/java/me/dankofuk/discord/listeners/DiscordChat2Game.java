@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
 public class DiscordChat2Game extends ListenerAdapter {
-    private KushStaffUtils main;
+    private final KushStaffUtils main;
     public FileConfiguration config;
 
     public DiscordChat2Game(KushStaffUtils main, FileConfiguration config) {

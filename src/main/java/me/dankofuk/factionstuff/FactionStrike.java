@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture;
 public class FactionStrike implements Listener, CommandExecutor {
 
     private final Map<String, Integer> strikes = new HashMap<>();
-    private FileConfiguration config;
+    private final FileConfiguration config;
     private KushStaffUtils main;
 
     public FactionStrike(FileConfiguration config) {

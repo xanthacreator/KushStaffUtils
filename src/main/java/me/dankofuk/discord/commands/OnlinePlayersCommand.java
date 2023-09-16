@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class OnlinePlayersCommand extends ListenerAdapter {
     private KushStaffUtils main;
-    private DiscordBot discordBot;
+    private final DiscordBot discordBot;
 
     public OnlinePlayersCommand(DiscordBot discordBot) {
         this.discordBot = discordBot;

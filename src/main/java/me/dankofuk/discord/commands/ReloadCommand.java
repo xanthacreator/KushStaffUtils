@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ReloadCommand extends ListenerAdapter {
-    private DiscordBot discordBot;
+    private final DiscordBot discordBot;
     private Plugin botTask;
 
     public DiscordBot getDiscordBot() {

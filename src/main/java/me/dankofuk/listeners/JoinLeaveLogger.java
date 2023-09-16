@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class JoinLeaveLogger implements Listener {
-    private FileConfiguration config;
+    private final FileConfiguration config;
     private KushStaffUtils main;
 
     public JoinLeaveLogger(FileConfiguration config) {

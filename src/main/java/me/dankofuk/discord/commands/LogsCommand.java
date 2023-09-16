@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class LogsCommand extends ListenerAdapter {
 
-    private DiscordBot discordBot;
+    private final DiscordBot discordBot;
     private KushStaffUtils main;
 
     public LogsCommand(DiscordBot discordBot) {

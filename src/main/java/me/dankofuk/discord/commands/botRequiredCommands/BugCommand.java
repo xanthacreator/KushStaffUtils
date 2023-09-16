@@ -23,7 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class BugCommand extends ListenerAdapter implements CommandExecutor, Listener {
-    private KushStaffUtils instance;
+    private final KushStaffUtils instance;
     public FileConfiguration config;
     public final Map<UUID, Long> cooldowns = new HashMap<>();
     public DiscordBot discordBot;
