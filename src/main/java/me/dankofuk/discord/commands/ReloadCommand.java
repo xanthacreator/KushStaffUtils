@@ -1,6 +1,6 @@
 package me.dankofuk.discord.commands;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.DiscordBot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -18,7 +18,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class ReloadCommand extends ListenerAdapter {
-    private DiscordBot discordBot;
+    private final DiscordBot discordBot;
     private Plugin botTask;
 
     public DiscordBot getDiscordBot() {
@@ -34,7 +34,7 @@ public class ReloadCommand extends ListenerAdapter {
             if (event.getMember() != null && event.getMember().getRoles().stream()
                     .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID()))) {
                 try {
-                    FileConfiguration config = Main.getInstance().getConfig();
+                    FileConfiguration config = KushStaffUtils.getInstance().getConfig();
                     config.load(new File("plugins/KushStaffUtils/config.yml"));
                 } catch (IOException|org.bukkit.configuration.InvalidConfigurationException e) {
                     e.printStackTrace();

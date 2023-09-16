@@ -1,6 +1,6 @@
 package me.dankofuk.listeners;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,13 +39,13 @@ public class FileCommandLogger implements Listener {
     }
 
     public void accessConfigs() {
-        boolean logCommands = Main.getInstance().getConfig().getBoolean("per-user-logging.enabled");
+        boolean logCommands = KushStaffUtils.getInstance().getConfig().getBoolean("per-user-logging.enabled");
     }
 
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if (!Main.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
+        if (!KushStaffUtils.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
             return;
         }
 

@@ -1,13 +1,12 @@
 package me.dankofuk.discord.commands;
 
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.managers.UUIDFetcher;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -18,8 +17,8 @@ import java.util.UUID;
 
 public class LogsCommand extends ListenerAdapter {
 
-    private DiscordBot discordBot;
-    private Main main;
+    private final DiscordBot discordBot;
+    private KushStaffUtils main;
 
     public LogsCommand(DiscordBot discordBot) {
         this.discordBot = discordBot;
@@ -44,7 +43,7 @@ public class LogsCommand extends ListenerAdapter {
                 return;
             }
 
-            if (!Main.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
+            if (!KushStaffUtils.getInstance().getConfig().getBoolean("per-user-logging.enabled")) {
                 EmbedBuilder e = new EmbedBuilder();
                 e.setColor(Color.RED);
                 e.setTitle("Error 404");

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public final class UUIDFetcher {
 
-    private static HashMap<String, UUID> realUuids = new HashMap<>();
+    private static final HashMap<String, UUID> realUuids = new HashMap<>();
 
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/";
 

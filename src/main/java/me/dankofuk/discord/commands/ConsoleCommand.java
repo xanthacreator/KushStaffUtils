@@ -25,7 +25,6 @@ public class ConsoleCommand extends ListenerAdapter {
                 String subCommand = event.getSubcommandName();
                 String inGameCommand = event.getOption("command").getAsString();
 
-                // Check if user has permissions to execute the command
                 boolean hasPermission = event.getMember().getRoles().stream()
                         .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID()));
 

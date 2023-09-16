@@ -2,9 +2,8 @@ package me.dankofuk.factionstuff;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import me.dankofuk.Main;
+import me.dankofuk.KushStaffUtils;
 import me.dankofuk.utils.ColorUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -29,24 +28,24 @@ import java.util.concurrent.CompletableFuture;
 public class FactionStrike implements Listener, CommandExecutor {
 
     private final Map<String, Integer> strikes = new HashMap<>();
-    private FileConfiguration config;
-    private Main main;
+    private final FileConfiguration config;
+    private KushStaffUtils main;
 
     public FactionStrike(FileConfiguration config) {
         this.config = config;
     }
 
     public void accessConfigs() {
-        String strikeWebhookUrl = Main.getInstance().getConfig().getString("strike.webhookUrl");
-        String strikeUsername = Main.getInstance().getConfig().getString("strike.username");
-        String strikeAvatarUrl = Main.getInstance().getConfig().getString("strike.avatarUrl");
-        boolean isStrikeEnabled = Main.getInstance().getConfig().getBoolean("strike.enabled");
-        String strikeMessage = Main.getInstance().getConfig().getString("strike.message");
-        String strikeNoPermissionMessage = Main.getInstance().getConfig().getString("strike.noPermissionMessage");
-        String strikeUserMessage = Main.getInstance().getConfig().getString("strike.usageMessage");
-        List<String> strikeCommand = Main.getInstance().getConfig().getStringList("strike.sendCommand");
-        String strikeEmbedTitle = Main.getInstance().getConfig().getString("strike.embedTitle");
-        String strikeThumbnail = Main.getInstance().getConfig().getString("strike.thumbnail");
+        String strikeWebhookUrl = KushStaffUtils.getInstance().getConfig().getString("strike.webhookUrl");
+        String strikeUsername = KushStaffUtils.getInstance().getConfig().getString("strike.username");
+        String strikeAvatarUrl = KushStaffUtils.getInstance().getConfig().getString("strike.avatarUrl");
+        boolean isStrikeEnabled = KushStaffUtils.getInstance().getConfig().getBoolean("strike.enabled");
+        String strikeMessage = KushStaffUtils.getInstance().getConfig().getString("strike.message");
+        String strikeNoPermissionMessage = KushStaffUtils.getInstance().getConfig().getString("strike.noPermissionMessage");
+        String strikeUserMessage = KushStaffUtils.getInstance().getConfig().getString("strike.usageMessage");
+        List<String> strikeCommand = KushStaffUtils.getInstance().getConfig().getStringList("strike.sendCommand");
+        String strikeEmbedTitle = KushStaffUtils.getInstance().getConfig().getString("strike.embedTitle");
+        String strikeThumbnail = KushStaffUtils.getInstance().getConfig().getString("strike.thumbnail");
     }
 
     @Override
@@ -57,23 +56,23 @@ public class FactionStrike implements Listener, CommandExecutor {
 
         Player player = (Player) sender;
         if (!player.hasPermission("commandlogger.strike.use")) {
-            player.sendMessage(ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.noPermissionMessage")));
+            player.sendMessage(ColorUtils.translateColorCodes(KushStaffUtils.getInstance().getConfig().getString("strike.noPermissionMessage")));
             return true;
         }
 
-        if (!Main.getInstance().getConfig().getBoolean("strike.enabled")) {
+        if (!KushStaffUtils.getInstance().getConfig().getBoolean("strike.enabled")) {
             player.sendMessage(ColorUtils.translateColorCodes("&cStrikes are currently disabled."));
             return true;
         }
         if (args.length < 3 || !isInteger(args[1])) {
-            player.sendMessage(ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.usageMessage")));
+            player.sendMessage(ColorUtils.translateColorCodes(KushStaffUtils.getInstance().getConfig().getString("strike.usageMessage")));
             return true;
         }
         String groupName = args[0];
         int strikeAmount = Integer.parseInt(args[1]);
         String strikeReason = String.join(" ", Arrays.<CharSequence>copyOfRange(args, 2, args.length));
         if (strikeAmount <= 0) {
-            player.sendMessage(ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.usageMessage")));
+            player.sendMessage(ColorUtils.translateColorCodes(KushStaffUtils.getInstance().getConfig().getString("strike.usageMessage")));
             return true;
 
         }
@@ -83,7 +82,7 @@ public class FactionStrike implements Listener, CommandExecutor {
             this.strikes.put(groupName, strikeAmount);
         }
 
-        for (String cmd : Main.getInstance().getConfig().getStringList("strike.sendCommand")) {
+        for (String cmd : KushStaffUtils.getInstance().getConfig().getStringList("strike.sendCommand")) {
             cmd = cmd.replace("%group%", groupName)
                     .replace("%amount%", Integer.toString(strikeAmount))
                     .replace("%reason%", strikeReason)
@@ -104,26 +103,26 @@ public class FactionStrike implements Listener, CommandExecutor {
     private void sendWebhook(Player player, String groupName, int strikeAmount, String strikeReason) {
         CompletableFuture.runAsync(() -> {
             try {
-                URL url = new URL(Main.getInstance().getConfig().getString("strike.webhookUrl"));
+                URL url = new URL(KushStaffUtils.getInstance().getConfig().getString("strike.webhookUrl"));
                 HttpURLConnection connection = (HttpURLConnection)url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestProperty("User-Agent", "StrikeWebhook");
                 connection.setDoOutput(true);
-                String description = ColorUtils.translateColorCodes(Main.getInstance().getConfig().getString("strike.message")
+                String description = ColorUtils.translateColorCodes(KushStaffUtils.getInstance().getConfig().getString("strike.message")
                         .replace("%group%", groupName)
                         .replace("%amount%", Integer.toString(strikeAmount))
                         .replace("%reason%", strikeReason)
                         .replace("%staff%", player.getName()));
                 JsonObject json = new JsonObject();
-                json.addProperty("username", Main.getInstance().getConfig().getString("strike.username"));
-                json.addProperty("avatar_url", Main.getInstance().getConfig().getString("strike.avatarUrl"));
+                json.addProperty("username", KushStaffUtils.getInstance().getConfig().getString("strike.username"));
+                json.addProperty("avatar_url", KushStaffUtils.getInstance().getConfig().getString("strike.avatarUrl"));
                 JsonObject embed = new JsonObject();
                 embed.addProperty("description", description);
                 embed.addProperty("color", getColorCode("#FF0000"));
-                embed.addProperty("title", Main.getInstance().getConfig().getString("strike.embedTitle"));
+                embed.addProperty("title", KushStaffUtils.getInstance().getConfig().getString("strike.embedTitle"));
                 JsonObject thumbnail = new JsonObject();
-                thumbnail.addProperty("url", Main.getInstance().getConfig().getString("strike.thumbnail"));
+                thumbnail.addProperty("url", KushStaffUtils.getInstance().getConfig().getString("strike.thumbnail"));
                 embed.add("thumbnail", thumbnail);
                 JsonArray embeds = new JsonArray();
                 embeds.add(embed);
@@ -136,10 +135,10 @@ public class FactionStrike implements Listener, CommandExecutor {
                 int responseCode = connection.getResponseCode();
                 String str1 = connection.getResponseMessage();
             } catch (MalformedURLException e) {
-                Bukkit.getLogger().warning("[StrikeWebhook] Invalid webhook URL specified: " + Main.getInstance().getConfig().getString("strike.webhookUrl"));
+                Bukkit.getLogger().warning("[StrikeWebhook] Invalid webhook URL specified: " + KushStaffUtils.getInstance().getConfig().getString("strike.webhookUrl"));
                 e.printStackTrace();
             } catch (ProtocolException e) {
-                Bukkit.getLogger().warning("[StrikeWebhook] Invalid protocol specified in webhook URL: " + Main.getInstance().getConfig().getString("strike.webhookUrl"));
+                Bukkit.getLogger().warning("[StrikeWebhook] Invalid protocol specified in webhook URL: " + KushStaffUtils.getInstance().getConfig().getString("strike.webhookUrl"));
                 e.printStackTrace();
             } catch (IOException e) {
                 Bukkit.getLogger().warning("[StrikeWebhook] Error sending message to Discord webhook.");

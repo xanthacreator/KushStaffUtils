@@ -6,7 +6,7 @@ public class ColorUtils {
     public static final String WITH_DELIMITER = "((?<=%1$s)|(?=%1$s))";
 
     public static String translateColorCodes(String text) {
-        String[] texts = text.split(String.format("((?<=%1$s)|(?=%1$s))", new Object[] { "&" }));
+        String[] texts = text.split(String.format("((?<=%1$s)|(?=%1$s))", "&"));
         StringBuilder finalText = new StringBuilder();
         for (int i = 0; i < texts.length; i++) {
             if (texts[i].equalsIgnoreCase("&")) {
