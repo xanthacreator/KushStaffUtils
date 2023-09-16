@@ -1,6 +1,6 @@
 package me.dankofuk;
 
-import me.dankofuk.commands.BugCommand;
+import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
 import me.dankofuk.commands.CommandLogViewer;
 import me.dankofuk.commands.ReportCommand;
 import me.dankofuk.discord.DiscordBot;
@@ -153,10 +153,12 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("Strike Command - [Enabled]");
         }
         // Bug Report Command (Webhook + Command)
-        if (!config.getBoolean("bug_report.enabled")) {
-            getLogger().warning("Bug Command - [Not Enabled]");
+        if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Bug Report Command - [Not Enabled] - (Requires Discord Bot enabled)");
+        } else if (!config.getBoolean("bug_report.enabled")) {
+            getLogger().warning("Bug Report Command - [Not Enabled]");
         } else {
-            this.bugCommand = new BugCommand(config);
+            this.bugCommand = new BugCommand(this, discordBot, config);
             getServer().getPluginManager().registerEvents(this.bugCommand, this);
             getCommand("bug").setExecutor(this.bugCommand);
             getLogger().warning("Bug Command - [Enabled]");
@@ -172,6 +174,8 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         // Suggestion Command (Discord Bot + Command)
         if (!config.getBoolean("bot.enabled")) {
             getLogger().warning("Suggestion Command - [Not Enabled] - (Requires Discord Bot enabled)");
+        } else if (!config.getBoolean("suggestion.enabled")) {
+            getLogger().warning("Suggestion Command - [Not Enabled]");
         } else {
             this.suggestionCommand = new SuggestionCommand(this.discordBot, config);
             getCommand("suggestion").setExecutor(this.suggestionCommand);

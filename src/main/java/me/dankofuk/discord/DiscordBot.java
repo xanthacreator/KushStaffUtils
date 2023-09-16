@@ -1,6 +1,7 @@
 package me.dankofuk.discord;
 
 import me.dankofuk.KushStaffUtils;
+import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
 import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
@@ -48,7 +49,7 @@ public class DiscordBot extends ListenerAdapter {
                 GatewayIntent.DIRECT_MESSAGE_REACTIONS,
                 GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(this)
-                .setActivity(Activity.of(Activity.ActivityType.valueOf(KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity_type")), KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity"))) // Set the customizable activity
+                .setActivity(Activity.of(Activity.ActivityType.valueOf(KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity_type")), KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity")))
                 .build()
                 .awaitReady();
 
@@ -72,7 +73,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("online", "Lists Online Players."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
-        commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.STRING, "user", "The user that the avatar for."));
+        commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -83,7 +84,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("online", "Lists Online Players."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
-        commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.STRING, "user", "The user that the avatar for."));
+        commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
