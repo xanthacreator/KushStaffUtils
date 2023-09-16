@@ -26,8 +26,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -83,7 +85,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
 
         // Features
         if (config.getBoolean("bot.enabled")) {
-            if ("false".equals(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")) || KushStaffUtils.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
+            if ("false".equals(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")) || Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")).isEmpty()) {
                 getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
@@ -98,7 +100,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("[Discord Bot] Bot is disabled. Skipping initialization...");
         }
         CommandLogViewer commandLogViewer = new CommandLogViewer(getDataFolder().getPath() + File.separator + "logs", 15);
-        getCommand("viewlogs").setExecutor(commandLogViewer);
+        Objects.requireNonNull(getCommand("viewlogs")).setExecutor(commandLogViewer);
 
 
         // FileCommandLogger (Logging Folder)
@@ -120,6 +122,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         }
         // Start/Stop Logger (Discord Bot Feature)
         if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Start/Stop Logger - [Not Enabled] - (Requires Discord Bot enabled)");
             } else if (!config.getBoolean("serverstatus.enabled")) {
                 getLogger().warning("Start/Stop Logger - [Not Enabled] - (Requires Discord Bot enabled)");
             } else {
@@ -137,11 +140,12 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         }
         // Player Report Command (Webhook + Command)
         if (!config.getBoolean("bot.enabled")) {
+            getLogger().warning("Player Reporting Command - [Not Enabled] - (Requires Discord Bot enabled)");
         } else if (!config.getBoolean("report.enabled")) {
             getLogger().warning("Player Reporting Command - [Not Enabled] - (Requires Discord Bot enabled)");
         } else {
             this.reportCommand = new ReportCommand(this, discordBot);
-            getCommand("report").setExecutor(this.reportCommand);
+            Objects.requireNonNull(getCommand("report")).setExecutor(this.reportCommand);
             Bukkit.getPluginManager().registerEvents(reportCommand, this);
             getLogger().warning("Player Reporting Command - [Enabled]");
         }
@@ -150,7 +154,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("Strike Command - [Not Enabled]");
         } else {
             this.factionStrike = new FactionStrike(config);
-            getCommand("strike").setExecutor(this.factionStrike);
+            Objects.requireNonNull(getCommand("strike")).setExecutor(this.factionStrike);
             getLogger().warning("Strike Command - [Enabled]");
         }
         // Bug Report Command (Webhook + Command)
@@ -161,7 +165,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         } else {
             this.bugCommand = new BugCommand(this, discordBot, config);
             getServer().getPluginManager().registerEvents(this.bugCommand, this);
-            getCommand("bug").setExecutor(this.bugCommand);
+            Objects.requireNonNull(getCommand("bug")).setExecutor(this.bugCommand);
             getLogger().warning("Bug Command - [Enabled]");
             }
         // Join Leave Logger (Webhooks)
@@ -179,7 +183,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("Suggestion Command - [Not Enabled]");
         } else {
             this.suggestionCommand = new SuggestionCommand(this.discordBot, config);
-            getCommand("suggestion").setExecutor(this.suggestionCommand);
+            Objects.requireNonNull(getCommand("suggestion")).setExecutor(this.suggestionCommand);
             getServer().getPluginManager().registerEvents(this.suggestionCommand, this);
             getLogger().warning("Suggestion Command - [Enabled]");
         }
@@ -196,8 +200,8 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         if (!config.getBoolean("creative-logging.enabled")) {
             getLogger().warning("Creative Logging - [Not Enabled]");
         } else {
-            this.creativeLogger = new CreativeMiddleClickLogger();
-            this.creativeDropLogger = new CreativeDropLogger();
+            this.creativeLogger = new CreativeMiddleClickLogger(this);
+            this.creativeDropLogger = new CreativeDropLogger(this);
             getServer().getPluginManager().registerEvents(this.creativeLogger, this);
             getServer().getPluginManager().registerEvents(this.creativeDropLogger, this);
             getLogger().warning("Creative Logging - [Enabled]");
@@ -230,15 +234,15 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
     }
 
 
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, @NotNull String[] args) {
         if (cmd.getName().equalsIgnoreCase("stafflogger")) {
             if (!sender.hasPermission("commandlogger.reload")) {
-                sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("noPermissionMessage")));
+                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(messagesConfig.getString("noPermissionMessage"))));
                 return true;
             }
             if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
                 reloadConfigOptions();
-                sender.sendMessage(ColorUtils.translateColorCodes(messagesConfig.getString("reloadMessage")));
+                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(messagesConfig.getString("reloadMessage"))));
                 return true;
             }
             return false;
