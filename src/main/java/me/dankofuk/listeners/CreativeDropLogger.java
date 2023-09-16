@@ -16,6 +16,13 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class CreativeDropLogger implements Listener {
+
+    public KushStaffUtils instance;
+
+    public CreativeDropLogger(KushStaffUtils instance) {
+        this.instance = instance;
+    }
+
     @EventHandler
     public void onDropItem(PlayerDropItemEvent e) {
         Player p = e.getPlayer();
