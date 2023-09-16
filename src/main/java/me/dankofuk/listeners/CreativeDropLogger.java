@@ -2,6 +2,7 @@ package me.dankofuk.listeners;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import me.dankofuk.KushStaffUtils;
@@ -43,7 +44,7 @@ public class CreativeDropLogger implements Listener {
             }
 
             if (itemMeta.hasLore()) {
-                loreText = itemMeta.getLore().toString().replaceAll("§[0-9a-fk-or]", " ");
+                loreText = Objects.requireNonNull(itemMeta.getLore()).toString().replaceAll("§[0-9a-fk-or]", " ");
             }
                     webhook.addEmbed((new WebhookUtils.EmbedObject())
                             .setTitle(fileConfiguration.getString("creative-logging.drop.title"))

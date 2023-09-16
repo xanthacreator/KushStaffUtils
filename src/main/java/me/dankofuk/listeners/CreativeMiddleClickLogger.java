@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 import static org.bukkit.Bukkit.getLogger;
@@ -77,7 +78,7 @@ public class CreativeMiddleClickLogger implements Listener {
             }
 
             if (itemMeta.hasLore()) {
-                loreText = itemMeta.getLore().toString().replaceAll("§[0-9a-fk-or]", " ");
+                loreText = Objects.requireNonNull(itemMeta.getLore()).toString().replaceAll("§[0-9a-fk-or]", " ");
             }
 
             webhook.addEmbed(new WebhookUtils.EmbedObject()
