@@ -1,8 +1,11 @@
 package me.dankofuk.commands;
 
 import me.dankofuk.KushStaffUtils;
+import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.utils.ColorUtils;
 import me.dankofuk.utils.WebhookUtils;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,27 +18,16 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class ReportCommand implements Listener, CommandExecutor {
-    private KushStaffUtils main;
-    private WebhookUtils webhookUtils;
+    private final DiscordBot discordBot;
+    private final KushStaffUtils instance;
     public final Map<UUID, Long> cooldowns = new HashMap<>();
-    public FileConfiguration config;
 
-    public ReportCommand(FileConfiguration config) {
-        this.config = config;
-    }
-
-    public void accessConfigs() {
-        String ReportWebhookUrl = KushStaffUtils.getInstance().getConfig().getString("report.webhookUrl");
-        String username = KushStaffUtils.getInstance().getConfig().getString("report.username");
-        String avatarUrl = KushStaffUtils.getInstance().getConfig().getString("report.avatarUrl");
-        boolean isReportEnabled = KushStaffUtils.getInstance().getConfig().getBoolean("report.enabled");
-        String reportMessage = KushStaffUtils.getInstance().getConfig().getString("report.message");
-        int reportCooldown = KushStaffUtils.getInstance().getConfig().getInt("report.cooldown");
-        String reportSentMessage = KushStaffUtils.getInstance().getConfig().getString("report.sentMessage");
-        String noPermissionMessage = KushStaffUtils.getInstance().getConfig().getString("report.noPermissionMessage");
-        String usageMessage = KushStaffUtils.getInstance().getConfig().getString("report.usageMessage");
+    public ReportCommand(KushStaffUtils instance, DiscordBot discordBot) {
+        this.instance = instance;
+        this.discordBot = discordBot;
     }
 
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -67,31 +59,27 @@ public class ReportCommand implements Listener, CommandExecutor {
     }
 
     private void sendWebhook(Player player, String reportedPlayerName, String reportReason) {
-        try {
-            this.webhookUtils = new WebhookUtils(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.webhookUrl")));
-            long time = System.currentTimeMillis() / 1000L;
-            WebhookUtils.EmbedObject embedObject = new WebhookUtils.EmbedObject()
-                    .setDescription(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.message"))
-                            .replace("%player%", player.getName())
-                            .replace("%reported_player%", reportedPlayerName)
-                            .replace("%reason%", reportReason)
-                            .replace("\n", "\\n")
-                            .replace("%time%", "<t:" + time + ":R>"))
-                    .setColor(Color.RED);
+        CompletableFuture.runAsync(() -> {
+            try {
+                TextChannel channel = discordBot.getJda().getTextChannelById(KushStaffUtils.getInstance().getConfig().getString("report.channelId"));
+                if (channel == null) {
+                    Bukkit.getLogger().warning("[Player Report Command] Invalid channel ID specified: " + KushStaffUtils.getInstance().getConfig().getString("report.channelId"));
+                    return;
+                }
 
-            webhookUtils.setContent(null); // Set content to null if you don't want any text content
-            webhookUtils.setUsername(KushStaffUtils.getInstance().getConfig().getString("report.username"));
-            webhookUtils.setAvatarUrl(KushStaffUtils.getInstance().getConfig().getString("report.avatarUrl"));
-            webhookUtils.addEmbed(embedObject);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try {
-            webhookUtils.execute();
-        } catch (IOException e) {
-            Bukkit.getLogger().warning("[ReportWebhook] Error sending message to Discord webhook.");
-            e.printStackTrace();
-        }
+                String playerName = player.getName();
+                String playerUUID = player.getUniqueId().toString();
+
+                EmbedBuilder embed = new EmbedBuilder();
+                long time = System.currentTimeMillis() / 1000L;
+                embed.setTitle(KushStaffUtils.getInstance().getConfig().getString("report.embed_title").replace("%reason%", reportReason).replace("%reported_player%", reportedPlayerName).replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>"));
+                embed.setDescription(KushStaffUtils.getInstance().getConfig().getString("report.message").replace("%reason%", reportReason).replace("%reported_player%", reportedPlayerName).replace("%player%", playerName).replace("%time%", "<t:" + time + ":R>"));
+
+                channel.sendMessageEmbeds(embed.build()).queue();
+            } catch (Exception e) {
+                Bukkit.getLogger().warning("[Player Report Command] Error sending player report: " + e.getMessage());
+            }
+        });
     }
 
     private int getColorCode(String color) {
