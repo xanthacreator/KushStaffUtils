@@ -2,7 +2,7 @@ package me.dankofuk;
 
 import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
 import me.dankofuk.commands.CommandLogViewer;
-import me.dankofuk.commands.ReportCommand;
+import me.dankofuk.discord.commands.botRequiredCommands.ReportCommand;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.commands.botRequiredCommands.SuggestionCommand;
 import me.dankofuk.discord.listeners.ChatWebhook;

@@ -1,4 +1,4 @@
-package me.dankofuk.commands;
+package me.dankofuk.discord.commands.botRequiredCommands;
 
 import me.dankofuk.KushStaffUtils;
 import me.dankofuk.discord.DiscordBot;
