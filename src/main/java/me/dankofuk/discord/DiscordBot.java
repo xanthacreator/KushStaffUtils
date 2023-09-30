@@ -1,7 +1,6 @@
 package me.dankofuk.discord;
 
 import me.dankofuk.KushStaffUtils;
-import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
 import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
@@ -20,10 +19,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DiscordBot extends ListenerAdapter {
     public JDA jda;
@@ -44,15 +45,27 @@ public class DiscordBot extends ListenerAdapter {
     public void start() throws InterruptedException {
         if (!KushStaffUtils.getInstance().getConfig().getBoolean("bot.enabled"))
             return;
-        this.jda = JDABuilder.createDefault(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")).enableIntents(GatewayIntent.GUILD_MESSAGES,
-                GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS,
-                GatewayIntent.DIRECT_MESSAGE_REACTIONS,
-                GatewayIntent.MESSAGE_CONTENT)
+
+        String activityTypeStr = KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity_type");
+        Activity.ActivityType activityType = getActivityType(activityTypeStr);
+
+        if (activityType == null) {
+            System.err.println("Invalid bot.discord_activity_type. Valid options are:");
+            for (Activity.ActivityType validType : Activity.ActivityType.values()) {
+                System.err.println(validType.name());
+            }
+            return;
+        }
+
+        this.jda = JDABuilder.createDefault(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token"))
+                .enableIntents(GatewayIntent.GUILD_MESSAGES,
+                        GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                        GatewayIntent.DIRECT_MESSAGE_REACTIONS,
+                        GatewayIntent.MESSAGE_CONTENT)
                 .addEventListeners(this)
-                .setActivity(Activity.of(Activity.ActivityType.valueOf(KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity_type")), KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity")))
+                .setActivity(Activity.of(activityType, Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("bot.discord_activity"))))
                 .build()
                 .awaitReady();
-
 
         // Register Events/Listeners
         this.jda.addEventListener(new OnlinePlayersCommand(this));
@@ -64,13 +77,22 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new DiscordChat2Game(main, config));
         this.jda.addEventListener(new ReloadCommand(this));
         this.jda.addEventListener(new AvatarCommand());
-        //this.jda.addEventListener(new ChatWebhook(this));
+        this.jda.addEventListener(new ServerInfoCommand());
+    }
+
+    private Activity.ActivityType getActivityType(String activityTypeStr) {
+        try {
+            return Activity.ActivityType.valueOf(activityTypeStr);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         List<CommandData> commandsData = new ArrayList<>();
         commandsData.add(Commands.slash("help", "Shows the list of all commands in this bot."));
         commandsData.add(Commands.slash("online", "Lists Online Players."));
+        commandsData.add(Commands.slash("serverinfo", "Guild Info for this server."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
@@ -82,6 +104,7 @@ public class DiscordBot extends ListenerAdapter {
         List<CommandData> commandsData = new ArrayList<>();
         commandsData.add(Commands.slash("help", "Shows the list of all commands in this bot."));
         commandsData.add(Commands.slash("online", "Lists Online Players."));
+        commandsData.add(Commands.slash("serverinfo", "Guild Info for this server."));
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
@@ -94,7 +117,7 @@ public class DiscordBot extends ListenerAdapter {
             this.jda.shutdown();
             Bukkit.getScheduler().getPendingTasks().stream()
                     .filter(task -> (task.getOwner() == this.botTask))
-                    .forEach(task -> task.cancel());
+                    .forEach(BukkitTask::cancel);
         }
     }
 
@@ -133,7 +156,7 @@ public class DiscordBot extends ListenerAdapter {
         stop();
         accessConfigs();
         if (KushStaffUtils.getInstance().getConfig().getBoolean("bot.enabled")) {
-            if ("false".equals(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")) || KushStaffUtils.getInstance().getConfig().getString("bot.discord_token").isEmpty()) {
+            if ("false".equals(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")) || Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("bot.discord_token")).isEmpty()) {
                 Bukkit.getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
@@ -153,7 +176,6 @@ public class DiscordBot extends ListenerAdapter {
     }
 
     public String getAdminRoleID() {
-        String adminRoleId = KushStaffUtils.getInstance().getConfig().getString("bot.adminRoleID");
-        return adminRoleId;
+        return KushStaffUtils.getInstance().getConfig().getString("bot.adminRoleID");
     }
 }
