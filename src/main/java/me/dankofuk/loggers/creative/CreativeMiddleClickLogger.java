@@ -1,4 +1,4 @@
-package me.dankofuk.listeners;
+package me.dankofuk.loggers.creative;
 
 import me.dankofuk.KushStaffUtils;
 import me.dankofuk.utils.WebhookUtils;
