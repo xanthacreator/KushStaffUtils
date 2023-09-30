@@ -194,6 +194,7 @@ strike:
   username: "FactionStrikeBot"
   avatarUrl: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   embedTitle: ":book: `Faction Strike`"
+  embedColor: "#00FF00"
   message: ":information_source: `Faction:`\n> **%group%**\n \n:red_circle: `Amount of Strikes:`\n> **%amount%**\n \n:books: `Reason:`\n> %reason%\n \n:man_beard: `Striked by:`\n> %staff%"
   thumbnail: "https://cdn.discordapp.com/avatars/689960485495373824/19e1d85814a1a19c84e7ef0e261455a8.png?size=4096"
   staffMessage: "&c[&c&ᴋᴜѕʜѕᴛᴀꜰꜰᴜᴛɪʟѕ&c] &8» &aYou have given &c%group% %amount% &aof strikes for &c%reason%"
@@ -261,6 +262,7 @@ announcer:
     - ""
     - "Join our server to compete!"
   sendInterval: 60
+  embedColor: "#00FF00"
   title: "Factions Top Announcement - testerrr"
   username: "FactionsBot"
   footer: "Factions Top Logger"
