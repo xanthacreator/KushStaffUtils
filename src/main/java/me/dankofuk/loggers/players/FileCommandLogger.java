@@ -141,13 +141,13 @@ public class FileCommandLogger implements Listener {
                 if (!file.createNewFile()) {
                     throw new IOException("[KushStaffLogger] Player Logs: Failed to create file: " + playerId + ".txt");
                 }
-                System.out.println("[KushStaffLogger] Player Logs: Created file: " + playerId + ".txt");
+                Bukkit.getLogger().info("[KushStaffLogger] Player Logs: Created file: " + playerId + ".txt");
             } else {
-                System.out.println("[KushStaffLogger] Player Logs: File already exists: " + playerId + ".txt");
+                Bukkit.getLogger().info("[KushStaffLogger] Player Logs: File already exists: " + playerId + ".txt");
             }
             return new BufferedWriter(new FileWriter(file, true));
         } catch (IOException e) {
-            System.err.println("[KushStaffLogger] Player Logs: Failed to create file: " + playerId + ".txt");
+            Bukkit.getLogger().info("[KushStaffLogger] Player Logs: Failed to create file: " + playerId + ".txt");
             e.printStackTrace();
         }
         return null;
