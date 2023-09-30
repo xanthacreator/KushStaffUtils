@@ -1,4 +1,4 @@
-package me.dankofuk.factionstuff; // Update the package name
+package me.dankofuk.factions;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -22,12 +22,10 @@ import java.util.stream.Collectors;
 
 public class FactionsTopAnnouncer implements Listener {
 
-        private KushStaffUtils main;
-        private final FileConfiguration config;
+        private KushStaffUtils instance;
         private BukkitTask announcementTask;
 
-        public FactionsTopAnnouncer(FileConfiguration config) {
-                this.config = config;
+        public FactionsTopAnnouncer(FileConfiguration config, KushStaffUtils instance) {
 
                 boolean isEnabled = KushStaffUtils.getInstance().getConfig().getBoolean("announcer.enabled");
                 if (isEnabled) {
@@ -55,7 +53,7 @@ public class FactionsTopAnnouncer implements Listener {
                                         sendAnnouncement();
                                 }
                         }
-                }.runTaskTimer(Bukkit.getPluginManager().getPlugin("KushStaffUtils"), 0L, KushStaffUtils.getInstance().getConfig().getLong("announcer.sendInterval") * 20L); // Delay = 0, Period = sendInterval * 20 ticks
+                }.runTaskTimer(Objects.requireNonNull(Bukkit.getPluginManager().getPlugin("KushStaffUtils")), 0L, KushStaffUtils.getInstance().getConfig().getLong("announcer.sendInterval") * 20L); // Delay = 0, Period = sendInterval * 20 ticks
         }
 
         public void cancelAnnouncements() {
@@ -72,7 +70,7 @@ public class FactionsTopAnnouncer implements Listener {
 
         private void sendAnnouncement() {
                 if (KushStaffUtils.getInstance().getConfig().getString("announcer.webhookUrl") == null || Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("announcer.webhookUrl")).isEmpty()) {
-                        return; // No webhook URL, nothing to send
+                        return;
                 }
 
                 try {
@@ -100,7 +98,9 @@ public class FactionsTopAnnouncer implements Listener {
 
                         JsonObject embed = new JsonObject();
                         embed.addProperty("description", message);
-                        embed.addProperty("color", getColorCode("#00FF00")); // Change color code as needed
+                        String embedColor = KushStaffUtils.getInstance().getConfig().getString("announcer.embedColor");
+                        int embedColorCode = getColorCode(embedColor);
+                        embed.addProperty("color", embedColorCode);
                         embed.addProperty("title", KushStaffUtils.getInstance().getConfig().getString("announcer.title"));
 
                         JsonObject footerObj = new JsonObject();
@@ -139,6 +139,11 @@ public class FactionsTopAnnouncer implements Listener {
 
         private int getColorCode(String color) {
                 color = color.replace("#", "");
-                return Integer.parseInt(color, 16);
+                try {
+                        return Integer.parseInt(color, 16);
+                } catch (NumberFormatException e) {
+                        Bukkit.getLogger().warning("[FactionsTopAnnouncer] Invalid color code specified: " + color);
+                        return 0;
+                }
         }
 }
