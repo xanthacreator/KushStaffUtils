@@ -1,4 +1,4 @@
-package me.dankofuk.listeners;
+package me.dankofuk.loggers.players;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.dankofuk.KushStaffUtils;

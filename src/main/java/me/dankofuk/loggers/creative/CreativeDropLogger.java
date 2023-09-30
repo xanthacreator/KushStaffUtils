@@ -1,4 +1,4 @@
-package me.dankofuk.listeners;
+package me.dankofuk.loggers.creative;
 
 import java.awt.Color;
 import java.io.IOException;

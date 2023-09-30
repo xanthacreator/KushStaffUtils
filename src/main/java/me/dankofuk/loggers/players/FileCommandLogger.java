@@ -1,6 +1,7 @@
-package me.dankofuk.listeners;
+package me.dankofuk.loggers.players;
 
 import me.dankofuk.KushStaffUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,10 +32,10 @@ public class FileCommandLogger implements Listener {
         boolean success = logsFolder.mkdirs();
         if (!success && !logsFolder.exists()) {
             // Handle the error here
-            System.err.println("[KushStaffLogger] Player Logs: Failed to create the logs folder at path " + logsFolder.getAbsolutePath());
+            Bukkit.getLogger().info("[KushStaffLogger] Player Logs: Failed to create the logs folder at path " + logsFolder.getAbsolutePath());
         } else {
             // TODO Change logger
-            System.out.println("[KushStaffLogger] Player Logs: Logs folder already exists at path " + logsFolder.getAbsolutePath());
+            Bukkit.getLogger().info("[KushStaffLogger] Player Logs: Logs folder already exists at path " + logsFolder.getAbsolutePath());
         }
         this.writerMap = new ConcurrentHashMap<>();
     }
@@ -70,9 +72,10 @@ public class FileCommandLogger implements Listener {
         Location to = event.getTo();
 
         // Check if the player moved to a different world
+        assert to != null;
         if (from.getWorld() != to.getWorld()) {
             String location = String.format("%.2f, %.2f, %.2f", to.getX(), to.getY(), to.getZ());
-            log(player.getUniqueId(), "move", "Changed world to " + to.getWorld().getName() + " at " + location);
+            log(player.getUniqueId(), "move", "Changed world to " + Objects.requireNonNull(to.getWorld()).getName() + " at " + location);
         }
     }
 
@@ -83,8 +86,8 @@ public class FileCommandLogger implements Listener {
         String itemName = droppedItem.getType().toString();
         String itemLore = "";
 
-        if (droppedItem.hasItemMeta() && droppedItem.getItemMeta().hasLore()) {
-            itemLore = String.join(", ", droppedItem.getItemMeta().getLore());
+        if (droppedItem.hasItemMeta() && Objects.requireNonNull(droppedItem.getItemMeta()).hasLore()) {
+            itemLore = String.join(", ", Objects.requireNonNull(droppedItem.getItemMeta().getLore()));
         }
 
         int itemAmount = droppedItem.getAmount();
@@ -138,14 +141,13 @@ public class FileCommandLogger implements Listener {
                 if (!file.createNewFile()) {
                     throw new IOException("[KushStaffLogger] Player Logs: Failed to create file: " + playerId + ".txt");
                 }
-                System.out.println("[KushStaffLogger] Player Logs: Created file: " + playerId + ".txt");
-                return new BufferedWriter(new FileWriter(file, true));
+                Bukkit.getLogger().info("[KushStaffLogger] Player Logs: Created file: " + playerId + ".txt");
             } else {
-                System.out.println("[KushStaffLogger] Player Logs: File already exists: " + playerId + ".txt");
-                return new BufferedWriter(new FileWriter(file, true));
+                Bukkit.getLogger().info("[KushStaffLogger] Player Logs: File already exists: " + playerId + ".txt");
             }
+            return new BufferedWriter(new FileWriter(file, true));
         } catch (IOException e) {
-            System.err.println("[KushStaffLogger] Player Logs: Failed to create file: " + playerId + ".txt");
+            Bukkit.getLogger().info("[KushStaffLogger] Player Logs: Failed to create file: " + playerId + ".txt");
             e.printStackTrace();
         }
         return null;
