@@ -1,10 +1,9 @@
 package me.dankofuk.discord.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +27,9 @@ public class AvatarCommand extends ListenerAdapter {
 
             EmbedBuilder embed = new EmbedBuilder();
             embed.setColor(Color.BLUE);
-            embed.setTitle("Avatar for " + username);
+            embed.setTitle("Avatar for " + "`"+username+"`");
             embed.setImage(avatarUrl);
-            embed.setFooter("Avatar Command - BETA");
+            embed.setFooter("Avatar Command -"+username+"'s " + "Avatar");
 
             event.replyEmbeds(embed.build()).queue();
         }
