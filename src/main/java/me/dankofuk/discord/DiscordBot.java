@@ -98,7 +98,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
-        commandsData.add(Commands.slash("sendverifypanel", "Gets the avatar of a user.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendverifypanel", "Sends the verify panel to the channel you select.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -111,7 +111,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
-        commandsData.add(Commands.slash("sendverifypanel", "Gets the avatar of a user.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendverifypanel", "Sends the verify panel to the channel you select").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
