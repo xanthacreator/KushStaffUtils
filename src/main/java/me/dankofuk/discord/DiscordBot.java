@@ -5,6 +5,8 @@ import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
 import me.dankofuk.discord.listeners.StartStopLogger;
+import me.dankofuk.discord.verify.SendPanel;
+import me.dankofuk.discord.verify.VerifyPanel;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -78,6 +80,7 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new ReloadCommand(this));
         this.jda.addEventListener(new AvatarCommand());
         this.jda.addEventListener(new ServerInfoCommand());
+        this.jda.addEventListener(new SendPanel(jda, main));
     }
 
     private Activity.ActivityType getActivityType(String activityTypeStr) {
@@ -96,6 +99,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
+        commandsData.add(Commands.slash("sendverifypanel", "Gets the avatar of a user.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -108,6 +112,7 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
+        commandsData.add(Commands.slash("sendverifypanel", "Gets the avatar of a user.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
