@@ -302,3 +302,97 @@ creative-logging:
     world: "%world%"
     location: "`X:` %location-x% `Y:` %location-y% `Z:` %location-z%"
     enchants: "%enchants%"
+
+#----------------------------------------------------------------
+# LiteBans Logging Configuration - Discord Bot Not Required
+#----------------------------------------------------------------
+# Placeholders for LiteBans Logging
+#
+# %time% - Time of punishment
+
+litebans:
+  # if false it will not try to use LiteBans
+  enabled: true
+  # Ban Logging
+  ban:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW BAN** | Bans Logging"
+    embedDescription: ""
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  warn:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW WARNING** | Warnings Logging"
+    embedDescription: ""
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  kick:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW KICK** | Kicks Logging"
+    embedDescription: ""
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  mute:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW MUTE** | Mutes Logging"
+    embedDescription: ""
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+
+#----------------------------------------------------------------
+# AdvancedBans Logging Configuration - Discord Bot Not Required
+#----------------------------------------------------------------
+# Placeholders for AdvancedBans Logging
+#
+# %time% - Time of punishment
+
+advancedbans:
+  # if false it will not try to use LiteBans
+  enabled: true
+  # Ban Logging
+  ban:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW BAN** | Bans Logging"
+    embedDescription: "%time%"
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  ip-ban:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW IP-BAN** | Bans Logging"
+    embedDescription: "%time%"
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  tempban:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW TEMP-BAN** | Bans Logging"
+    embedDescription: "%time%"
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  warn:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW WARNING** | Warnings Logging"
+    embedDescription: "%time%"
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  kick:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW KICK** | Kicks Logging"
+    embedDescription: "%time%"
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+  mute:
+    webhookUrl: "webhook-url-here"
+    embedTitle: "**NEW MUTE** | Mutes Logging"
+    embedDescription: "%time%"
+    embedFooter: "%time%"
+    embedThumbnail: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
+    embedAvatar: "https://cdn.discordapp.com/avatars/1093413225338507344/a60fa5f0a630cafb471effcf3a3e1bd8.png?size=4096"
