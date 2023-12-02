@@ -1,6 +1,8 @@
 package me.dankofuk.discord.verify;
 
 import me.dankofuk.KushStaffUtils;
+import me.dankofuk.discord.DiscordBot;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
@@ -13,26 +15,40 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.bukkit.configuration.Configuration;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class SendPanel extends ListenerAdapter {
 
     public String roleID;
     public KushStaffUtils instance;
-    public JDA jda;
+    public DiscordBot discordBot;
 
-    public SendPanel(JDA jda, KushStaffUtils instance) {
-        this.jda = jda;
+    public SendPanel(DiscordBot discordBot, KushStaffUtils instance) {
+        this.discordBot = discordBot;
         this.instance = instance;
     }
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
+        boolean hasPermission = event.getMember().getRoles().stream()
+                .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID()));
+
+        if (!hasPermission) {
+            EmbedBuilder noPerms = new EmbedBuilder();
+            noPerms.setColor(Color.RED);
+            noPerms.setTitle("Error #NotDankEnough");
+            noPerms.setDescription(">  `You lack the required permissions for this command!`");
+            noPerms.setFooter(OffsetDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME));
+            event.replyEmbeds(noPerms.build()).queue();
+            return;
+        }
         if (event.getName().equals("sendverifypanel")) {
             Configuration config = KushStaffUtils.getInstance().getConfig();
             String channelId = event.getOption("channel").getAsString();
-            MessageChannel channel = jda.getChannelById(MessageChannel.class, channelId);
+            MessageChannel channel = discordBot.jda.getChannelById(MessageChannel.class, channelId);
             String sentMessage = config.getString("verify_panel.sentMessage");
             String buttonMessage = config.getString("verify_panel.buttonMessage");
             List<String> embedMessageList = config.getStringList("verify_panel.embedMessage");
