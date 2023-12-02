@@ -415,6 +415,40 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getServer().getPluginManager().registerEvents(this.creativeDropLogger, this);
             getLogger().warning("Creative Logging - [Enabled]");
         }
+
+        // LiteBans Logging (Webhooks)
+        if (!config.getBoolean("litebans.enabled")) {
+            getLogger().warning("LiteBans Logging - [Not Enabled]");
+        } else {
+            this.lbKickListener = new LBKickListener(this);
+            lbKickListener.registerEvents();
+            this.lbWarnListener = new LBWarnListener(this);
+            lbWarnListener.registerEvents();
+            this.lbMuteListener = new LBMuteListener(this);
+            lbMuteListener.registerEvents();
+            this.bansListener = new LBBanListener(this);
+            bansListener.registerEvents();
+            getLogger().warning("LiteBans Logging - [Enabled]");
+        }
+
+        // AdvacnedBans Logging (Webhooks)
+        if (!config.getBoolean("advancedbans.enabled")) {
+            getLogger().warning("AdvancedBans Logging - [Not Enabled]");
+        } else {
+            this.aMuteListener = new AMuteListener(this);
+            getServer().getPluginManager().registerEvents(aMuteListener, this);
+            this.aIPBanListener = new AIPBanListener(this);
+            getServer().getPluginManager().registerEvents(aIPBanListener, this);
+            this.aKickListener = new AKickListener(this);
+            getServer().getPluginManager().registerEvents(aKickListener, this);
+            this.aWarnListener = new AWarnListener(this);
+            getServer().getPluginManager().registerEvents(aWarnListener, this);
+            this.aTempBanListener = new ATempBanListener(this);
+            getServer().getPluginManager().registerEvents(aTempBanListener, this);
+            this.aBanListener = new ABanListener(this);
+            getServer().getPluginManager().registerEvents(aBanListener, this);
+            getLogger().warning("AdvancedBans Logging - [Enabled]");
+        }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
 
