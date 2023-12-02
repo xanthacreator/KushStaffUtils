@@ -1,17 +1,19 @@
 package me.dankofuk;
 
-import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
 import me.dankofuk.commands.CommandLogViewer;
-import me.dankofuk.discord.commands.botRequiredCommands.ReportCommand;
 import me.dankofuk.discord.DiscordBot;
+import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
+import me.dankofuk.discord.commands.botRequiredCommands.ReportCommand;
 import me.dankofuk.discord.commands.botRequiredCommands.SuggestionCommand;
 import me.dankofuk.discord.listeners.ChatWebhook;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.StartStopLogger;
 import me.dankofuk.factions.FactionStrike;
 import me.dankofuk.factions.FactionsTopAnnouncer;
+import me.dankofuk.loggers.advancedbans.*;
 import me.dankofuk.loggers.creative.CreativeDropLogger;
 import me.dankofuk.loggers.creative.CreativeMiddleClickLogger;
+import me.dankofuk.loggers.litebans.listeners.*;
 import me.dankofuk.loggers.players.FileCommandLogger;
 import me.dankofuk.loggers.players.JoinLeaveLogger;
 import me.dankofuk.utils.ColorUtils;
@@ -59,6 +61,19 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
     public CreativeMiddleClickLogger creativeLogger;
     public CreativeDropLogger creativeDropLogger;
     public CommandLogViewer commandLogViewer;
+    // LiteBans
+    public LBBanListener bansListener;
+    public LBMuteListener lbMuteListener;
+    public LBWarnListener lbWarnListener;
+    public LBKickListener lbKickListener;
+    // AdvancedBans
+    public ABanListener aBanListener;
+    public ATempBanListener aTempBanListener;
+    public AIPBanListener aIPBanListener;
+    public AWarnListener aWarnListener;
+    public AKickListener aKickListener;
+    public AMuteListener aMuteListener;
+
 
     public void onEnable() {
         // Loading configuration
@@ -206,6 +221,40 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getServer().getPluginManager().registerEvents(this.creativeLogger, this);
             getServer().getPluginManager().registerEvents(this.creativeDropLogger, this);
             getLogger().warning("Creative Logging - [Enabled]");
+        }
+
+        // LiteBans Logging (Webhooks)
+        if (!config.getBoolean("litebans.enabled")) {
+            getLogger().warning("LiteBans Logging - [Not Enabled]");
+        } else {
+            this.lbKickListener = new LBKickListener(this);
+            lbKickListener.registerEvents();
+            this.lbWarnListener = new LBWarnListener(this);
+            lbWarnListener.registerEvents();
+            this.lbMuteListener = new LBMuteListener(this);
+            lbMuteListener.registerEvents();
+            this.bansListener = new LBBanListener(this);
+            bansListener.registerEvents();
+            getLogger().warning("LiteBans Logging - [Enabled]");
+        }
+
+        // AdvacnedBans Logging (Webhooks)
+        if (!config.getBoolean("advancedbans.enabled")) {
+            getLogger().warning("AdvancedBans Logging - [Not Enabled]");
+        } else {
+            this.aMuteListener = new AMuteListener(this);
+            getServer().getPluginManager().registerEvents(aMuteListener, this);
+            this.aIPBanListener = new AIPBanListener(this);
+            getServer().getPluginManager().registerEvents(aIPBanListener, this);
+            this.aKickListener = new AKickListener(this);
+            getServer().getPluginManager().registerEvents(aKickListener, this);
+            this.aWarnListener = new AWarnListener(this);
+            getServer().getPluginManager().registerEvents(aWarnListener, this);
+            this.aTempBanListener = new ATempBanListener(this);
+            getServer().getPluginManager().registerEvents(aTempBanListener, this);
+            this.aBanListener = new ABanListener(this);
+            getServer().getPluginManager().registerEvents(aBanListener, this);
+            getLogger().warning("AdvancedBans Logging - [Enabled]");
         }
 
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
