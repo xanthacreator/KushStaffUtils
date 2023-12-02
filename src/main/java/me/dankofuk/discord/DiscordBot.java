@@ -79,7 +79,7 @@ public class DiscordBot extends ListenerAdapter {
         this.jda.addEventListener(new ReloadCommand(this));
         this.jda.addEventListener(new AvatarCommand());
         this.jda.addEventListener(new ServerInfoCommand());
-        this.jda.addEventListener(new SendPanel(jda, main));
+        this.jda.addEventListener(new SendPanel(this, main));
     }
 
     private Activity.ActivityType getActivityType(String activityTypeStr) {
