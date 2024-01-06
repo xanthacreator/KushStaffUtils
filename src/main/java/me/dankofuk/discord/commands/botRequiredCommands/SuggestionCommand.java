@@ -31,10 +31,6 @@ public class SuggestionCommand extends ListenerAdapter implements CommandExecuto
     public SuggestionCommand(DiscordBot discordBot, FileConfiguration config) {
         this.discordBot = discordBot;
         this.config = config;
-
-        if (!config.getBoolean("bot.enabled")) {
-            Bukkit.getLogger().warning("[SuggestionCommandListener] Bot is not enabled. Suggestion command will not function.");
-        }
     }
 
     public void accessConfigs() {
