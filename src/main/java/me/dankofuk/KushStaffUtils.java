@@ -1,6 +1,7 @@
 package me.dankofuk;
 
 import me.dankofuk.commands.CommandLogViewer;
+import me.dankofuk.commands.StaffUtilsCommand;
 import me.dankofuk.discord.DiscordBot;
 import me.dankofuk.discord.commands.botRequiredCommands.BugCommand;
 import me.dankofuk.discord.commands.botRequiredCommands.ReportCommand;
@@ -13,15 +14,15 @@ import me.dankofuk.factions.FactionsTopAnnouncer;
 import me.dankofuk.loggers.advancedbans.*;
 import me.dankofuk.loggers.creative.CreativeDropLogger;
 import me.dankofuk.loggers.creative.CreativeMiddleClickLogger;
-import me.dankofuk.loggers.litebans.listeners.*;
+import me.dankofuk.loggers.litebans.listeners.LBBanListener;
+import me.dankofuk.loggers.litebans.listeners.LBKickListener;
+import me.dankofuk.loggers.litebans.listeners.LBMuteListener;
+import me.dankofuk.loggers.litebans.listeners.LBWarnListener;
 import me.dankofuk.loggers.players.FileCommandLogger;
 import me.dankofuk.loggers.players.JoinLeaveLogger;
-import me.dankofuk.utils.ColorUtils;
 import net.dv8tion.jda.api.JDA;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.HandlerList;
@@ -29,7 +30,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Objects;
@@ -61,6 +61,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
     public CreativeMiddleClickLogger creativeLogger;
     public CreativeDropLogger creativeDropLogger;
     public CommandLogViewer commandLogViewer;
+    public StaffUtilsCommand staffUtilsCommand;
     // LiteBans
     public LBBanListener bansListener;
     public LBMuteListener lbMuteListener;
@@ -257,6 +258,8 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("AdvancedBans Logging - [Enabled]");
         }
 
+        this.staffUtilsCommand = new StaffUtilsCommand();
+        Objects.requireNonNull(getCommand("stafflogger")).setExecutor(this.staffUtilsCommand);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been enabled");
     }
@@ -276,28 +279,11 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         }
         if (discordBotEnabled) {
             if (config.getBoolean("serverstatus.enabled")) {
-                this.startStopLogger = new StartStopLogger(discordBot);
                 startStopLogger.sendStatusUpdateMessage(false);
             }
-        }
+        } else
+            getLogger().info("[Failed to start the start/stop logger]");
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Plugin has been disabled!");
-    }
-
-
-    public boolean onCommand(@NotNull CommandSender sender, Command cmd, @NotNull String label, @NotNull String[] args) {
-        if (cmd.getName().equalsIgnoreCase("stafflogger")) {
-            if (!sender.hasPermission("commandlogger.reload")) {
-                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(messagesConfig.getString("noPermissionMessage"))));
-                return true;
-            }
-            if (args.length == 1 && args[0].equalsIgnoreCase("reload")) {
-                reloadConfigOptions();
-                sender.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(messagesConfig.getString("reloadMessage"))));
-                return true;
-            }
-            return false;
-        }
-        return false;
     }
 
     public void reloadConfigOptions() {
