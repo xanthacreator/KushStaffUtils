@@ -20,8 +20,8 @@ import me.dankofuk.loggers.litebans.listeners.LBMuteListener;
 import me.dankofuk.loggers.litebans.listeners.LBWarnListener;
 import me.dankofuk.loggers.players.FileCommandLogger;
 import me.dankofuk.loggers.players.JoinLeaveLogger;
+import me.dankofuk.utils.Metrics;
 import net.dv8tion.jda.api.JDA;
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -98,7 +98,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
 
         // bStats
         int pluginId = 18185;
-        Metrics metrics = new Metrics(this, pluginId);
+        me.dankofuk.utils.Metrics metrics = new Metrics(this, pluginId);
 
         // Features
         if (config.getBoolean("bot.enabled")) {
