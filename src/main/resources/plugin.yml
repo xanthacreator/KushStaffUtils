@@ -5,7 +5,6 @@ author: DankOfUK
 description: Made by Exotic Development
 load-after: [InteractiveChat, AntiCheatReplay, LiteBans, AdvancedBans]
 softdepend: [PlaceholderAPI, Vault, AntiCheatReplay, LiteBans, AdvancedBans]
-api-version: 1.20.4
 commands:
   stafflogger:
     description: reloads the config.
