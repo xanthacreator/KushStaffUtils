@@ -16,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -97,7 +99,8 @@ public class FactionsTopAnnouncer implements Listener {
                         json.addProperty("avatar_url", KushStaffUtils.getInstance().getConfig().getString("announcer.avatarUrl"));
 
                         JsonObject embed = new JsonObject();
-                        embed.addProperty("description", message);
+                        long time = System.currentTimeMillis() / 1000L;
+                        embed.addProperty("description", message.replace("%time%", "<t:" + time + ":R>"));
                         String embedColor = KushStaffUtils.getInstance().getConfig().getString("announcer.embedColor");
                         int embedColorCode = getColorCode(embedColor);
                         embed.addProperty("color", embedColorCode);
