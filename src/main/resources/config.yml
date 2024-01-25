@@ -20,6 +20,20 @@ bot:
   discord_activity_type: "STREAMING"
 
 #----------------------------------------------------------------
+# Verify Panel Configuration  - Discord Bot Required
+#----------------------------------------------------------------
+verify_panel:
+  giveRoleOnClicks: "role-id-here"
+  roleGivenMessage: "Your roles have been given!"
+  embedMessage:
+    - "Welcome to Kush Staff Utils"
+    - "Click to verify!"
+    - "Made by Exotic Development"
+  sentMessage: "Verify Panel has been sent!"
+  embedThumbnail: "link-here"
+  buttonMessage: "Click to verify!"
+
+#----------------------------------------------------------------
 # Server Shutdown/Startup Logger Configuration  - Discord Bot Required
 #----------------------------------------------------------------
 serverstatus:

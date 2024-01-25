@@ -3,8 +3,8 @@ version: '${project.version}'
 main: me.dankofuk.KushStaffUtils
 author: DankOfUK
 description: Made by Exotic Development
-load-after: [InteractiveChat, AntiCheatReplay]
-softdepend: [PlaceholderAPI, Vault, AntiCheatReplay]
+load-after: [InteractiveChat, AntiCheatReplay, LiteBans, AdvancedBans]
+softdepend: [PlaceholderAPI, Vault, AntiCheatReplay, LiteBans, AdvancedBans]
 commands:
   stafflogger:
     description: reloads the config.

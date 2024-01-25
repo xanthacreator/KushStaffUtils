@@ -27,6 +27,7 @@ public class HelpCommand extends ListenerAdapter {
                 helpEmbed.addField("/help", "Shows this menu", false);
                 helpEmbed.addField("/command [command]", "Sends a command to the server!", true);
                 helpEmbed.addField("/online", "Shows the players online", false);
+                helpEmbed.addField("/sendverifypanel [channel]", "Sends the verify panel the selected channel.", true);
                 helpEmbed.addField("/logs [user]", "Shows the log file for the user selected", true);
                 helpEmbed.addField("/avatar [user]", "Shows the avatar for the user selected", true);
                 helpEmbed.addField("/reload", "Reloads the configs for the bot related stuff.", false);
