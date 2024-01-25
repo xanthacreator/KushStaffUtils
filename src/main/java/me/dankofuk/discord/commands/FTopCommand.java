@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 public class FTopCommand extends ListenerAdapter {
@@ -35,7 +37,7 @@ public class FTopCommand extends ListenerAdapter {
             EmbedBuilder helpEmbed = new EmbedBuilder();
             helpEmbed.setColor(Color.RED);
             helpEmbed.setTitle(discordBot.config.getString("announcer.title"));
-            helpEmbed.setDescription(message);
+            helpEmbed.setDescription(message.replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())));
             helpEmbed.setFooter(discordBot.config.getString("announcer.footer"));
             event.replyEmbeds(helpEmbed.build()).setEphemeral(true).queue();
         }
