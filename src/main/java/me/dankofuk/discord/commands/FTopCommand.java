@@ -33,11 +33,12 @@ public class FTopCommand extends ListenerAdapter {
                         }
                     })
                     .collect(Collectors.joining("\n"));
+            long time = System.currentTimeMillis() / 1000L;
 
             EmbedBuilder helpEmbed = new EmbedBuilder();
             helpEmbed.setColor(Color.RED);
             helpEmbed.setTitle(discordBot.config.getString("announcer.title"));
-            helpEmbed.setDescription(message.replace("%time%", (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(new Date())));
+            helpEmbed.setDescription(message.replace("%time%", "<t:" + time + ":R>"));
             helpEmbed.setFooter(discordBot.config.getString("announcer.footer"));
             event.replyEmbeds(helpEmbed.build()).setEphemeral(true).queue();
         }
