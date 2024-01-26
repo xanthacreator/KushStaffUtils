@@ -9,6 +9,8 @@ import me.dankofuk.discord.commands.botRequiredCommands.SuggestionCommand;
 import me.dankofuk.discord.listeners.ChatWebhook;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.StartStopLogger;
+import me.dankofuk.commands.SyncGameCommand;
+import me.dankofuk.discord.syncing.SyncStorage;
 import me.dankofuk.factions.FactionStrike;
 import me.dankofuk.factions.FactionsTopAnnouncer;
 import me.dankofuk.loggers.advancedbans.*;
@@ -45,6 +47,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
 
     public FileConfiguration config;
     public FileConfiguration messagesConfig;
+    public FileConfiguration syncingConfig;
 
     public StartStopLogger startStopLogger;
     public CommandLogger commandLogger;
@@ -74,6 +77,8 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
     public AWarnListener aWarnListener;
     public AKickListener aKickListener;
     public AMuteListener aMuteListener;
+    // Syncing
+    public SyncStorage syncStorage;
 
 
     public void onEnable() {
@@ -82,6 +87,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
         messagesConfig = loadMessagesConfig();
+        syncingConfig = loadSyncingConfig();
         setDefaultMessages();
 
         // Instance
@@ -106,7 +112,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
                 getLogger().warning("[Discord Bot] No bot token found. Bot initialization skipped.");
                 return;
             }
-            this.discordBot = new DiscordBot(this, config);
+            this.discordBot = new DiscordBot(this, config, syncStorage);
             try {
                 this.discordBot.start();
                 getLogger().warning("[Discord Bot] Starting Discord Bot...");
@@ -258,6 +264,14 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
             getLogger().warning("AdvancedBans Logging - [Enabled]");
         }
 
+        // Syncing Feature
+        String url = KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.URL");
+        String username = KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.USERNAME");
+        String password = KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.PASSWORD");
+        syncStorage = new SyncStorage(url, username, password);
+        syncStorage.initDatabase();
+        Objects.requireNonNull(getCommand("sync")).setExecutor(new SyncGameCommand(discordBot, url, username, password));
+
         this.staffUtilsCommand = new StaffUtilsCommand();
         Objects.requireNonNull(getCommand("stafflogger")).setExecutor(this.staffUtilsCommand);
         new ThreadPoolExecutor(5, 10, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
@@ -267,6 +281,7 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
     public void onDisable() {
         FileConfiguration config = getConfig();
         boolean discordBotEnabled = config.getBoolean("bot.enabled");
+        syncStorage.closeConnection();
         if (discordBotEnabled) {
             this.discordBot.stop();
             getLogger().warning("[Discord Bot] Bot has been disabled!");
@@ -437,6 +452,27 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         }
         Bukkit.getConsoleSender().sendMessage("[KushStaffUtils] Config options have been reloaded!");
     }
+
+    private FileConfiguration loadSyncingConfig() {
+        saveResource("syncing.yml", false);
+
+        return YamlConfiguration.loadConfiguration(new File(getDataFolder(), "syncing.yml"));
+    }
+
+    private void setSyncingConfig() {
+        syncingConfig.options().copyDefaults(true);
+        saveSyncingConfig();
+
+    }
+
+    private void saveSyncingConfig() {
+        try {
+            syncingConfig.save(new File(getDataFolder(), "syncing.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private FileConfiguration loadMessagesConfig() {
         saveResource("messages.yml", false);
