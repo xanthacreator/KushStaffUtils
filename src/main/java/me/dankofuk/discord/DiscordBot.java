@@ -5,6 +5,10 @@ import me.dankofuk.discord.commands.*;
 import me.dankofuk.discord.listeners.CommandLogger;
 import me.dankofuk.discord.listeners.DiscordChat2Game;
 import me.dankofuk.discord.listeners.StartStopLogger;
+import me.dankofuk.discord.commands.SendRewardEmbedCommand;
+import me.dankofuk.discord.commands.SendSyncPanel;
+import me.dankofuk.discord.syncing.SyncStorage;
+import me.dankofuk.discord.commands.UnSyncCommand;
 import me.dankofuk.discord.verify.SendPanel;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -32,11 +36,14 @@ public class DiscordBot extends ListenerAdapter {
     public Plugin botTask;
     public KushStaffUtils main;
     public FileConfiguration config;
+    public SendSyncPanel sendSyncPanel;
+    public SyncStorage syncStorage;
 
 
-    public DiscordBot(Plugin botTask, FileConfiguration config) {
+    public DiscordBot(Plugin botTask, FileConfiguration config, SyncStorage syncStorage) {
         this.botTask = botTask;
         this.config = config;
+        this.syncStorage = syncStorage;
     }
 
     public JDA getJda() {
@@ -68,7 +75,19 @@ public class DiscordBot extends ListenerAdapter {
                 .build()
                 .awaitReady();
 
+
+        // Database Strings
+        String url = KushStaffUtils.getInstance().getConfig().getString("MYSQL.URL");
+        String username = KushStaffUtils.getInstance().getConfig().getString("MYSQL.USERNAME");
+        String password = KushStaffUtils.getInstance().getConfig().getString("MYSQL.PASSWORD");
+
         // Register Events/Listeners
+        this.jda.addEventListener(new HelpCommand(this));
+        this.jda.addEventListener(new ReloadCommand(this));
+        this.sendSyncPanel = new SendSyncPanel(this, url, username, password);
+        this.jda.addEventListener(sendSyncPanel);
+        this.jda.addEventListener(new SendRewardEmbedCommand(this, config, url, username, password));
+        this.jda.addEventListener(new UnSyncCommand(this, url, username, password));
         this.jda.addEventListener(new OnlinePlayersCommand(this));
         this.jda.addEventListener(new StartStopLogger(this));
         this.jda.addEventListener(new ConsoleCommand(this));
@@ -101,6 +120,10 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
         commandsData.add(Commands.slash("sendverifypanel", "Sends the verify panel to the channel you select.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendsyncpanel", "Sends the sync panel to the channel you select").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendrewardpanel", "Sends the reward panel to the channel you select").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("unsync", "Unsync a user that has been synced").addOption(OptionType.USER, "user", "User you want to unsync"));
+        commandsData.add(Commands.slash("sync", "Sends the syncing code too your private messages."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
@@ -114,10 +137,16 @@ public class DiscordBot extends ListenerAdapter {
         commandsData.add(Commands.slash("command", "Sends the command to the server.").addOption(OptionType.STRING, "command", "The command you want to send."));
         commandsData.add(Commands.slash("logs", "Gets the logs for the user you enter.").addOption(OptionType.STRING, "user", "The user you would like the logs for."));
         commandsData.add(Commands.slash("avatar", "Gets the avatar of a user.").addOption(OptionType.USER, "user", "The user that the avatar for."));
-        commandsData.add(Commands.slash("sendverifypanel", "Sends the verify panel to the channel you select").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendverifypanel", "Sends the verify panel to the channel you select.").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendsyncpanel", "Sends the sync panel to the channel you select").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("sendrewardpanel", "Sends the reward panel to the channel you select").addOption(OptionType.CHANNEL, "channel", "The channel to send the panel to."));
+        commandsData.add(Commands.slash("unsync", "Unsync a user that has been synced").addOption(OptionType.USER, "user", "User you want to unsync"));
+        commandsData.add(Commands.slash("sync", "Sends the syncing code too your private messages."));
         commandsData.add(Commands.slash("reload", "Reloads the bot configs. (only bot related)"));
         event.getJDA().updateCommands().addCommands(commandsData).queue();
     }
+
+
 
     public void stop() {
         if (this.jda != null) {
@@ -184,5 +213,9 @@ public class DiscordBot extends ListenerAdapter {
 
     public String getAdminRoleID() {
         return KushStaffUtils.getInstance().getConfig().getString("bot.adminRoleID");
+    }
+
+    public SendSyncPanel getSendPanel() {
+        return sendSyncPanel;
     }
 }
