@@ -22,3 +22,6 @@ commands:
   suggestion:
     description: Make a suggestion
     aliases: [suggest]
+  syncing:
+    description: Syncing discord account to minecraft account
+    aliases: [sync, syncing]
