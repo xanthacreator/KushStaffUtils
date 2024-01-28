@@ -6,7 +6,7 @@
 
     <groupId>KushStaffUtils</groupId>
     <artifactId>KushStaffUtils</artifactId>
-    <version>2.6.0.1-SNAPSHOT</version>
+    <version>2.7.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>KushStaffUtils</name>
@@ -145,6 +145,12 @@
             <artifactId>AdvancedBan</artifactId>
             <version>v2.3.0</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.23</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

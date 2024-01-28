@@ -1,0 +1,82 @@
+SYNC-PANEL:
+  # Discord Roles that will be given once sync has been completed!
+  ROLE-GIVEN-ON-SYNC:
+    - "971612308335919134"
+    - "971612316326035538"
+  # When the panel has been sent via command.
+  SENT-MESSAGE: "Sync Panel sent too: %channel%"
+  # The Panel Embed Message
+  EMBED-MESSAGE:
+    - "Kush Rewards - Syncing Panel"
+    - ""
+    - "Click to start the sync process!"
+    - ""
+    - "Made by Exotic Development"
+  # Thumbnail for embed
+  THUMBNAIL-URL: "https://i.ytimg.com/vi/mm8UEsfVAUE/maxresdefault.jpg"
+  # Message on the button
+  BUTTON-MESSAGE: "Click here!"
+
+  INVALID-CHANNEL-MESSAGE: "Invalid Channel!"
+  ROLE-GIVEN-MESSAGE: "Your roles have been given for syncing successfully!"
+  ROLE-NOT-FOUND-MESSAGE: "No roles have been found (tell your administrator)"
+
+# Messages
+MESSAGES:
+  # Game Related Messages
+  COMMAND-USAGE: "&7[&5&lEXOTIC&b&lREWARDS&7] &cInvalid command usage! &aUse &f/sync <code>&a!"
+  INVALID-CODE-MESSAGE: "&7[&5&lEXOTIC&b&lREWARDS&7] &cInvalid sync usage, your code is invalid!"
+  ALREADY-SYNCED-MESSAGE: "&7[&5&lEXOTIC&b&lREWARDS&7] &cYou have already been synced, contact and admin in discord if this is a error!"
+  SYNCED-SUCCESSFULLY-MESSAGE: "&7[&5&lEXOTIC&b&lREWARDS&7] &aYou have been successfully synced!"
+
+  # Discord Messages
+
+
+REWARD-EMBED:
+  TITLE: "Your Reward Title"
+  DESCRIPTION:
+    - "Line 1 of description"
+    - "Line 2 of description"
+  THUMBNAIL-URL: "https://i.ytimg.com/vi/mm8UEsfVAUE/maxresdefault.jpg"
+  COLOR: "#FFA500"
+
+SYNC-RANKS:
+  rank1:
+    ROLE-ID-GIVEN: "discord-role1"
+    LUCK-PERMS-RANK: "rank1"
+    BUTTON-ID: "button1"
+  rank2:
+    ROLE-ID-GIVEN: "discord-role2"
+    LUCK-PERMS-RANK: "rank2"
+    BUTTON-ID: "button2"
+
+BUTTONS:
+  button1:
+    REQUIRED-ROLE-ID: "961839666556960792"
+    REWARDS:
+      - "give %player% diamond 5"
+    REWARD-INTERVAL: 120
+    MESSAGE: "Claim Diamonds"
+  button2:
+    REQUIRED-ROLE-ID: "961839666556960792"
+    REWARDS:
+      - "give %player% gold_ingot 10"
+    REWARD-INTERVAL: 60
+    MESSAGE: "Claim Gold"
+  button3:
+    REQUIRED-ROLE-ID: "961839666556960792"
+    REWARDS:
+      - "give %player% iron_ingot 10"
+    REWARD-INTERVAL: 60
+    MESSAGE: "Claim Iron"
+  button4:
+    REQUIRED-ROLE-ID: "961839666556960792"
+    REWARDS:
+      - "give %player% coal 10"
+    REWARD-INTERVAL: 60
+    MESSAGE: "Claim Coal"
+
+MYSQL:
+  URL: "jdbc:mysql:"
+  USERNAME: "username"
+  PASSWORD: "password"
