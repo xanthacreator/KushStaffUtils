@@ -42,9 +42,6 @@ public class SendSyncPanel extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
-        if (event.isAcknowledged()) {
-            return;
-        }
         boolean hasPermission = Objects.requireNonNull(event.getMember()).getRoles().stream()
                 .anyMatch(role -> role.getId().equals(discordBot.getAdminRoleID()));
 
@@ -69,16 +66,13 @@ public class SendSyncPanel extends ListenerAdapter {
 
             String buttonMessage = KushStaffUtils.getInstance().syncingConfig.getString("SYNC-PANEL.BUTTON-MESSAGE");
 
-            channel.sendMessageEmbeds(embedBuilder.build()).setActionRow(Button.primary("sync_button", Objects.requireNonNull(buttonMessage))).queue();
-            event.reply("Panel sent to channel").setEphemeral(true).queue();
+            Objects.requireNonNull(channel).sendMessageEmbeds(embedBuilder.build()).setActionRow(Button.primary("sync_button", Objects.requireNonNull(buttonMessage))).queue();
+            channel.sendMessage("Panel sent to channel").queue();
         }
     }
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
-        if (event.isAcknowledged()) {
-            return;
-        }
 
         if (event.getComponentId().equals("sync_button")) {
             User user = event.getUser();
@@ -91,10 +85,8 @@ public class SendSyncPanel extends ListenerAdapter {
 
             if (syncStorage.isUserSynced(userId)) {
                 sendUserPrivateMessage(user, "You are already synced! (If this is a mistake speak with your administrator)", event);
-                event.reply("You are already synced! (If this is a mistake speak with your administrator)").setEphemeral(true).queue();
             } else if (hasActiveCode) {
                 sendUserPrivateMessage(user, "You already have an active sync code. Please wait until it expires.", event);
-                event.reply("You already have an active sync code. Please check your DMs.").setEphemeral(true).queue();
             } else {
                 String code = generateRandomCode();
                 long expiryTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5);
