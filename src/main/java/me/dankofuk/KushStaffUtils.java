@@ -265,12 +265,9 @@ public class KushStaffUtils extends JavaPlugin implements Listener {
         }
 
         // Syncing Feature
-        String url = KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.URL");
-        String username = KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.USERNAME");
-        String password = KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.PASSWORD");
-        syncStorage = new SyncStorage(url, username, password);
+        syncStorage = new SyncStorage(KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.URL"), KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.USERNAME"), KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.PASSWORD"));
         syncStorage.initDatabase();
-        Objects.requireNonNull(getCommand("sync")).setExecutor(new SyncGameCommand(discordBot, url, username, password));
+        Objects.requireNonNull(getCommand("sync")).setExecutor(new SyncGameCommand(discordBot, KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.URL"), KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.USERNAME"), KushStaffUtils.getInstance().syncingConfig.getString("MYSQL.PASSWORD")));
 
         this.staffUtilsCommand = new StaffUtilsCommand();
         Objects.requireNonNull(getCommand("stafflogger")).setExecutor(this.staffUtilsCommand);
