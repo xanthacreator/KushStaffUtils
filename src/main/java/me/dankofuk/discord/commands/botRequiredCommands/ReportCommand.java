@@ -38,6 +38,10 @@ public class ReportCommand implements Listener, CommandExecutor {
             player.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.usageMessage"))));
             return true;
         }
+        if (reportedPlayerName.equalsIgnoreCase(player.getName())) {
+            player.sendMessage(ColorUtils.translateColorCodes(Objects.requireNonNull(KushStaffUtils.getInstance().getConfig().getString("report.selfReportMessage"))));
+            return true;
+        }
         String reportedPlayerName = args[0];
         String reportReason = String.join(" ", Arrays.<CharSequence>copyOfRange(args, 1, args.length));
         long currentTime = System.currentTimeMillis();
